@@ -7,7 +7,7 @@ import base64
 def byte_xor(ba1, ba2):
     return bytes([_a ^ _b for _a, _b in zip(ba1, ba2)])
 
-
+"""
 
 ka = base64.urlsafe_b64decode(Fernet.generate_key())
 kc = base64.urlsafe_b64decode(Fernet.generate_key())
@@ -38,3 +38,24 @@ if kc == new_kc:
 else:
     print("false")
 
+"""
+
+x = ["x","x"]
+y = ["y","y","y"]
+z = ["r1","r5"]
+
+hash = bytearray(32)
+hash1 = bytearray(32)
+hash2 = bytearray(32)
+
+for el in x:
+    hash = byte_xor(hash, hashlib.sha3_256(el.encode('utf-8')).digest())
+
+for el in y:
+    hash1 = byte_xor(hash1, hashlib.sha3_256(el.encode('utf-8')).digest())
+
+for el in z:
+    hash2 = byte_xor(hash2, hashlib.sha3_256(el.encode('utf-8')).digest())
+
+print(hash == hash1)
+print(hash == hash2)
