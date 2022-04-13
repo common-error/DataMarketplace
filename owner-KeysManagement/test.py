@@ -2,7 +2,7 @@ from cryptography.fernet import Fernet
 import secrets
 import hashlib
 import base64
-
+import networkx as nx
 
 def byte_xor(ba1, ba2):
     return bytes([_a ^ _b for _a, _b in zip(ba1, ba2)])
@@ -38,7 +38,7 @@ if kc == new_kc:
 else:
     print("false")
 
-"""
+##################################################
 
 x = ["x","x"]
 y = ["y","y","y"]
@@ -59,3 +59,26 @@ for el in z:
 
 print(hash == hash1)
 print(hash == hash2)
+########################################################################################
+
+G = nx.read_gml("../KDS.gml")
+
+
+
+#print(G.in_edges("d0bd83a1c71c96b196e5369a674dd41b804c9f32c8fbf2f00514bd4b9d7a057f"))
+_buyer = "0xD1192bc74BF3b44EEC9ad07271165dD6B6FF8387"
+G.add_edge(_buyer,"d0bd83a1c71c96b196e5369a674dd41b804c9f32c8fbf2f00514bd4b9d7a057f")
+#G.add_edge("0xC1192bc74BF3b44EEC9ad07271165dD6B6FF8387","d0bd83a1c71c96b196e5369a674dd41b804c9f32c8fbf2f00514bd4b9d7a057f")
+for fr,to in G.in_edges("d0bd83a1c71c96b196e5369a674dd41b804c9f32c8fbf2f00514bd4b9d7a057f"):
+    if G.nodes[fr]["user"] and fr != _buyer:
+        print("True")
+
+print("false")
+
+
+######################################################
+
+"""
+test = ["r1","r2","r3"]
+print(test[:1])
+print(test[1:])
