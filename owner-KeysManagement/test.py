@@ -7,6 +7,8 @@ import networkx as nx
 def byte_xor(ba1, ba2):
     return bytes([_a ^ _b for _a, _b in zip(ba1, ba2)])
 
+def hash(_data):
+    return hashlib.sha3_256(_data.encode('utf-8')).hexdigest()
 """
 
 ka = base64.urlsafe_b64decode(Fernet.generate_key())
@@ -78,7 +80,43 @@ print("false")
 
 ######################################################
 
+test = ["r1","r2","r2"]
+test2 = ["r3"]
+G = nx.read_gml("../KDS.gml")
+
+G.add_edge("d0bd83a1c71c96b196e5369a674dd41b804c9f32c8fbf2f00514bd4b9d7a057f","5dc06a84656da8277d534b82c36a5c0607efcd73295d75a66f8a5fca7b44cb65")
+G.add_edge("0xD1192bc74BF3b44EEC9ad07271165dD6B6FF8387","5dc06a84656da8277d534b82c36a5c0607efcd73295d75a66f8a5fca7b44cb65")
+
+capHashes = ["5dc06a84656da8277d534b82c36a5c0607efcd73295d75a66f8a5fca7b44cb65","5dc06a84656da8277d534b82c36a5c0607efcd73295d75a66f8a5fca7b44cb65"]
+x = [list(nx.ancestors(G,el)) for el in capHashes]
+l = [item for sublist in x for item in sublist]
+print(list(set(l)))
+nx.write_gml(G,"x.gml")
+
+
+bc = byte_xor( hashlib.sha3_256("b".encode("utf-8")).digest(),hashlib.sha3_256("c".encode("utf-8")).digest())
+b = hashlib.sha3_256("b".encode("utf-8")).digest()
+c = hashlib.sha3_256("c".encode("utf-8")).digest()
+
+x = byte_xor(bc,b)
+
+print(byte_xor(x,c) == bytearray(32))
+
 """
-test = ["r1","r2","r3"]
-print(test[:1])
-print(test[1:])
+
+from itertools import combinations
+
+def capHash(_data):
+    tempHash = bytearray(32)
+    for el in _data:
+        tempHash = byte_xor(tempHash, hashlib.sha3_256(el.encode('utf-8')).digest())
+        
+    return tempHash
+ 
+vec = ["a","b","c"]
+comb = [list(combinations(vec,x)) for x in range(len(vec))]
+flattened = [item for sublist in comb for item in sublist]
+flattened = flattened[1::]
+hashed = [capHash(el) for el in flattened]
+print(hashed[0] == capHash(["b"]))
+print(hashed)

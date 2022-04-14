@@ -1,9 +1,11 @@
+from tkinter import N
 import networkx as nx
 import secrets
 import hashlib
 from os.path import exists
 from cryptography.fernet import Fernet
 import base64
+from itertools import combinations
 
 DEFAULTPATH = "../KDS.gml"
 
@@ -56,8 +58,16 @@ class KDS():
         if n_cap_u in self.G:
             self.G.add_edge(_buyer,n_cap_u)
         else:
-            print()
+            self.G.add_node(
+                n_cap_u,
+                unHashName=','.join(_capList),
+                key= base64.urlsafe_b64decode(Fernet.generate_key()).hex(),
+                user = False,
+                tag=secrets.token_hex(32)
+            )
+            self.G.add_edge(_buyer,n_cap_u)
 
+            Desc = self._findDesc(_capList)
 
     def getResourceEncKey(self,_resource):
         idResource = self._hash(_resource)
@@ -95,3 +105,25 @@ class KDS():
                 return (_capList[:idx+1],_capList[idx:])
 
         return ([],_capList)
+
+    def _findDesc(self, _capList):
+        comb = [list(combinations(_capList,size)) for size in range(len(_capList))]
+        flattenedComb = [item for sublist in comb for item in sublist]
+        flattenedComb = flattenedComb[1::]
+        hashedComb = [self._capHash(el) for el in flattenedComb]
+
+        potentialSubset = self._potentialSubset(_capList)
+
+        temp = set(potentialSubset) - set(hashedComb)
+        return list(set(potentialSubset) - temp)
+    
+    def _findDescCover(self,_Desc,_n_cap_u):
+        print()
+
+    def _potentialSubset(self, _capList):
+        capHashes = [self._hash(el) for el in _capList]
+
+        ancestors = [list(nx.ancestors(self.G,el)) for el in capHashes]
+        flattenedAnc = [item for sublist in ancestors for item in sublist]
+        
+        return list(set(flattenedAnc)) + capHashes
