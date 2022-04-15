@@ -26,7 +26,8 @@ class KDS():
                 unHashName=_resource,
                 key= base64.urlsafe_b64decode(Fernet.generate_key()).hex(),
                 user = False,
-                tag=secrets.token_hex(32)
+                tag=secrets.token_hex(32),
+                elements = [self._hash(_resource)]
             )
 
 
@@ -63,12 +64,13 @@ class KDS():
                 unHashName=','.join(_capList),
                 key= base64.urlsafe_b64decode(Fernet.generate_key()).hex(),
                 user = False,
-                tag=secrets.token_hex(32)
+                tag=secrets.token_hex(32),
+                elements = [self._hash(el) for el in _capList]
             )
             self.G.add_edge(_buyer,n_cap_u)
 
             Desc = self._findDesc(_capList)
-            Cover = []                                              #DA FARE
+            Cover = self._greedySetCover(self,_capList,Desc)                                              #DA FARE
             for el in Cover:
                 self.G.add_edge(n_cap_u, el)
             
@@ -112,13 +114,16 @@ class KDS():
             
         return False
     
+    #il buyer sarà sempre connesso solo ad un nodo
     def _previousState(self,_buyer,_capList):
-        source,target = self.G.out_edges(_buyer)[0]
+        edge = list(self.G.out_edges(_buyer))
+        if len(edge) == 1:
+            source,target = edge[0]
 
-        for idx,el in enumerate(_capList):
-            capHash = self._byte_xor(capHash, self._hash(el))
-            if capHash == target:
-                return (_capList[:idx+1],_capList[idx:])
+            for idx,el in enumerate(_capList):
+                capHash = self._byte_xor(capHash, self._hash(el))
+                if capHash == target:
+                    return (_capList[:idx+1],_capList[idx:])
 
         return ([],_capList)
 
@@ -133,8 +138,6 @@ class KDS():
         temp = set(potentialSubset) - set(hashedComb)
         return list(set(potentialSubset) - temp)
     
-    def _findDescCover(self,_Desc,_n_cap_u):
-        print()
 
     def _potentialSubset(self, _capList):
         capHashes = [self._hash(el) for el in _capList]
@@ -143,3 +146,20 @@ class KDS():
         flattenedAnc = [item for sublist in ancestors for item in sublist]
         
         return list(set(flattenedAnc) | set(capHashes))
+    
+    def _greedySetCover(self,_capList,_desc):
+        capHashes = [self._hash(el) for el in _capList]
+        DescCover = []
+
+        while len(capHashes) != 0:
+            value = 0
+            maxSetRoundCover = []
+            maxSetNode = ""
+            for el in _desc:
+                if len(tmp := list(set(self.G.nodes[el]["elements"]) & set(capHashes))) > value: 
+                    maxSetRoundCover = tmp
+                    maxSetNode = el
+            capHashes = list(set(capHashes)-set(maxSetRoundCover))
+            DescCover = list(set(DescCover)| set(maxSetNode))
+        
+        return DescCover

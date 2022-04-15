@@ -16,7 +16,7 @@ for x in resources:
     kds.addResource(x['id'])
     print(util.crypt(kds.getResourceEncKey(x['id']),x['data']))
 
-kds.enforcePurchase("0xD1192bc74BF3b44EEC9ad07271165dD6B6FF8387",["r1","r2"])
+#kds.enforcePurchase("0xD1192bc74BF3b44EEC9ad07271165dD6B6FF8387",["r1","r2"])
 
 kds.save()
 

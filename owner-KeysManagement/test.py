@@ -134,11 +134,17 @@ labels = nx.get_node_attributes(G, 'unHashName')
 nx.draw(G,with_labels = True,labels=labels)
 plt.show()
 
+###################################################
 
-"""
 ToRemove = []
 ToRemove = list(set(ToRemove) | set([("a","b")]))
 ToRemove = list(set(ToRemove) | set([("c","b")]))
 ToRemove = list(set(ToRemove) | set([("c","b")]))
 for x,y in ToRemove:
     print("{} {}".format(x,y))
+
+"""
+
+G = nx.read_gml("./x.gml")
+a,b = list(G.out_edges("d0bd83a1c71c96b196e5369a674dd41b804c9f32c8fbf2f00514bd4b9d7a057f"))[0]
+print(b)
