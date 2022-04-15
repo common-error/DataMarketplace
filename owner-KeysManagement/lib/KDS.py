@@ -68,6 +68,22 @@ class KDS():
             self.G.add_edge(_buyer,n_cap_u)
 
             Desc = self._findDesc(_capList)
+            Cover = []                                              #DA FARE
+            for el in Cover:
+                self.G.add_edge(n_cap_u, el)
+            
+            Par = []                                                #DA FARE
+            DescCover = []                                          #DA FARE
+            for n_par in Par:
+                ToRemove = []
+                for n in list(set(DescCover) | set(Cover)):
+                    if self.G.has_edge(n_par,n):
+                        ToRemove = list(set(ToRemove) | set([n_par,n]))
+                if len(ToRemove) >= 2:
+                    self.G.add_edge(n_par,n_cap_u)
+                    for n_par,n_z in ToRemove:
+                        self.G.remove_edge(n_par,n_z)
+
 
     def getResourceEncKey(self,_resource):
         idResource = self._hash(_resource)
@@ -126,4 +142,4 @@ class KDS():
         ancestors = [list(nx.ancestors(self.G,el)) for el in capHashes]
         flattenedAnc = [item for sublist in ancestors for item in sublist]
         
-        return list(set(flattenedAnc)) + capHashes
+        return list(set(flattenedAnc) | set(capHashes))

@@ -3,12 +3,23 @@ import secrets
 import hashlib
 import base64
 import networkx as nx
+import matplotlib.pyplot as pltpip
 
 def byte_xor(ba1, ba2):
     return bytes([_a ^ _b for _a, _b in zip(ba1, ba2)])
 
+def byte_and(ba1, ba2):
+    return bytes([_a & _b for _a, _b in zip(ba1, ba2)])
+
 def hash(_data):
     return hashlib.sha3_256(_data.encode('utf-8')).hexdigest()
+
+def capHash(_data):
+    tempHash = bytearray(32)
+    for el in _data:
+        tempHash = byte_xor(tempHash, hashlib.sha3_256(el.encode('utf-8')).digest())
+        
+    return tempHash
 """
 
 ka = base64.urlsafe_b64decode(Fernet.generate_key())
@@ -102,16 +113,11 @@ x = byte_xor(bc,b)
 
 print(byte_xor(x,c) == bytearray(32))
 
-"""
+
 
 from itertools import combinations
 
-def capHash(_data):
-    tempHash = bytearray(32)
-    for el in _data:
-        tempHash = byte_xor(tempHash, hashlib.sha3_256(el.encode('utf-8')).digest())
-        
-    return tempHash
+
  
 vec = ["a","b","c"]
 comb = [list(combinations(vec,x)) for x in range(len(vec))]
@@ -120,3 +126,19 @@ flattened = flattened[1::]
 hashed = [capHash(el) for el in flattened]
 print(hashed[0] == capHash(["b"]))
 print(hashed)
+
+##########################################################################
+import matplotlib.pyplot as plt
+G = nx.read_gml("../KDS.gml")
+labels = nx.get_node_attributes(G, 'unHashName') 
+nx.draw(G,with_labels = True,labels=labels)
+plt.show()
+
+
+"""
+ToRemove = []
+ToRemove = list(set(ToRemove) | set([("a","b")]))
+ToRemove = list(set(ToRemove) | set([("c","b")]))
+ToRemove = list(set(ToRemove) | set([("c","b")]))
+for x,y in ToRemove:
+    print("{} {}".format(x,y))
