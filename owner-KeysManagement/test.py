@@ -143,7 +143,13 @@ ToRemove = list(set(ToRemove) | set([("c","b")]))
 for x,y in ToRemove:
     print("{} {}".format(x,y))
 
-"""
-
+##################################################
 G = nx.read_gml("./x.gml")
 print(G.nodes())
+
+"""
+a = "sdgasdfgasdfgsdfg"
+c = [a]
+b = ["sdfasdfasdf"]
+
+print(list(set(c)-set(b)))

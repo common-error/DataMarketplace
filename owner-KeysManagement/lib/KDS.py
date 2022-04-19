@@ -7,6 +7,7 @@ from cryptography.fernet import Fernet
 import base64
 from itertools import combinations
 import matplotlib.pyplot as plt
+from numpy import byte
 
 DEFAULTPATH = "../KDS.gml"
 
@@ -32,17 +33,18 @@ class KDS():
             )
 
 
-    def enforcePurchase(self,_buyer,_capList):
+    def enforcePurchase(self,_buyer,_name,_capList):
         if _buyer not in self.G:
             self.G.add_node(
                 _buyer,
+                unHashName=_name,
                 key = base64.urlsafe_b64decode(Fernet.generate_key()).hex(),
                 user = True
             )
         
         oldCap,R = self._previousState(_buyer,_capList)
 
-        n_cap_u = self._capHash(oldCap)
+        n_cap_u = (self._capHash(oldCap)).hex()
         if  n_cap_u in self.G:
             self.G.remove_edge(_buyer,n_cap_u)
             if not self._existAnotherUser(_buyer,n_cap_u):
@@ -56,7 +58,7 @@ class KDS():
                             self.G.add_edge(n_par, n_desc)
                     self.G.remove_node(n_cap_u)
         
-        n_cap_u = self._capHash(_capList)
+        n_cap_u = (self._capHash(_capList)).hex()
         if n_cap_u in self.G:
             self.G.add_edge(_buyer,n_cap_u)
         else:
@@ -75,7 +77,7 @@ class KDS():
             for el in Cover:
                 self.G.add_edge(n_cap_u, el)
             
-            Par = self._getPar(_capList)
+            Par = self._getPar(_capList,n_cap_u)
             notFlattenedDescCover = [list(nx.descendants(self.G,node)) for node in Desc] 
             DescCover =  [item for sublist in notFlattenedDescCover for item in sublist]
             DescCover = list(set(DescCover))
@@ -120,12 +122,13 @@ class KDS():
     
     #il buyer sarà sempre connesso solo ad un nodo
     def _previousState(self,_buyer,_capList):
-        edge = list(self.G.out_edges(_buyer))
+        edge = [to for frm,to in list(self.G.out_edges(_buyer))]
         if len(edge) == 1:
-            source,target = edge[0]
+            target = edge[0]
+            capHash = bytearray(32) 
 
             for idx,el in enumerate(_capList):
-                capHash = self._byte_xor(capHash, self._hash(el))
+                capHash = self._byte_xor(capHash, bytes.fromhex(self._hash(el)))
                 if capHash == target:
                     return (_capList[:idx+1],_capList[idx:])
 
@@ -135,7 +138,7 @@ class KDS():
         comb = [list(combinations(_capList,size)) for size in range(len(_capList))]
         flattenedComb = [item for sublist in comb for item in sublist]
         flattenedComb = flattenedComb[1::]
-        hashedComb = [self._capHash(el) for el in flattenedComb]
+        hashedComb = [(self._capHash(el)).hex() for el in flattenedComb]
 
         potentialSubset = self._potentialSubset(_capList)
 
@@ -158,23 +161,25 @@ class KDS():
         while len(capHashes) != 0:
             value = 0
             maxSetRoundCover = []
-            maxSetNode = ""
+            maxSetNode = []
             for el in _desc:
                 if len(tmp := list(set(self.G.nodes[el]["elements"]) & set(capHashes))) > value: 
+                    value = len(tmp)
                     maxSetRoundCover = tmp
-                    maxSetNode = el
+                    maxSetNode = [el]
             capHashes = list(set(capHashes)-set(maxSetRoundCover))
             DescCover = list(set(DescCover)| set(maxSetNode))
         
         return DescCover
 
-    def _getPar(self,_capList):
+    def _getPar(self,_capList,_currentNode):
         capHashes = set([self._hash(el) for el in _capList])
         Par = []
 
-        for node in self.G.nodes():
+        nodes = [x for x,y in self.G.nodes(data = True) if y['user']==0 and x != _currentNode]
+        for node in nodes:
             if set(self.G.nodes[node]["elements"]).issuperset(capHashes):
-                Par = list(set(Par) | set(node))
+                Par = list(set(Par) | set([node]))
         
         return Par
 
