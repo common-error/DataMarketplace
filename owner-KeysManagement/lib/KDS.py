@@ -7,7 +7,10 @@ from cryptography.fernet import Fernet
 import base64
 from itertools import combinations
 import matplotlib.pyplot as plt
+import pydot 
+from networkx.drawing.nx_pydot import graphviz_layout
 from numpy import byte
+import scipy as sp
 
 DEFAULTPATH = "../KDS.gml"
 
@@ -86,7 +89,7 @@ class KDS():
                 ToRemove = []
                 for n in list(set(DescCover) | set(Cover)):
                     if self.G.has_edge(n_par,n):
-                        ToRemove = list(set(ToRemove) | set([n_par,n]))
+                        ToRemove = list(set(ToRemove) | set([(n_par,n)]))
                 if len(ToRemove) >= 2:
                     self.G.add_edge(n_par,n_cap_u)
                     for n_par,n_z in ToRemove:
@@ -184,6 +187,12 @@ class KDS():
         return Par
 
     def show(self):
+        #pos = graphviz_layout(self.G,prog="dot")
+        pos = nx.spring_layout(self.G, k=0.15, iterations=20)
         labels = nx.get_node_attributes(self.G, 'unHashName') 
-        nx.draw(self.G,with_labels = True,labels=labels)
+        nx.draw(self.G,pos,with_labels = True,labels=labels)
+        #nx.draw(self.G,pos)
+        #nx.draw_circular(self.G,with_labels = True,labels=labels)
+        #nx.draw_kamada_kawai(self.G,with_labels = True,labels=labels)
+        #nx.draw_planar(self.G,with_labels = True,labels=labels)
         plt.show() 
