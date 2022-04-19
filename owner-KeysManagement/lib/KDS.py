@@ -6,6 +6,7 @@ from os.path import exists
 from cryptography.fernet import Fernet
 import base64
 from itertools import combinations
+import matplotlib.pyplot as plt
 
 DEFAULTPATH = "../KDS.gml"
 
@@ -70,12 +71,15 @@ class KDS():
             self.G.add_edge(_buyer,n_cap_u)
 
             Desc = self._findDesc(_capList)
-            Cover = self._greedySetCover(self,_capList,Desc)                                              #DA FARE
+            Cover = self._greedySetCover(_capList,Desc)
             for el in Cover:
                 self.G.add_edge(n_cap_u, el)
             
-            Par = []                                                #DA FARE
-            DescCover = []                                          #DA FARE
+            Par = self._getPar(_capList)
+            notFlattenedDescCover = [list(nx.descendants(self.G,node)) for node in Desc] 
+            DescCover =  [item for sublist in notFlattenedDescCover for item in sublist]
+            DescCover = list(set(DescCover))
+                                    
             for n_par in Par:
                 ToRemove = []
                 for n in list(set(DescCover) | set(Cover)):
@@ -163,3 +167,18 @@ class KDS():
             DescCover = list(set(DescCover)| set(maxSetNode))
         
         return DescCover
+
+    def _getPar(self,_capList):
+        capHashes = set([self._hash(el) for el in _capList])
+        Par = []
+
+        for node in self.G.nodes():
+            if set(self.G.nodes[node]["elements"]).issuperset(capHashes):
+                Par = list(set(Par) | set(node))
+        
+        return Par
+
+    def show(self):
+        labels = nx.get_node_attributes(self.G, 'unHashName') 
+        nx.draw(self.G,with_labels = True,labels=labels)
+        plt.show() 

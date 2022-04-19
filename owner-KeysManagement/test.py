@@ -146,5 +146,4 @@ for x,y in ToRemove:
 """
 
 G = nx.read_gml("./x.gml")
-a,b = list(G.out_edges("d0bd83a1c71c96b196e5369a674dd41b804c9f32c8fbf2f00514bd4b9d7a057f"))[0]
-print(b)
+print(G.nodes())
