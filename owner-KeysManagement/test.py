@@ -1,9 +1,13 @@
+from tkinter import Pack
+from brownie import web3
 from cryptography.fernet import Fernet
 import secrets
 import hashlib
 import base64
 import networkx as nx
 import matplotlib.pyplot as pltpip
+from numpy import byte
+
 
 def byte_xor(ba1, ba2):
     return bytes([_a ^ _b for _a, _b in zip(ba1, ba2)])
@@ -147,9 +151,32 @@ for x,y in ToRemove:
 G = nx.read_gml("./x.gml")
 print(G.nodes())
 
-"""
+########################################
 a = "sdgasdfgasdfgsdfg"
 c = [a]
 b = ["sdfasdfasdf"]
 
 print(list(set(c)-set(b)))
+"""
+import json
+from web3 import Web3
+
+PATH_TO_TRUFFLE = "../smart-contract/build/contracts/"
+trufflefile = json.load(open(PATH_TO_TRUFFLE+"accessAuth.json"))
+
+abi = trufflefile['abi']
+bytecode = trufflefile['bytecode']
+
+
+ganache_url = "http://127.0.0.1:7545"
+web3 = Web3(Web3.HTTPProvider(ganache_url))
+chain_id = 5777
+
+print("Connected: {}".format(web3.isConnected()))
+
+
+owner = ("0xA44E86CE0817E7244015B481E59599d56ed26BA9","0xfae34b208c72d5f8590ac8fda25ecc5127fc8c3e26c64b3dac58d8eb04aae399")
+user = "0x484657fCE5228112f83a975AC2c04f8f3D30B4Bd"
+
+accessAuth = web3.eth.contract(abi=abi,bytecode=bytecode)
+print(accessAuth)
