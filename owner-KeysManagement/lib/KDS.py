@@ -1,4 +1,4 @@
-from tkinter import N
+#from tkinter import N
 import networkx as nx
 import secrets
 import hashlib
@@ -7,10 +7,9 @@ from cryptography.fernet import Fernet
 import base64
 from itertools import combinations
 import matplotlib.pyplot as plt
-import pydot 
-from networkx.drawing.nx_pydot import graphviz_layout
+from networkx.drawing.nx_agraph import graphviz_layout, to_agraph
+
 from numpy import byte
-import scipy as sp
 
 DEFAULTPATH = "../KDS.gml"
 
@@ -187,12 +186,18 @@ class KDS():
         return Par
 
     def show(self):
-        #pos = graphviz_layout(self.G,prog="dot")
-        pos = nx.spring_layout(self.G, k=0.15, iterations=20)
+        #pos = graphviz_layout(self.G,prog='twopi')
+        #pos = nx.spring_layout(self.G, k=0.15, iterations=20)
         labels = nx.get_node_attributes(self.G, 'unHashName') 
-        nx.draw(self.G,pos,with_labels = True,labels=labels)
+        color_map = []
+        for node,data in self.G.nodes(data = True):
+            if data['user'] == 1:
+                color_map.append('red')
+            else:
+                color_map.append('gray')
+        #nx.draw(self.G,pos,with_labels = True,labels=labels)
         #nx.draw(self.G,pos)
         #nx.draw_circular(self.G,with_labels = True,labels=labels)
         #nx.draw_kamada_kawai(self.G,with_labels = True,labels=labels)
-        #nx.draw_planar(self.G,with_labels = True,labels=labels)
+        nx.draw_planar(self.G,node_color = color_map, with_labels = True,labels=labels)
         plt.show() 
