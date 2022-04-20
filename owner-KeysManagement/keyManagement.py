@@ -27,16 +27,12 @@ for x in resources:
 #kds.show()
 
 kds.enforcePurchase("0xD1192bc74BF3b44EEC9ad07271165dD6B6FF8387","w",["a","b","c"])
-kds.show()
 kds.enforcePurchase("0xwdfgsdfc74BF3b44EEC9ad07271165dD6B6FF8387","x",["c","d","e","f"])
-kds.show()
 kds.enforcePurchase("0xD1192bcsdfgsdfg44EEC9ad07271165dD6B6FF8387","y",["a","b","c"])
-kds.show()
 kds.enforcePurchase("0xZcompraBC","z",["b","c"])
-kds.show()
-kds.enforcePurchase("0xZcompraBC","z",["a","d","e","f"])
-kds.show()
-kds.enforcePurchase("0xD1192bc74BF3b44EEC9ad07271165dD6B6FF8387","w",["d","e","f"])
+kds.enforcePurchase("0xZcompraBC","z",["b","c","a","d","e","f"])
+kds.enforcePurchase("0xD1192bc74BF3b44EEC9ad07271165dD6B6FF8387","w",["a","b","c","d","e","f"])
+
 kds.show()
 kds.save()
 

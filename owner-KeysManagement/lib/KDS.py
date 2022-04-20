@@ -51,8 +51,8 @@ class KDS():
         if  n_cap_u in self.G:
             self.G.remove_edge(_buyer,n_cap_u)
             if not self._existAnotherUser(_buyer,n_cap_u):
-                par = [fr[0] for fr in self.G.in_edges(n_cap_u)]
-                desc = [to[0] for to in self.G.out_edges(n_cap_u)]
+                par = [fr for fr,to in list(self.G.in_edges(n_cap_u))]
+                desc = [to for fr,to in list(self.G.out_edges(n_cap_u))]
                 if (len(par) * len(desc)) < (len(par) + len(desc)):
                     for n_par in par:
                         self.G.remove_edge(n_par, n_cap_u)
@@ -127,11 +127,11 @@ class KDS():
     def _previousState(self,_buyer,_capList):
         edge = [to for frm,to in list(self.G.out_edges(_buyer))]
         if len(edge) == 1:
-            target = edge[0]
+            target = bytes.fromhex(edge[0])
             capHash = bytearray(32) 
 
             for idx,el in enumerate(_capList):
-                capHash = self._byte_xor(capHash, bytes.fromhex(self._hash(el)))
+                capHash = (self._byte_xor(capHash, bytes.fromhex(self._hash(el))))
                 if capHash == target:
                     return (_capList[:idx+1],_capList[idx:])
 
