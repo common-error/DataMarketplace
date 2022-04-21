@@ -1,6 +1,7 @@
 import argparse
 import json
 import re
+import string
 from tokenize import group
 
 
@@ -27,6 +28,7 @@ add_resources = subparser.add_parser("add",help="Used when there is the need to 
 add_resources.add_argument("path",nargs=1,type=input_file,help="Path to the json file containing the resources")
 update_kds = subparser.add_parser("update",help="Used when a buyer bought new resources and the KDS must be updated")
 update_kds.add_argument("address",nargs=1,type=bytes_address,help="Public Key of a buyer wallet")
+update_kds.add_argument("alias",nargs=1,type=str,help="Plain name of the buyer (only for visual representation)")
 update_kds.add_argument("-d","--deployContract",action="store_true",help="When used a new contract is deployed into the blockchain")
 args = parser.parse_args()
 
@@ -39,7 +41,7 @@ if args.command == "add":
             kds.addResource(x['id'])
             #print(util.crypt(kds.getResourceEncKey(x['id']),x['data']))
         
-        #kds.save()
+        kds.save()
         kds.show()
 elif args.command == "update":
     if args.address:
@@ -51,8 +53,14 @@ elif args.command == "update":
             print("SAVE THE FORMER ADDRESS IN THE .ENV FILE!")
             print("")
 
-        print(chain.getCapabilityListByAddress(args.address[0]))
-        #kds.enforcePurchase(args.update[0],"",[])
+        resources = chain.getCapabilityListByAddress(args.address[0])   
+        print("Current cap list: {}".format(resources))
+        
+        kds.enforcePurchase(args.address[0],args.alias[0],resources)
+        
+        kds.save()
+        kds.show()
+
 else:
     print("Incomplete command!")
 """
