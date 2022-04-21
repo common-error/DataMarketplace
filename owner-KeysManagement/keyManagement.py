@@ -6,12 +6,16 @@ from tokenize import group
 
 #from brownie import Contract, network, web3
 
-from lib import KDS
-from lib import util
+from lib import KDS,util, manageChain
 
 kds = KDS.KDS()
 
 def input_file(arg_value, pat=re.compile(r".*\.(json)")):
+    if not pat.match(arg_value):
+        raise argparse.ArgumentTypeError
+    return arg_value
+
+def bytes_address(arg_value, pat=re.compile(r"^0x[a-fA-F0-9]{40}$")):
     if not pat.match(arg_value):
         raise argparse.ArgumentTypeError
     return arg_value
@@ -21,7 +25,11 @@ parser = argparse.ArgumentParser()
 subparser = parser.add_subparsers(dest = "command")
 add_resources = subparser.add_parser("add",help="Used when there is the need to add new resources")
 add_resources.add_argument("path",nargs=1,type=input_file,help="Path to the json file containing the resources")
+update_kds = subparser.add_parser("update",help="Used when a buyer bought new resources and the KDS must be updated")
+update_kds.add_argument("address",nargs=1,type=bytes_address,help="Public Key of a buyer wallet")
+update_kds.add_argument("-d","--deployContract",action="store_true",help="When used a new contract is deployed into the blockchain")
 args = parser.parse_args()
+
 
 if args.command == "add":
     if args.path:
@@ -33,7 +41,20 @@ if args.command == "add":
         
         #kds.save()
         kds.show()
+elif args.command == "update":
+    if args.address:
+        chain = manageChain.chain()
 
+        if args.deployContract:
+            print("")
+            print("Contract created with the following address\n\t -> {}".format(chain.deployContract()))
+            print("SAVE THE FORMER ADDRESS IN THE .ENV FILE!")
+            print("")
+
+        print(chain.getCapabilityListByAddress(args.address[0]))
+        #kds.enforcePurchase(args.update[0],"",[])
+else:
+    print("Incomplete command!")
 """
 for x in resources:
     kds.addResource(x['id'])
