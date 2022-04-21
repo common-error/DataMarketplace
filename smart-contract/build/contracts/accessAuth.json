@@ -14278,14 +14278,95 @@
   },
   "networks": {
     "5777": {
-      "events": {},
+      "events": {
+        "0xbfd335c856109df92d33bccc4da109730e24680ab6638f449464073216ba9059": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "components": [
+                {
+                  "internalType": "string",
+                  "name": "from",
+                  "type": "string"
+                },
+                {
+                  "internalType": "string",
+                  "name": "to",
+                  "type": "string"
+                },
+                {
+                  "internalType": "bytes32",
+                  "name": "token",
+                  "type": "bytes32"
+                }
+              ],
+              "indexed": false,
+              "internalType": "struct accessAuth.catalogueEntry[]",
+              "name": "_resources",
+              "type": "tuple[]"
+            }
+          ],
+          "name": "CatalogueUpdated",
+          "type": "event"
+        },
+        "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "previousOwner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "newOwner",
+              "type": "address"
+            }
+          ],
+          "name": "OwnershipTransferred",
+          "type": "event"
+        },
+        "0x5ba619da677e42358704a0f907e37564b0ba14d2dd898c16a0d380cecdea8bc6": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "_buyer",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "price",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256[]",
+              "name": "oldCababilityList",
+              "type": "uint256[]"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256[]",
+              "name": "newCapabilityList",
+              "type": "uint256[]"
+            }
+          ],
+          "name": "capabilityListUpdated",
+          "type": "event"
+        }
+      },
       "links": {},
-      "address": "0xff240eB6eeD2C0a4c0CbDf85E3d539A91E236e86",
-      "transactionHash": "0x940c40114bd127c6cb191bb1d01546dff3b9295690710f9f2972cdf407179bf8"
+      "address": "0x0E77E021b23aA0597997200344f17368F36E3EF8",
+      "transactionHash": "0x7f1c928da45998ffaaf1b01b6142cc33f75c700dab29523f063477cf562508f4"
     }
   },
   "schemaVersion": "3.4.7",
-  "updatedAt": "2022-04-20T16:03:52.318Z",
+  "updatedAt": "2022-04-21T06:26:05.169Z",
   "networkType": "ethereum",
   "devdoc": {
     "kind": "dev",
