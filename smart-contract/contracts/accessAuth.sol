@@ -5,25 +5,25 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 contract accessAuth is Ownable(){
 
     struct catalogueEntry{
-        string from;
-        string to;
+        bytes32 from;
+        bytes32 to;
         bytes32 token;
     }
 
     mapping(bytes32 => mapping(bytes32 => bytes32)) catalogue;
-    mapping(address => uint[]) capabilityList;
+    mapping(address => string[]) capabilityList;
 
     event capabilityListUpdated(
         address indexed _buyer,
         uint price,
-        uint[] oldCababilityList,
-        uint[] newCapabilityList
+        string[] oldCababilityList,
+        string[] newCapabilityList
     );
     event CatalogueUpdated(catalogueEntry[] _resources);
 
 
-    function buyResources(uint[] memory _resources) external payable {
-        uint[] memory oldCap = capabilityList[msg.sender];
+    function buyResources(string[] memory _resources) external payable {
+        string[] memory oldCap = capabilityList[msg.sender];
 
         for(uint i=0; i < _resources.length; i++){
             capabilityList[msg.sender].push(_resources[i]); 
@@ -37,23 +37,20 @@ contract accessAuth is Ownable(){
     function updateCatalogue(catalogueEntry[] memory _catalogueEntries) onlyOwner() external{
 
         for(uint i=0; i < _catalogueEntries.length; i++){
-            bytes32 from = keccak256(abi.encodePacked(_catalogueEntries[i].from));
-            bytes32 to = keccak256(abi.encodePacked(_catalogueEntries[i].to));
+            bytes32 from = _catalogueEntries[i].from;
+            bytes32 to = _catalogueEntries[i].to;
             catalogue[from][to] = _catalogueEntries[i].token;
         }
 
         emit CatalogueUpdated(_catalogueEntries);
     }
 
-    function getCapabilityListByAddress(address _buyer) external view returns(uint[] memory) {
+    function getCapabilityListByAddress(address _buyer) external view returns(string[] memory) {
         return capabilityList[_buyer];
     }
 
-    function getToken(string memory _from, string memory _to) external view returns(bytes32){
-        bytes32 from = keccak256(abi.encodePacked(_from));
-        bytes32 to = keccak256(abi.encodePacked(_to));
-
-        return catalogue[from][to];
+    function getToken(bytes32 _from, bytes32 _to) external view returns(bytes32){
+        return catalogue[_from][_to];
     }
 
 
