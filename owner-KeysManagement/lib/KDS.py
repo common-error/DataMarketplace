@@ -6,6 +6,17 @@ from numpy import byte
 
 DEFAULTPATH = "../KDS.gml"
 
+"""
+Class used for the purpose of managing a key derivation structure 
+
+NOTE:   Every node in the KDS is identified by an unique value built as the hash of the parts
+        For example, the identifier of a resource called "a" is its hash : id_a = hash("a")
+        where hash() is the sha3 deterministic function.
+        The combination of any set of resources result as follows:
+        id_abc = hash("a") xor hash("b") xor hash("c")
+        This order independent hash rule is used to verify if a node in the KDS is the composition of 
+        a specific set of resources without worrying about the order of the atomic resources.
+"""
 class KDS():
 
     def __init__(self, _graphName = DEFAULTPATH):
@@ -14,7 +25,17 @@ class KDS():
         else:
             self.G = nx.DiGraph()
 
+    """
+    The following procedure is used whenever a new resource need to be added to the KDS 
 
+    idResource  :   is the sha3 result of the resource name
+    unHashName  :   is used only for printing purpose
+    key         :   is the secret key used for encrypt the data of the resource
+    user        :   specify if a node is a user or a resource
+    tag         :   (called label in the paper) represent the label associated to the secret key
+    elements    :   is a collection of hashes of each resource that makes up the node. 
+                    Essential for the resolution of the cover set problem.
+    """
     def addResource(self,_resource):
         idResource = self._hash(_resource)
         if idResource not in self.G:
@@ -27,7 +48,9 @@ class KDS():
                 elements = [self._hash(_resource)]
             )
 
-
+    """
+    The following procedure updates the KDS allowing a buyer to access the resources they are entitled to
+    """
     def enforcePurchase(self,_buyer,_name,_capList):
         if _buyer not in self.G:
             self.G.add_node(
@@ -115,7 +138,12 @@ class KDS():
             
         return False
     
-    #il buyer sarà sempre connesso solo ad un nodo
+
+    """
+    Compare the capability list with the current state in the KDS and returns the already accessible
+    resources and the ones to be updated
+    NOTE: the buyer will always be connected to only one node
+    """
     def _previousState(self,_buyer,_capList):
         edge = [to for frm,to in list(self.G.out_edges(_buyer))]
         if len(edge) == 1:
@@ -129,6 +157,15 @@ class KDS():
 
         return ([],_capList)
 
+    """
+    This function find the set of descendand of a node 
+
+    First all combination of a set of resources if found: 
+    example: the combination of "abc" = [a,b,c,ab,ab,bc]
+    Those are all the possible subset that could exist in the KDS for the node "abc"
+
+    Thanks to _potentialSubset() all the combination set that does not exist will be eliminated
+    """
     def _findDesc(self, _capList):
         comb = [list(combinations(_capList,size)) for size in range(len(_capList))]
         flattenedComb = [item for sublist in comb for item in sublist]
@@ -140,7 +177,9 @@ class KDS():
         temp = set(potentialSubset) - set(hashedComb)
         return list(set(potentialSubset) - temp)
     
-
+    """
+    Startign from the capability list of a buyer is possible to find the distinct ancestors
+    """
     def _potentialSubset(self, _capList):
         capHashes = [self._hash(el) for el in _capList]
 
@@ -149,6 +188,9 @@ class KDS():
         
         return list(set(flattenedAnc) | set(capHashes))
     
+    """
+    Considering the set cover problem, the function follows the implementation of a greedy solution
+    """
     def _greedySetCover(self,_capList,_desc):
         capHashes = [self._hash(el) for el in _capList]
         DescCover = []
@@ -167,6 +209,9 @@ class KDS():
         
         return DescCover
 
+    """
+    The following function return all the nodes that are superset of a given node
+    """
     def _getPar(self,_capList,_currentNode):
         capHashes = set([self._hash(el) for el in _capList])
         Par = []
