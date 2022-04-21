@@ -158,7 +158,10 @@ c = [a]
 b = ["sdfasdfasdf"]
 
 print(list(set(c)-set(b)))
+
+###########################################################
 """
+#WORK WITH WEB3PY
 import json
 from web3 import Web3
 import os
@@ -210,9 +213,11 @@ tx_hash = web3.eth.send_raw_transaction(signed_txn.rawTransaction)
 tx_receipt = web3.eth.wait_for_transaction_receipt(tx_hash)
 
 print(tx_receipt.contractAddress)
-"""
+
+###########################################################
+
 #working with contracts
-contractAddress = "0x5b1869D9A4C187F2EAa108f3062412ecf0526b24"
+contractAddress = "0xe78A0F7E598Cc8b0Bb87894B0F60dD2a88d6a8Ab"
 
 accessAuth = web3.eth.contract(address=contractAddress,abi=abi)
 nonce = web3.eth.getTransactionCount(owner["publicKey"])
@@ -221,11 +226,12 @@ print("nonce: {}".format(nonce))
 
 
 #Crea una transazione e modifica la blockchain
-strore_transaction = accessAuth.functions.buyResources([1,2]).buildTransaction({
+strore_transaction = accessAuth.functions.buyResources(["a","b"]).buildTransaction({
     "gasPrice":web3.eth.gas_price,
     "chainId":chain_id,
     "from":owner["publicKey"],
-    "nonce":nonce
+    "nonce":nonce,
+    "value": 50
 })
 sign_store_tnx = web3.eth.account.sign_transaction(
     strore_transaction,
@@ -236,3 +242,19 @@ tx_receipt = web3.eth.wait_for_transaction_receipt(send_store_tx)
 
 #Chiama una funzione in sola lettura
 print(accessAuth.functions.getCapabilityListByAddress(owner["publicKey"]).call())
+print(web3.eth.get_balance(owner["publicKey"]))
+
+###################################################################
+"""
+#LEGGI GLI EVENTI
+contractAddress = "0xe78A0F7E598Cc8b0Bb87894B0F60dD2a88d6a8Ab"
+accessAuth = web3.eth.contract(address=contractAddress,abi=abi)
+
+transfer_filter = accessAuth.events.capabilityListUpdated.createFilter(
+    fromBlock="0x0",
+    argument_filters={
+        '_buyer': owner["publicKey"]
+        }
+)
+
+print(transfer_filter.get_all_entries())
