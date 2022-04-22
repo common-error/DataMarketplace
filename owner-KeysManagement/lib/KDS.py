@@ -223,6 +223,21 @@ class KDS():
         
         return Par
 
+    def generateCatalogue(self):
+        catalogue=[]
+        for edge in self.G.edges:
+            K_from = bytes.fromhex(self.G.nodes[edge[0]]["key"])
+            K_to = bytes.fromhex(self.G.nodes[edge[1]]["key"])
+            l_to = bytes.fromhex(self.G.nodes[edge[1]]["tag"])
+            xor_Kl = self._byte_xor(K_from,l_to)
+
+            hash_kl = bytes.fromhex(self._hash(xor_Kl.hex()))
+
+            token = self._byte_xor(K_to,hash_kl).hex()
+            catalogue.append((edge[0],edge[1],token))
+
+        return catalogue
+
     def show(self):
         #pos = graphviz_layout(self.G,prog='twopi')
         #pos = nx.spring_layout(self.G, k=0.15, iterations=20)

@@ -9,6 +9,7 @@ import matplotlib.pyplot as pltpip
 from numpy import byte
 from rsa import sign
 
+from lib import KDS
 
 def byte_xor(ba1, ba2):
     return bytes([_a ^ _b for _a, _b in zip(ba1, ba2)])
@@ -161,6 +162,8 @@ print(list(set(c)-set(b)))
 
 ###########################################################
 """
+
+"""
 #WORK WITH WEB3PY
 import json
 from web3 import Web3
@@ -190,7 +193,7 @@ owner = {
 }
 user = "0xFFcf8FDEE72ac11b5c542428B35EEF5769C409f0"
 
-"""
+
 #Create a contract in python
 accessAuth = web3.eth.contract(abi=abi,bytecode=bytecode)
 print(accessAuth)
@@ -246,6 +249,8 @@ print(web3.eth.get_balance(owner["publicKey"]))
 
 ###################################################################
 """
+
+"""
 #LEGGI GLI EVENTI
 contractAddress = "0xe78A0F7E598Cc8b0Bb87894B0F60dD2a88d6a8Ab"
 accessAuth = web3.eth.contract(address=contractAddress,abi=abi)
@@ -258,3 +263,9 @@ transfer_filter = accessAuth.events.capabilityListUpdated.createFilter(
 )
 
 print(transfer_filter.get_all_entries())
+"""
+
+kds = KDS.KDS()
+
+for el in kds.generateCatalogue():
+    print(el)
