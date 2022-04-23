@@ -1,9 +1,11 @@
-import argparse
+import argparse, os,sys
 import json
 import re
 import string
 from tokenize import group
+from dotenv import load_dotenv
 
+load_dotenv()
 
 #from brownie import Contract, network, web3
 
@@ -29,7 +31,7 @@ add_resources.add_argument("path",nargs=1,type=input_file,help="Path to the json
 update_kds = subparser.add_parser("update",help="Used when a buyer bought new resources and the KDS must be updated")
 update_kds.add_argument("address",nargs=1,type=bytes_address,help="Public Key of a buyer wallet")
 update_kds.add_argument("alias",nargs=1,type=str,help="Plain name of the buyer (only for visual representation)")
-update_kds.add_argument("-d","--deployContract",action="store_true",help="When used a new contract is deployed into the blockchain")
+deploy = subparser.add_parser("deploy", help="Used to deploy a new smart contract on the blockchain")
 args = parser.parse_args()
 
 
@@ -44,25 +46,41 @@ if args.command == "add":
         kds.save()
         kds.show()
 elif args.command == "update":
+    if os.getenv("CONTRACT_ADDRESS") == "":
+        print("Contract not deployed nor .env file not updated!")
+        sys.exit(0)
+
     if args.address:
         chain = manageChain.chain()
-
-        if args.deployContract:
-            print("")
-            print("Contract created with the following address\n\t -> {}".format(chain.deployContract()))
-            print("SAVE THE FORMER ADDRESS IN THE .ENV FILE!")
-            print("")
-
         resources = chain.getCapabilityListByAddress(args.address[0])   
         print("Current cap list: {}".format(resources))
         
+        old_catalogue = set(kds.generateCatalogue())
         kds.enforcePurchase(args.address[0],args.alias[0],resources)
-        
+        new_catalogue = set(kds.generateCatalogue())
+
+        common_el = (new_catalogue & old_catalogue)
+
+        to_remove = old_catalogue - common_el
+        to_add = list(new_catalogue - common_el)
+        for fr,to in to_remove:
+            to_add.append((fr,to,""))
+
+        print(to_add)
+
         kds.save()
         kds.show()
-
+elif args.command == "deploy":
+        chain = manageChain.chain()
+        
+        print("")
+        print("Contract created with the following address\n\t -> {}".format(chain.deployContract()))
+        print("SAVE THE FORMER ADDRESS IN THE .ENV FILE!")
+        print("")
 else:
     print("Incomplete command!")
+
+
 """
 for x in resources:
     kds.addResource(x['id'])

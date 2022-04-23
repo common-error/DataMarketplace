@@ -19,7 +19,7 @@ buyer = {
     "privateKey" : "0x6cbed15c793ce57650b9877cf6fa156fbef513c4e6134f022a85b1ffdd59b2a1"
 }
 
-contractAddress = "0x26b4AFb60d6C903165150C6F0AA14F8016bE4aec"
+contractAddress = os.getenv("CONTRACT_ADDRESS")
 
 accessAuth = web3.eth.contract(address=contractAddress,abi=abi)
 nonce = web3.eth.getTransactionCount(buyer["publicKey"])

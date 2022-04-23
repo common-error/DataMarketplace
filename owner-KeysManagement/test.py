@@ -266,6 +266,12 @@ print(transfer_filter.get_all_entries())
 """
 
 kds = KDS.KDS()
+kds.generateCatalogue()
+ct =  kds.generateCatalogue()
+ct2 = set(ct[:-1])
+ct = set(ct)
 
-for el in kds.generateCatalogue():
-    print(el)
+print(ct)
+
+print(ct - (ct2 & ct))
+print(ct2 - (ct2 & ct))

@@ -55,6 +55,9 @@ class chain():
 
         return  self.contract.functions.getCapabilityListByAddress(_buyer).call()
 
+    def updateCatalogue(self, _elements):
+        print()
+
     def _completeTransaction(self,_transaction):
 
         signed_tx = self.w3.eth.account.sign_transaction(
