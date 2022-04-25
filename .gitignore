@@ -1,0 +1,4 @@
+owner-KeysManagement/.env
+launch.json
+/node_modules
+*.json
