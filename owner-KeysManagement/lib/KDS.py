@@ -234,7 +234,12 @@ class KDS():
             hash_kl = bytes.fromhex(self._hash(xor_Kl.hex()))
 
             token = self._byte_xor(K_to,hash_kl).hex()
-            catalogue.append((edge[0],edge[1],token))
+
+            frm = edge[0] if edge[0][:2] == "0x" else "0x"+edge[0]
+            to = edge[1] if edge[1][:2] == "0x" else "0x"+edge[1]
+
+
+            catalogue.append((frm,to,token))
 
         return catalogue
 

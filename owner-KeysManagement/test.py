@@ -265,13 +265,4 @@ transfer_filter = accessAuth.events.capabilityListUpdated.createFilter(
 print(transfer_filter.get_all_entries())
 """
 
-kds = KDS.KDS()
-kds.generateCatalogue()
-ct =  kds.generateCatalogue()
-ct2 = set(ct[:-1])
-ct = set(ct)
-
-print(ct)
-
-print(ct - (ct2 & ct))
-print(ct2 - (ct2 & ct))
+test = "0xciao"

@@ -55,8 +55,20 @@ class chain():
 
         return  self.contract.functions.getCapabilityListByAddress(_buyer).call()
 
-    def updateCatalogue(self, _elements):
-        print()
+    def updateCatalogue(self, _catalogue):
+        contract = self.w3.eth.contract(address=self._safeContractAddress(),abi=self.abi)
+
+        
+        nonce = self.w3.eth.getTransactionCount(self.owner["pubKey"])
+
+        transaction = contract.functions.updateCatalogue(_catalogue).buildTransaction({
+            "gasPrice":self.w3.eth.gas_price,
+            "chainId":self.network["chainId"],
+            "from":self.owner["pubKey"],
+            "nonce":nonce
+        })
+
+        self._completeTransaction(transaction)
 
     def _completeTransaction(self,_transaction):
 

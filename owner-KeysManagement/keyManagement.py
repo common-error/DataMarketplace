@@ -1,4 +1,5 @@
 import argparse, os,sys
+from lib2to3.pgen2 import token
 import json
 import re
 import string
@@ -63,10 +64,12 @@ elif args.command == "update":
 
         to_remove = old_catalogue - common_el
         to_add = list(new_catalogue - common_el)
-        for fr,to in to_remove:
+        for fr,to,tok in to_remove:
             to_add.append((fr,to,""))
 
-        print(to_add)
+        for el in to_add:
+            print(el)
+        chain.updateCatalogue(to_add)
 
         kds.save()
         kds.show()
