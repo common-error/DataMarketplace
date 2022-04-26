@@ -1,4 +1,5 @@
 from tkinter import Pack
+from urllib import response
 from brownie import chain, web3
 from cryptography.fernet import Fernet
 import secrets
@@ -265,4 +266,30 @@ transfer_filter = accessAuth.events.capabilityListUpdated.createFilter(
 print(transfer_filter.get_all_entries())
 """
 
-test = "0xciao"
+import requests,json
+
+BASE="http://127.0.0.1:5000/api/v1/"
+
+address="0xe78A0F7E598Cc8b0Bb87894B0F60dD2a88d6a8Ab"
+dict = {
+    "signature":"",
+    "resources":json.dumps({
+        "a0b37b8bfae8e71330bd8e278e4a45ca916d00475dd8b85e9352533454c9fec8":"f",
+        "42538602949f370aa331d2c07a1ee7ff26caac9cc676288f94b82eb2188b8465":"e"
+    })
+
+}
+
+test ={
+    "signature":"asdfasdfasd",
+    "tewst":3,
+    "d":json.dumps([2,4,56,3,2]),
+    "a":json.dumps({
+        "ab":"c",
+        "ac":"df"
+    })
+}
+
+response = requests.post(BASE + "addResources/"+address,dict)
+
+print(response.json())
