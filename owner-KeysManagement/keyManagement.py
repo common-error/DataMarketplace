@@ -43,6 +43,9 @@ if args.command == "add":
         for x in resources["data"]:
             kds.addResource(x['id'])
             #print(util.crypt(kds.getResourceEncKey(x['id']),x['data']))
+
+        
+        #Spedisci al server le risorse cifrate e il catalogo delle risorse
         
         kds.save()
         kds.show()
@@ -60,15 +63,8 @@ elif args.command == "update":
         kds.enforcePurchase(args.address[0],args.alias[0],resources)
         new_catalogue = set(kds.generateCatalogue())
 
-        common_el = (new_catalogue & old_catalogue)
+        to_add = util.modifiedResources(old_catalogue,new_catalogue)
 
-        to_remove = old_catalogue - common_el
-        to_add = list(new_catalogue - common_el)
-        for fr,to,tok in to_remove:
-            to_add.append((fr,to,""))
-
-        for el in to_add:
-            print(el)
         chain.updateCatalogue(to_add)
 
         kds.save()
