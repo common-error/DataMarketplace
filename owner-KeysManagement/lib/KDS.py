@@ -26,7 +26,7 @@ class KDS():
             self.G = nx.DiGraph()
 
     """
-    The following procedure is used whenever a new resource need to be added to the KDS 
+    The following function is used whenever a new resource need to be added to the KDS 
 
     idResource  :   is the sha3 result of the resource name
     unHashName  :   is used only for printing purpose
@@ -47,6 +47,8 @@ class KDS():
                 tag=secrets.token_hex(32),
                 elements = [self._hash(_resource)]
             )
+            return True
+        return False
 
     """
     The following procedure updates the KDS allowing a buyer to access the resources they are entitled to
@@ -243,19 +245,20 @@ class KDS():
 
         return catalogue
 
-    def show(self):
-        #pos = graphviz_layout(self.G,prog='twopi')
-        #pos = nx.spring_layout(self.G, k=0.15, iterations=20)
-        labels = nx.get_node_attributes(self.G, 'unHashName') 
-        color_map = []
-        for node,data in self.G.nodes(data = True):
-            if data['user'] == 1:
-                color_map.append('red')
-            else:
-                color_map.append('gray')
-        #nx.draw(self.G,pos,with_labels = True,labels=labels)
-        #nx.draw(self.G,pos)
-        #nx.draw_circular(self.G,with_labels = True,labels=labels)
-        #nx.draw_kamada_kawai(self.G,with_labels = True,labels=labels)
-        nx.draw_planar(self.G,node_color = color_map, with_labels = True,labels=labels)
-        plt.show() 
+    def show(self,_do):
+        if _do:
+            #pos = graphviz_layout(self.G,prog='twopi')
+            #pos = nx.spring_layout(self.G, k=0.15, iterations=20)
+            labels = nx.get_node_attributes(self.G, 'unHashName') 
+            color_map = []
+            for node,data in self.G.nodes(data = True):
+                if data['user'] == 1:
+                    color_map.append('red')
+                else:
+                    color_map.append('gray')
+            #nx.draw(self.G,pos,with_labels = True,labels=labels)
+            #nx.draw(self.G,pos)
+            #nx.draw_circular(self.G,with_labels = True,labels=labels)
+            #nx.draw_kamada_kawai(self.G,with_labels = True,labels=labels)
+            nx.draw_planar(self.G,node_color = color_map, with_labels = True,labels=labels)
+            plt.show() 

@@ -26,6 +26,7 @@ def bytes_address(arg_value, pat=re.compile(r"^0x[a-fA-F0-9]{40}$")):
 
 parser = argparse.ArgumentParser()
 
+parser.add_argument("-s","--show",action="store_true",help="Show the current visual representation of the graph")
 subparser = parser.add_subparsers(dest = "command")
 add_resources = subparser.add_parser("add",help="Used when there is the need to add new resources")
 add_resources.add_argument("path",nargs=1,type=input_file,help="Path to the json file containing the resources")
@@ -42,23 +43,23 @@ if args.command == "add":
         enk_dict = {}
         
         for x in resources["data"]:
-            kds.addResource(x['id'])
-            id,key = kds.getResourceEncKey(x['id'])
-            enk_data = util.crypt(key,bytes(x['data'].encode()))
-            enk_dict.update({id:enk_data})
+            if kds.addResource(x['id']):
+                id,key = kds.getResourceEncKey(x['id'])
+                enk_data = util.crypt(key,bytes(x['data'].encode()))
+                enk_dict.update({id:enk_data})
         
-        data_to_send = {
-            "resources":json.dumps(enk_dict)
-        }
+        if enk_dict:
+            data_to_send = {
+                "resources":json.dumps(enk_dict)
+            }
 
-       
-        url = "{}addResources/{}".format(os.getenv("BASE_URL"),os.getenv("PUBLIC_KEY"))
+            url = "{}addResources/{}".format(os.getenv("BASE_URL"),os.getenv("PUBLIC_KEY"))
 
-        response = requests.post(url,data_to_send)
-        print(response.json())
+            response = requests.post(url,data_to_send)
+            print(response.json())
     
         kds.save()
-        kds.show()
+        kds.show(args.show)
 elif args.command == "update":
     if os.getenv("CONTRACT_ADDRESS") == "":
         print("Contract not deployed nor .env file not updated!")
@@ -78,7 +79,7 @@ elif args.command == "update":
         chain.updateCatalogue(to_add)
 
         kds.save()
-        kds.show()
+        kds.show(args.show)
 elif args.command == "deploy":
         chain = manageChain.chain()
         
@@ -88,26 +89,6 @@ elif args.command == "deploy":
         print("")
 else:
     print("Incomplete command!")
-
-
-"""
-for x in resources:
-    kds.addResource(x['id'])
-    #print(util.crypt(kds.getResourceEncKey(x['id']),x['data']))
-
-#kds.show()
-
-kds.enforcePurchase("0xD1192bc74BF3b44EEC9ad07271165dD6B6FF8387","w",["a","b","c"])
-kds.enforcePurchase("0xwdfgsdfc74BF3b44EEC9ad07271165dD6B6FF8387","x",["c","d","e","f"])
-kds.enforcePurchase("0xD1192bcsdfgsdfg44EEC9ad07271165dD6B6FF8387","y",["a","b","c"])
-kds.enforcePurchase("0xZcompraBC","z",["b","c"])
-kds.enforcePurchase("0xZcompraBC","z",["b","c","a","d","e","f"])
-kds.enforcePurchase("0xD1192bc74BF3b44EEC9ad07271165dD6B6FF8387","w",["a","b","c","d","e","f"])
-
-
-kds.show()
-#kds.save()
-"""
 
 
 
