@@ -3,7 +3,7 @@ import base64
 
 def crypt(_key,_data):
     f = Fernet(base64.urlsafe_b64encode(bytes.fromhex(_key)))
-    return f.encrypt(_data)
+    return f.encrypt(_data).decode()
 
 def decrypt(_key,_data):
     f = Fernet(base64.urlsafe_b64encode(bytes.fromhex(_key)))

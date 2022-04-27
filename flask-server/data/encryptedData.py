@@ -3,7 +3,7 @@ from webargs import fields
 from webargs.flaskparser import parser
 from flask_restful import Resource
 from flask import request
-import pickle
+import pickle,json
 
 
 class Data(Resource):
@@ -14,4 +14,4 @@ class Data(Resource):
         with open('dictionary.pkl','wb') as f:
             pickle.dump(enkData,f)
 
-        return {},200
+        return "{} resources added!".format(len(json.loads(enkData))),200

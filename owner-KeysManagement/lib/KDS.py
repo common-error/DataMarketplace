@@ -113,7 +113,7 @@ class KDS():
 
     def getResourceEncKey(self,_resource):
         idResource = self._hash(_resource)
-        return self.G.nodes[idResource]["key"]
+        return idResource,self.G.nodes[idResource]["key"]
 
     def save(self,_path=DEFAULTPATH):
         nx.write_gml(self.G,_path)

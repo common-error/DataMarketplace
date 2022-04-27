@@ -23,8 +23,9 @@ api.add_resource(encryptedData.Data,"addResources/<string:address>")
 @app.route('/')
 
 def index():
-
-    loaded_dict = json.loads(pickle.load(open('dictionary.pkl', 'rb')))
-    
-    return render_template("index.html",data=loaded_dict)
+    if os.path.exists('dictionary.pkl'):
+        loaded_dict = json.loads(pickle.load(open('dictionary.pkl', 'rb')))
+        return render_template("index.html",data=loaded_dict)
+    else:
+        return render_template("index.html",data={"resources":"File not found!"})
 

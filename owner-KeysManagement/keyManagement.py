@@ -1,4 +1,4 @@
-import argparse, os,sys
+import argparse, os,sys,requests
 from lib2to3.pgen2 import token
 import json
 import re
@@ -39,14 +39,24 @@ args = parser.parse_args()
 if args.command == "add":
     if args.path:
         resources = json.load(open(args.path[0]))
+        enk_dict = {}
         
         for x in resources["data"]:
             kds.addResource(x['id'])
-            #print(util.crypt(kds.getResourceEncKey(x['id']),x['data']))
+            id,key = kds.getResourceEncKey(x['id'])
+            enk_data = util.crypt(key,bytes(x['data'].encode()))
+            enk_dict.update({id:enk_data})
+        
+        data_to_send = {
+            "resources":json.dumps(enk_dict)
+        }
 
-        
-        #Spedisci al server le risorse cifrate e il catalogo delle risorse
-        
+       
+        url = "{}addResources/{}".format(os.getenv("BASE_URL"),os.getenv("PUBLIC_KEY"))
+
+        response = requests.post(url,data_to_send)
+        print(response.json())
+    
         kds.save()
         kds.show()
 elif args.command == "update":
