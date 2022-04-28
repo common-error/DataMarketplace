@@ -1,11 +1,15 @@
-//provider = window.ethereum
 const ganache_url = "http://127.0.0.1:8545"
 window.web3 = new Web3(ganache_url);
 window.userWalletAddress = null
 window.newCap = null
 
+//-----------------------------------------------------
+// data for testing
+window.resourcesToBuy = ["a","f"]
+//-----------------------------------------------------
 
-
+// VARIABLES
+//*************************************************************************
 const ABI = [
   {
     "anonymous": false,
@@ -218,10 +222,13 @@ const metaButton = document.querySelector('.connectoToMetaMask');
 const getCapListButton = document.querySelector('.getCapList');
 const updateCapListButton = document.querySelector('.UpdateCapList');
 
-
+// EVENT LISTENER
+//*************************************************************************
 getCapListButton.addEventListener('click', () => {getCapList()})
 updateCapListButton.addEventListener('click', () => {updateCapList()})
 
+// ON CHAIN FUNCTIONS 
+//*************************************************************************
 async function getCapList(){
   var result = await contract.methods.getCapabilityListByAddress(window.userWalletAddress)
               .call()
@@ -230,12 +237,13 @@ async function getCapList(){
                 return
               })
   console.log(result)
+
   cap = _capHash(result)
-  new_cap = ["a","f"]
-  data = []
+  new_cap = window.resourcesToBuy
+  data_to_upload = []
   for (const el of new_cap){
     hash = keccak_256(el)
-    if (!cap.includes(hash)){data.push(el)}
+    if (!cap.includes(hash)){data_to_upload.push(el)}
   }
   
   window.newCap = data
@@ -250,8 +258,6 @@ async function updateCapList(){
   const data = tx.encodeABI()
   const nonce = await window.web3.eth.getTransactionCount(window.userWalletAddress)
   const networkId = await window.web3.eth.net.getId()
-
-  console.log(nonce)
 
   var params= [
     {
@@ -277,6 +283,8 @@ async function updateCapList(){
 }
 
 
+// CONNECTION TO METAMASK
+//*************************************************************************
 function handleAccountsChanged(accounts){
   if(accounts.length === 0){
     if (!window.ethereum){
@@ -312,9 +320,8 @@ window.addEventListener('DOMContentLoaded',() => {
         .catch(console.error);
 });
 
-
 //UTILITY
-
+//*************************************************************************
 function _capHash(capabilityList){
   hashed_res = []
   for (const el of capabilityList){
@@ -323,6 +330,5 @@ function _capHash(capabilityList){
   
   return hashed_res
 }
-Array.prototype.diff = function(dest) {
-  return this.filter(x => !dest.includes(x));
-}
+
+Array.prototype.diff = function(dest) {return this.filter(x => !dest.includes(x));}
