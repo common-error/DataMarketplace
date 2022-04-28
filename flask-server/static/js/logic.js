@@ -1,4 +1,3 @@
-keccak256 = require('js-sha3').keccak256;
 //provider = window.ethereum
 const ganache_url = "http://127.0.0.1:8545"
 window.web3 = new Web3(ganache_url);
@@ -215,12 +214,34 @@ const contract = new window.web3.eth.Contract(ABI,contractAddress)
 const metaButton = document.querySelector('.connectoToMetaMask');
 const test = document.querySelector('.getCapList');
 
-test.addEventListener('click', () => {
-  var result = contract.methods.getCapabilityListByAddress(window.userWalletAddress).call()
-  console.log(window.userWalletAddress)
-  //console.log(keccak256(result[0]))
-});
+test.addEventListener('click', () => {getCapList()})
 
+async function getCapList(){
+  var result = await contract.methods.getCapabilityListByAddress(window.userWalletAddress)
+              .call()
+              .catch((e) => {
+                console.error(e.message)
+                return
+              })
+  console.log(result)
+  cap = _capHash(result)
+  new_cap = _capHash(["a","c"])
+
+  console.log(new_cap.diff(cap))
+  //console.log(keccak256(result[0]))
+}
+
+function _capHash(capabilityList){
+  hashed_res = []
+  for (const el of capabilityList){
+    hashed_res.push(keccak_256(el))
+  }
+  console.log(hashed_res)
+  return hashed_res
+}
+Array.prototype.diff = function(dest) {
+  return this.filter(x => !dest.includes(x));
+}
 
 
 function handleAccountsChanged(accounts){

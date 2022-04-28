@@ -2,3 +2,5 @@
 *.json
 /node_modules
 owner-KeysManagement/.env
+flask-server/static/node_modules
+flask-server/static/*.js
