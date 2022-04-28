@@ -18,7 +18,7 @@ def modifiedResources(_oldCatalogue,_newCatalogue):
 
     to_remove = _oldCatalogue - common_el
     to_add = list(_newCatalogue - common_el)
-    for fr,to,tok in to_remove:
-        to_add.append((fr,to,""))
+    for fr,to,token,label in to_remove:
+        to_add.append((fr,to,"",""))
 
     return to_add

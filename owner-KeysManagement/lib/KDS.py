@@ -240,8 +240,9 @@ class KDS():
             frm = edge[0] if edge[0][:2] == "0x" else "0x"+edge[0]
             to = edge[1] if edge[1][:2] == "0x" else "0x"+edge[1]
 
+            label = "0x"+l_to.hex()
 
-            catalogue.append((frm,to,token))
+            catalogue.append((frm,to,token,label))
 
         return catalogue
 
