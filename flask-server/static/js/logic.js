@@ -5,7 +5,7 @@ window.newCap = null
 
 //-----------------------------------------------------
 // data for testing
-window.resourcesToBuy = ["a","f"]
+window.resourcesToBuy = ["a","e"]
 //-----------------------------------------------------
 
 // VARIABLES
@@ -246,7 +246,7 @@ async function getCapList(){
     if (!cap.includes(hash)){data_to_upload.push(el)}
   }
   
-  window.newCap = data
+  window.newCap = data_to_upload
 }
 
 
