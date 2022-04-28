@@ -2,6 +2,9 @@
 const ganache_url = "http://127.0.0.1:8545"
 window.web3 = new Web3(ganache_url);
 window.userWalletAddress = null
+window.newCap = null
+
+
 
 const ABI = [
   {
@@ -212,9 +215,12 @@ const contract = new window.web3.eth.Contract(ABI,contractAddress)
 
 
 const metaButton = document.querySelector('.connectoToMetaMask');
-const test = document.querySelector('.getCapList');
+const getCapListButton = document.querySelector('.getCapList');
+const updateCapListButton = document.querySelector('.UpdateCapList');
 
-test.addEventListener('click', () => {getCapList()})
+
+getCapListButton.addEventListener('click', () => {getCapList()})
+updateCapListButton.addEventListener('click', () => {updateCapList()})
 
 async function getCapList(){
   var result = await contract.methods.getCapabilityListByAddress(window.userWalletAddress)
@@ -225,22 +231,49 @@ async function getCapList(){
               })
   console.log(result)
   cap = _capHash(result)
-  new_cap = _capHash(["a","c"])
-
-  console.log(new_cap.diff(cap))
-  //console.log(keccak256(result[0]))
-}
-
-function _capHash(capabilityList){
-  hashed_res = []
-  for (const el of capabilityList){
-    hashed_res.push(keccak_256(el))
+  new_cap = ["a","f"]
+  data = []
+  for (const el of new_cap){
+    hash = keccak_256(el)
+    if (!cap.includes(hash)){data.push(el)}
   }
-  console.log(hashed_res)
-  return hashed_res
+  
+  window.newCap = data
 }
-Array.prototype.diff = function(dest) {
-  return this.filter(x => !dest.includes(x));
+
+
+async function updateCapList(){
+  
+  const tx = contract.methods.buyResources(window.newCap)
+  const gas = await tx.estimateGas({from: window.userWalletAddress})
+  const gasPrice = await window.web3.eth.getGasPrice()
+  const data = tx.encodeABI()
+  const nonce = await window.web3.eth.getTransactionCount(window.userWalletAddress)
+  const networkId = await window.web3.eth.net.getId()
+
+  console.log(nonce)
+
+  var params= [
+    {
+      from : window.userWalletAddress,
+      to : contractAddress,
+      data,
+      gas : gas.toString(),
+      gasPrice: gasPrice.toString(),
+      nonce:nonce.toString(),
+      chainId: networkId.toString(),
+      value:(100).toString()
+    },
+  ]
+
+  const result = await ethereum.request({
+    method: 'eth_sendTransaction',
+    params
+  }).catch((e) => {
+    console.log(e.message)
+  })
+
+  console.log(result)
 }
 
 
@@ -280,3 +313,16 @@ window.addEventListener('DOMContentLoaded',() => {
 });
 
 
+//UTILITY
+
+function _capHash(capabilityList){
+  hashed_res = []
+  for (const el of capabilityList){
+    hashed_res.push(keccak_256(el))
+  }
+  
+  return hashed_res
+}
+Array.prototype.diff = function(dest) {
+  return this.filter(x => !dest.includes(x));
+}
