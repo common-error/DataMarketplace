@@ -1,5 +1,3 @@
-#from marshmallow import Schema, fields
-from webargs import fields
 from webargs.flaskparser import parser
 from flask_restful import Resource
 from flask import request
@@ -24,3 +22,13 @@ class Data(Resource):
                 pickle.dump(enkData,f)
 
         return "{} resources added!".format(len(json.loads(enkData))),200
+
+class Contract(Resource):
+
+    def post(self,address):
+        contractAddress = request.form['contractAddress']
+        dataToSave = json.dumps({
+            "address":contractAddress
+        })
+        with open('contractAddress.pkl','wb') as f:
+                pickle.dump(dataToSave,f)

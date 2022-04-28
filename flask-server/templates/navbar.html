@@ -1,5 +1,9 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <div class="container-fluid justify-content-center">
-      <a class="navbar-brand mb-0 h1 d-flex" href="{{url_for('index')}}">Catalogue</a>
-    </div>
-  </nav>
+<nav class="navbar navbar-light bg-light">
+  <div class="container-fluid">
+    <a class="navbar-brand mb-0 h1" href="{{url_for('index')}}">Catalogue</a>
+    <span class="navbar-brand" id="contractAddress">{{addrs['address']}}</span>
+    <form class="d-flex">
+      <button class="btn btn-outline-success me-2 connectoToMetaMask" type="button">Connect MetaMask</button>
+    </form>
+  </div>
+</nav>

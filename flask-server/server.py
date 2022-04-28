@@ -5,7 +5,7 @@ import os,pickle,json
 
 from numpy import require
 
-from data import encryptedData
+from data import utils
 
 load_dotenv()
 
@@ -18,14 +18,21 @@ api = Api(app, prefix="/api/v1/")
 
 
 
-api.add_resource(encryptedData.Data,"addResources/<string:address>")
+api.add_resource(utils.Data,"addResources/<string:address>")
+api.add_resource(utils.Contract,"addContract/<string:address>")
 
 @app.route('/')
 
 def index():
     if os.path.exists('dictionary.pkl'):
-        loaded_dict = json.loads(pickle.load(open('dictionary.pkl', 'rb')))
-        return render_template("index.html",data=loaded_dict)
+        if os.path.exists('contractAddress.pkl'):
+            loaded_CtcAddress = json.loads(pickle.load(open('contractAddress.pkl', 'rb')))
+            loaded_dict = json.loads(pickle.load(open('dictionary.pkl', 'rb')))
+
+
+            return render_template("index.html",data=loaded_dict,addrs=loaded_CtcAddress)
+        else:
+            return render_template("index.html",data={"error":"Contract not deployed!"})
     else:
-        return render_template("index.html",data={"resources":"File not found!"})
+        return render_template("index.html",data={"error":"File not found!"})
 

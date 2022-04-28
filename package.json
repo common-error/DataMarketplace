@@ -1,5 +1,7 @@
 {
   "dependencies": {
-    "@openzeppelin/contracts": "^4.5.0"
+    "@openzeppelin/contracts": "^4.5.0",
+    "js-sha3": "^0.8.0",
+    "web3": "^1.7.3"
   }
 }

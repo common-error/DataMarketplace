@@ -82,9 +82,19 @@ elif args.command == "update":
         kds.show(args.show)
 elif args.command == "deploy":
         chain = manageChain.chain()
-        
+        contractAddress = chain.deployContract()
+
+        data_to_send = {
+            "contractAddress":contractAddress
+        }
+
+        url = "{}addContract/{}".format(os.getenv("BASE_URL"),os.getenv("PUBLIC_KEY"))
+
+        response = requests.post(url,data_to_send)
+        print(response.json())
+
         print("")
-        print("Contract created with the following address\n\t -> {}".format(chain.deployContract()))
+        print("Contract created with the following address\n\t -> {}".format(contractAddress))
         print("SAVE THE FORMER ADDRESS IN THE .ENV FILE!")
         print("")
 else:

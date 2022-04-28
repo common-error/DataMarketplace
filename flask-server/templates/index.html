@@ -3,9 +3,19 @@
 {%block content%}
     <div class="container mt-2">
         <ul class="list-group">
-            {% for key,value in data.items()%}
-                <li class="list-group-item">{{value}}</li>
-            {% endfor %}
+            {% if 'error' not in data %}
+                {% for key,value in data.items()%}
+                    <li class="list-group-item text-break">{{key}}</li>
+                {% endfor %}
+            {% else %}
+                <li class="list-group-item">{{data['error']}}</li>
+            {% endif%}
         </ul>
     </div>
+
+    <button class="btn btn-outline-success me-2 getCapList" type="button">Get CapList</button>
+   
+
+    <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+    <script src="{{ url_for('static',filename='js/logic.js')}}"></script>
 {%endblock%}
