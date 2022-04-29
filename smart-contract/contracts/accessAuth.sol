@@ -4,22 +4,30 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract accessAuth is Ownable(){
 
-    struct catalogueEntry{
+    struct updateData{
         bytes32 from;
         bytes32 to;
         bytes32 token;
+        bytes32 label;
     }
 
-    mapping(bytes32 => mapping(bytes32 => bytes32)) catalogue;
-    mapping(address => string[]) capabilityList;
+    struct node{
+        bytes32 id;
+        bytes32 token;
+    }
 
-    event capabilityListUpdated(
+    mapping(bytes32 => node[]) catalogue;
+    mapping(address => string[]) capabilityList;
+    mapping(bytes32 => bytes32) labels;
+
+    event CapabilityListUpdated(
         address indexed _buyer,
         uint price,
         string[] oldCababilityList,
         string[] newCapabilityList
     );
-    event CatalogueUpdated(catalogueEntry[] _resources);
+
+    event UpdateData(updateData[]);
 
 
     function buyResources(string[] memory _resources) external payable {
@@ -31,26 +39,55 @@ contract accessAuth is Ownable(){
         
         payable(owner()).transfer(msg.value);
 
-        emit capabilityListUpdated(msg.sender, msg.value, oldCap,capabilityList[msg.sender]);
+        emit CapabilityListUpdated(msg.sender, msg.value, oldCap,capabilityList[msg.sender]);
     }
 
-    function updateCatalogue(catalogueEntry[] memory _catalogueEntries) onlyOwner() external{
+    function updateCatalogue(updateData[] memory _updateData) onlyOwner() external{
+        node memory tempNode;
+        uint idx;
 
-        for(uint i=0; i < _catalogueEntries.length; i++){
-            bytes32 from = _catalogueEntries[i].from;
-            bytes32 to = _catalogueEntries[i].to;
-            catalogue[from][to] = _catalogueEntries[i].token;
+        for(uint i=0; i < _updateData.length; i++){
+            bytes32 from = _updateData[i].from;
+            bytes32 to = _updateData[i].to;
+
+            tempNode.id = to;
+            tempNode.token = _updateData[i].token;
+            (tempNode,idx) = _updateElementsInNode(catalogue[from],tempNode);
+
+            if(idx > catalogue[from].length){
+                catalogue[from].push(tempNode);
+            }else{
+                catalogue[from][idx] = tempNode;
+            }
+
+            labels[to] = _updateData[i].label;
         }
 
-        emit CatalogueUpdated(_catalogueEntries);
+        emit UpdateData(_updateData);
+    }
+
+
+    function _updateElementsInNode(node[] memory _node,node memory _data) public pure returns(node memory,uint){
+        for(uint i=0; i < _node.length; i++){
+            if(_node[i].id == _data.id){
+                _node[i].token = _data.token;
+                return (_data,i);
+            }
+        }
+
+        return (_data,_node.length+1);
     }
 
     function getCapabilityListByAddress(address _buyer) external view returns(string[] memory) {
         return capabilityList[_buyer];
     }
 
-    function getToken(bytes32 _from, bytes32 _to) external view returns(bytes32){
-        return catalogue[_from][_to];
+    function getTokens(bytes32 _from) external view returns(node[] memory){
+        return catalogue[_from];
+    }
+
+    function getLabel(bytes32 _edge) external view returns(bytes32){
+        return labels[_edge];
     }
 
 
