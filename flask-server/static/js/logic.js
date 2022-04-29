@@ -6,60 +6,12 @@ window.newCap = null
 //-----------------------------------------------------
 // data for testing
 window.resourcesToBuy = ["a","e"]
+window.userKey = "250f79b0de738847131c54244e5d7595930298a135e41de35c02a658023d82fc"
 //-----------------------------------------------------
 
 // VARIABLES
 //*************************************************************************
 const ABI = [
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "components": [
-          {
-            "internalType": "bytes32",
-            "name": "from",
-            "type": "bytes32"
-          },
-          {
-            "internalType": "bytes32",
-            "name": "to",
-            "type": "bytes32"
-          },
-          {
-            "internalType": "bytes32",
-            "name": "token",
-            "type": "bytes32"
-          }
-        ],
-        "indexed": false,
-        "internalType": "struct accessAuth.catalogueEntry[]",
-        "name": "_resources",
-        "type": "tuple[]"
-      }
-    ],
-    "name": "CatalogueUpdated",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "previousOwner",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "newOwner",
-        "type": "address"
-      }
-    ],
-    "name": "OwnershipTransferred",
-    "type": "event"
-  },
   {
     "anonymous": false,
     "inputs": [
@@ -88,7 +40,61 @@ const ABI = [
         "type": "string[]"
       }
     ],
-    "name": "capabilityListUpdated",
+    "name": "CapabilityListUpdated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "previousOwner",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "newOwner",
+        "type": "address"
+      }
+    ],
+    "name": "OwnershipTransferred",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "bytes32",
+            "name": "from",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "to",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "token",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "label",
+            "type": "bytes32"
+          }
+        ],
+        "indexed": false,
+        "internalType": "struct accessAuth.updateData[]",
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "name": "UpdateData",
     "type": "event"
   },
   {
@@ -155,16 +161,86 @@ const ABI = [
             "internalType": "bytes32",
             "name": "token",
             "type": "bytes32"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "label",
+            "type": "bytes32"
           }
         ],
-        "internalType": "struct accessAuth.catalogueEntry[]",
-        "name": "_catalogueEntries",
+        "internalType": "struct accessAuth.updateData[]",
+        "name": "_updateData",
         "type": "tuple[]"
       }
     ],
     "name": "updateCatalogue",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "bytes32",
+            "name": "id",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "token",
+            "type": "bytes32"
+          }
+        ],
+        "internalType": "struct accessAuth.node[]",
+        "name": "_node",
+        "type": "tuple[]"
+      },
+      {
+        "components": [
+          {
+            "internalType": "bytes32",
+            "name": "id",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "token",
+            "type": "bytes32"
+          }
+        ],
+        "internalType": "struct accessAuth.node",
+        "name": "_data",
+        "type": "tuple"
+      }
+    ],
+    "name": "_updateElementsInNode",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "bytes32",
+            "name": "id",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "token",
+            "type": "bytes32"
+          }
+        ],
+        "internalType": "struct accessAuth.node",
+        "name": "",
+        "type": "tuple"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "pure",
     "type": "function"
   },
   {
@@ -192,14 +268,40 @@ const ABI = [
         "internalType": "bytes32",
         "name": "_from",
         "type": "bytes32"
-      },
+      }
+    ],
+    "name": "getTokens",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "bytes32",
+            "name": "id",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "token",
+            "type": "bytes32"
+          }
+        ],
+        "internalType": "struct accessAuth.node[]",
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
       {
         "internalType": "bytes32",
-        "name": "_to",
+        "name": "_edge",
         "type": "bytes32"
       }
     ],
-    "name": "getToken",
+    "name": "getLabel",
     "outputs": [
       {
         "internalType": "bytes32",
@@ -221,11 +323,15 @@ const contract = new window.web3.eth.Contract(ABI,contractAddress)
 const metaButton = document.querySelector('.connectoToMetaMask');
 const getCapListButton = document.querySelector('.getCapList');
 const updateCapListButton = document.querySelector('.UpdateCapList');
+const getKeysButton = document.querySelector('.GetKeys');
+
+
 
 // EVENT LISTENER
 //*************************************************************************
 getCapListButton.addEventListener('click', () => {getCapList()})
 updateCapListButton.addEventListener('click', () => {updateCapList()})
+getKeysButton.addEventListener('click', () => {getKeys()})
 
 // ON CHAIN FUNCTIONS 
 //*************************************************************************
@@ -242,7 +348,7 @@ async function getCapList(){
   new_cap = window.resourcesToBuy
   data_to_upload = []
   for (const el of new_cap){
-    hash = keccak_256(el)
+    hash = sha3_256(el)
     if (!cap.includes(hash)){data_to_upload.push(el)}
   }
   
@@ -282,6 +388,72 @@ async function updateCapList(){
   console.log(result)
 }
 
+function getKeys(){
+  keys(["a"],window.userKey, window.userWalletAddress)
+}
+
+async function keys(_resources, _privKey, _from){
+  var nodes = await contract.methods.getTokens(_from)
+  .call()
+  .catch((e) => {
+    console.error(e.message)
+    return
+  })
+
+  nodes = _dataToStruct(nodes)
+  //nodes = JSON.parse(nodes)  
+  for(const node of nodes){
+    token = (node.token).slice(2)
+    label = await contract.methods.getLabel(node.id)
+    .call()
+    .catch((e) => {
+      console.error(e.message)
+      return
+    })
+    
+    label = label.slice(2)
+
+    xor_Kl = bytesToHex(_byte_xor(hexToBytes(_privKey) , hexToBytes(label)))
+
+    hash_Kl = hexToBytes(sha3_256(xor_Kl))
+    console.log(bytesToHex(hash_Kl))
+    key = bytesToHex(_byte_xor(hexToBytes(token) , hash_Kl))
+    debugger
+  }
+
+  return {}
+}
+
+function _dataToStruct(_data){
+  let nodes = []
+  for(let i = 0; i < _data.length; i++){
+    const node = {
+      id : _data[i].id,
+      token : _data[i].token
+    }
+    nodes.push(node)
+  }
+  return nodes
+}
+
+function _byte_xor(_ba1,_ba2){
+  zip= rows=>rows[0].map((_,c)=>rows.map(row=>row[c]))
+  var ret = new Uint8Array(32)
+  var comb = zip([_ba1,_ba2])
+  for(var ret = new Uint8Array(32), i=0; i < comb.length; i++){
+    ret[i] = comb[i][0] ^ comb[i][1]
+  }
+
+  return ret
+}
+
+/*
+const hexToBytes = hexString =>
+  new Uint8Array(hexString.match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
+
+  const bytesToHex = bytes =>
+  Array.from(bytes).reduce((str, byte) => str + byte.toString(16).padStart(2, '0'), '');
+*/
 
 // CONNECTION TO METAMASK
 //*************************************************************************
@@ -325,10 +497,27 @@ window.addEventListener('DOMContentLoaded',() => {
 function _capHash(capabilityList){
   hashed_res = []
   for (const el of capabilityList){
-    hashed_res.push(keccak_256(el))
+    hashed_res.push(sha3_256(el))
   }
   
   return hashed_res
 }
 
 Array.prototype.diff = function(dest) {return this.filter(x => !dest.includes(x));}
+
+// Convert a hex string to a byte array
+function hexToBytes(hex) {
+  for (var bytes = [], c = 0; c < hex.length; c += 2)
+      bytes.push(parseInt(hex.substr(c, 2), 16));
+  return bytes;
+}
+
+// Convert a byte array to a hex string
+function bytesToHex(bytes) {
+  for (var hex = [], i = 0; i < bytes.length; i++) {
+      var current = bytes[i] < 0 ? bytes[i] + 256 : bytes[i];
+      hex.push((current >>> 4).toString(16));
+      hex.push((current & 0xF).toString(16));
+  }
+  return hex.join("");
+}

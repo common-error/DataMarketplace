@@ -1,3 +1,4 @@
+from cProfile import label
 from tkinter import Pack
 from urllib import response
 from brownie import chain, web3
@@ -264,7 +265,7 @@ transfer_filter = accessAuth.events.capabilityListUpdated.createFilter(
 )
 
 print(transfer_filter.get_all_entries())
-"""
+
 
 import requests,json
 
@@ -293,3 +294,8 @@ test ={
 response = requests.post(BASE + "addResources/"+address,dict)
 
 print(response.json())
+"""
+kds = KDS.KDS()
+
+kds.generateCatalogue()
+

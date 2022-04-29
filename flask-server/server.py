@@ -24,15 +24,13 @@ api.add_resource(utils.Contract,"addContract/<string:address>")
 @app.route('/')
 
 def index():
+    loaded_CtcAddress = {}
+    loaded_dict = {"error":"Contract not deployed!"}
+
     if os.path.exists('dictionary.pkl'):
-        if os.path.exists('contractAddress.pkl'):
-            loaded_CtcAddress = json.loads(pickle.load(open('contractAddress.pkl', 'rb')))
-            loaded_dict = json.loads(pickle.load(open('dictionary.pkl', 'rb')))
+        loaded_dict = json.loads(pickle.load(open('dictionary.pkl', 'rb')))
 
-
-            return render_template("index.html",data=loaded_dict,addrs=loaded_CtcAddress)
-        else:
-            return render_template("index.html",data={"error":"Contract not deployed!"})
-    else:
-        return render_template("index.html",data={"error":"File not found!"})
-
+    if os.path.exists('contractAddress.pkl'):
+        loaded_CtcAddress = json.loads(pickle.load(open('contractAddress.pkl', 'rb')))
+   
+    return render_template("index.html",data=loaded_dict,addrs=loaded_CtcAddress)

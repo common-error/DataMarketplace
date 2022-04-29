@@ -2,7 +2,7 @@
 pragma solidity >=0.7.0 <0.9.0;
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract accessAuth is Ownable(){
+contract test is Ownable(){
 
     struct catalogueEntry{
         bytes32 from;
