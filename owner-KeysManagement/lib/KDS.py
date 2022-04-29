@@ -233,11 +233,7 @@ class KDS():
             l_to = bytes.fromhex(self.G.nodes[edge[1]]["tag"])
             xor_Kl = self._byte_xor(K_from,l_to)
 
-            #print("{} xor {} \n\t{}".format(K_from.hex(),l_to.hex(),xor_Kl.hex()))
-
             hash_kl = bytes.fromhex(self._hash(xor_Kl.hex()))
-
-            print(hash_kl.hex())
 
             token = self._byte_xor(K_to,hash_kl).hex()
 

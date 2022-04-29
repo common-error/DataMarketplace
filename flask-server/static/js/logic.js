@@ -5,7 +5,7 @@ window.newCap = null
 
 //-----------------------------------------------------
 // data for testing
-window.resourcesToBuy = ["a","e"]
+window.resourcesToBuy = ["a","b","c"]
 window.userKey = "250f79b0de738847131c54244e5d7595930298a135e41de35c02a658023d82fc"
 //-----------------------------------------------------
 
@@ -388,8 +388,9 @@ async function updateCapList(){
   console.log(result)
 }
 
-function getKeys(){
-  keys(["a"],window.userKey, window.userWalletAddress)
+async function getKeys(){
+  res = await keys(_capHash(["a","e"]),window.userKey, window.userWalletAddress)
+  console.log(res)
 }
 
 async function keys(_resources, _privKey, _from){
@@ -399,7 +400,7 @@ async function keys(_resources, _privKey, _from){
     console.error(e.message)
     return
   })
-
+  debugger
   nodes = _dataToStruct(nodes)
   //nodes = JSON.parse(nodes)  
   for(const node of nodes){
@@ -412,16 +413,31 @@ async function keys(_resources, _privKey, _from){
     })
     
     label = label.slice(2)
+    nodeId = (node.id).slice(2)
 
     xor_Kl = bytesToHex(_byte_xor(hexToBytes(_privKey) , hexToBytes(label)))
 
     hash_Kl = hexToBytes(sha3_256(xor_Kl))
-    console.log(bytesToHex(hash_Kl))
-    key = bytesToHex(_byte_xor(hexToBytes(token) , hash_Kl))
-    debugger
+    nodekey = bytesToHex(_byte_xor(hexToBytes(token) , hash_Kl))
+    
+    if(_resources.includes(nodeId)){
+      return {
+        id: nodeId,
+        key: nodekey
+      }
+    }else{
+      return [{
+        id: nodeId,
+        key: nodekey
+      },
+      await keys(_resources,nodekey,node.id)]
+    
+      //.push(await keys(_resources,nodekey,node.id))
+    }
+
   }
 
-  return {}
+  return 
 }
 
 function _dataToStruct(_data){
