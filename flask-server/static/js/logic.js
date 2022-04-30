@@ -324,6 +324,7 @@ const metaButton = document.querySelector('.connectoToMetaMask');
 const getCapListButton = document.querySelector('.getCapList');
 const updateCapListButton = document.querySelector('.UpdateCapList');
 const getKeysButton = document.querySelector('.GetKeys');
+const privKeyButton = document.querySelector('.privKeyBTN');
 
 
 
@@ -332,6 +333,7 @@ const getKeysButton = document.querySelector('.GetKeys');
 getCapListButton.addEventListener('click', () => {getCapList()})
 updateCapListButton.addEventListener('click', () => {updateCapList()})
 getKeysButton.addEventListener('click', () => {getKeys()})
+privKeyButton.addEventListener('click',getprivKey,false)
 
 // ON CHAIN FUNCTIONS 
 //*************************************************************************
@@ -402,31 +404,6 @@ async function getKeys(){
   res = await getKeysFromRequestedData(data,window.userKey,root[0],Keys)
   //res = await getAllKeys(window.userKey,root[0],Keys)
   console.log(Keys)
-/*
-  var root = await contract.methods.getTokens(window.userWalletAddress)
-  .call()
-  .catch((e) => {
-    console.error(e.message)
-    return
-  })
-  root = _dataToStruct(root)
-
-  label = await contract.methods.getLabel(root[0].id)
-  .call()
-  .catch((e) => {
-    console.error(e.message)
-    return
-  })
-  
-  debugger
-  token = (root[0].token).slice(2)
-  label = label.slice(2)
-  nodeId = (root[0].id).slice(2)
-  nodeKey = _createNodeKey(window.userKey,label,token)
-
-  console.log("id:\t"+nodeId)
-  console.log("key:\t"+nodeKey)
-*/
 }
 
 async function getAllKeys(_privKey, _node,_dictKeys){
@@ -480,7 +457,7 @@ async function getKeysFromRequestedData(_data, _privKey, _node,_dictKeys){
     nodeId = (_node.id).slice(2)
     nodeKey = _createNodeKey(_privKey,label,token)
 
-    console.log("id:\t"+nodeId,"key:\t"+nodeKey)
+    //console.log("id:\t"+nodeId,"key:\t"+nodeKey)
     
     if(_data.includes(nodeId)){
       _dictKeys.push({
@@ -538,6 +515,12 @@ function _byte_xor(_ba1,_ba2){
   }
 
   return ret
+}
+
+function getprivKey(){
+  window.userKey = document.getElementById('privKey').value
+  
+  document.getElementById('privKey').value = ""
 }
 
 // CONNECTION TO METAMASK

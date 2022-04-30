@@ -2,6 +2,12 @@
 
 {%block content%}
     <div class="container mt-2">
+        <div class="input-group mb-3">
+            <input type="text" id="privKey" class="form-control" placeholder="Inserisci la chiave privata" aria-label="Inserisci la chiave privata" aria-describedby="button-addon2">
+            <button class="btn btn-outline-secondary privKeyBTN" type="button">Imposta</button>
+        </div>
+    </div>
+    <div class="container mt-2">
         <ul class="list-group">
             {% if 'error' not in data %}
                 {% for key,value in data.items()%}
@@ -16,9 +22,11 @@
     <button class="btn btn-outline-success me-2 getCapList" type="button">Get CapList</button>
     <button class="btn btn-outline-success me-2 UpdateCapList" type="button">Update CapList</button>
     <button class="btn btn-outline-success me-2 GetKeys" type="button">Get Keys</button>
-   
 
+    
     <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
     <script src="{{ url_for('static',filename='js/logic.js')}}"></script>
     <script src="{{ url_for('static',filename='node_modules/js-sha3/src/sha3.js')}}"></script>
+
+    
 {%endblock%}
