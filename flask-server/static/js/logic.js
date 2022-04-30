@@ -388,44 +388,57 @@ async function updateCapList(){
 }
 
 async function getKeys(){
-  dictKeys = []
-  res = await keys(window.userKey, window.userWalletAddress,dictKeys)
-  console.log(dictKeys)
-}
-
-async function keys(_privKey, _from,_dictKeys){
-  var nodes = await contract.methods.getTokens(_from)
+  data = _capHash(["a","b"])
+  Keys = Object.create(null)
+  var root = await contract.methods.getTokens(window.userWalletAddress)
   .call()
   .catch((e) => {
     console.error(e.message)
     return
   })
-  nodes = _dataToStruct(nodes)
+  root = _dataToStruct(root)
+  
+  res = await keys(window.userKey,root[0],Keys)
+  console.log(Keys)
 
-  for(const node of nodes){
-    label = await contract.methods.getLabel(node.id)
-    .call()
-    .catch((e) => {
-      console.error(e.message)
-      return
-    })
+}
 
-    token = (node.token).slice(2)
-    label = label.slice(2)
-    nodeId = (node.id).slice(2)
-    nodeKey = _createNodeKey(_privKey,label,token)
-    
-    _dictKeys.push({
-      id: nodeId,
-      key: nodekey
-    })
-    child_dict = []
-    keys(nodeKey,node.id,child_dict)
-    _dictKeys["children"]= child_dict
+async function keys(_privKey, _node,_dictKeys){
+  label = await contract.methods.getLabel(_node.id)
+  .call()
+  .catch((e) => {
+    console.error(e.message)
+    return
+  })
+  
+  token = (_node.token).slice(2)
+  label = label.slice(2)
+  nodeId = (_node.id).slice(2)
+  nodeKey = _createNodeKey(_privKey,label,token)
+  
+  _dictKeys["id"] = nodeId
+  _dictKeys["key"] = nodeKey
+  _dictKeys["children"] = []
+
+  var nodes = await contract.methods.getTokens("0x"+nodeId)
+  .call()
+  .catch((e) => {
+    console.error(e.message)
+    return
+  })
+  childrens = _dataToStruct(nodes)
+
+  for(const child of childrens){
+    if(child.token != "0x0000000000000000000000000000000000000000000000000000000000000000"){
+      child_dict = Object.create(null)
+      keys(nodeKey,child,child_dict)
+      _dictKeys["children"].push(child_dict)
     }
+  }
+  
+  
 
   }
-
 
 
 function _createNodeKey(_privKey,_label,_token){
