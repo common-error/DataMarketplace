@@ -236,7 +236,16 @@ class KDS():
             hash_kl = bytes.fromhex(self._hash(xor_Kl.hex()))
 
             token = self._byte_xor(K_to,hash_kl).hex()
-
+            """
+            print("id :\t{}\ntoken:\t{}\nhash:\t{}\nxor:\t{}\nlabel:\t{}\nkey:\t{}".format(
+                edge[1],
+                token,
+                hash_kl.hex(),
+                xor_Kl.hex(),
+                l_to.hex(),
+                K_from.hex()
+                ))
+            """
             frm = edge[0] if edge[0][:2] == "0x" else "0x"+edge[0]
             to = edge[1] if edge[1][:2] == "0x" else "0x"+edge[1]
 

@@ -6,7 +6,7 @@ window.userWalletAddress = null
 //-----------------------------------------------------
 // data for testing
 window.resourcesToBuy = ["a","b","c"]
-window.userKey = "250f79b0de738847131c54244e5d7595930298a135e41de35c02a658023d82fc"
+window.userKey = "4518473d776c0b41b8e4d96ef9a5ba9dd6607e439e0883d2ac884c7f99b30cd0"
 //-----------------------------------------------------
 
 // VARIABLES
@@ -389,6 +389,7 @@ async function updateCapList(){
 
 async function getKeys(){
   data = _capHash(["a","b"])
+  
   Keys = []
   var root = await contract.methods.getTokens(window.userWalletAddress)
   .call()
@@ -399,9 +400,33 @@ async function getKeys(){
   root = _dataToStruct(root)
   
   res = await getKeysFromRequestedData(data,window.userKey,root[0],Keys)
-
+  //res = await getAllKeys(window.userKey,root[0],Keys)
   console.log(Keys)
+/*
+  var root = await contract.methods.getTokens(window.userWalletAddress)
+  .call()
+  .catch((e) => {
+    console.error(e.message)
+    return
+  })
+  root = _dataToStruct(root)
 
+  label = await contract.methods.getLabel(root[0].id)
+  .call()
+  .catch((e) => {
+    console.error(e.message)
+    return
+  })
+  
+  debugger
+  token = (root[0].token).slice(2)
+  label = label.slice(2)
+  nodeId = (root[0].id).slice(2)
+  nodeKey = _createNodeKey(window.userKey,label,token)
+
+  console.log("id:\t"+nodeId)
+  console.log("key:\t"+nodeKey)
+*/
 }
 
 async function getAllKeys(_privKey, _node,_dictKeys){
@@ -432,7 +457,7 @@ async function getAllKeys(_privKey, _node,_dictKeys){
   for(const child of childrens){
     if(child.token != "0x0000000000000000000000000000000000000000000000000000000000000000"){
       child_dict = Object.create(null)
-      keys(nodeKey,child,child_dict)
+      getAllKeys(nodeKey,child,child_dict)
       _dictKeys["children"].push(child_dict)
     }
   }
@@ -441,6 +466,7 @@ async function getAllKeys(_privKey, _node,_dictKeys){
 
 
 async function getKeysFromRequestedData(_data, _privKey, _node,_dictKeys){
+  
   if(_data.length > 0){
     label = await contract.methods.getLabel(_node.id)
     .call()
@@ -453,6 +479,8 @@ async function getKeysFromRequestedData(_data, _privKey, _node,_dictKeys){
     label = label.slice(2)
     nodeId = (_node.id).slice(2)
     nodeKey = _createNodeKey(_privKey,label,token)
+
+    console.log("id:\t"+nodeId,"key:\t"+nodeKey)
     
     if(_data.includes(nodeId)){
       _dictKeys.push({
@@ -474,7 +502,7 @@ async function getKeysFromRequestedData(_data, _privKey, _node,_dictKeys){
     for(const child of childrens){
       if(child.token != "0x0000000000000000000000000000000000000000000000000000000000000000"){
         child_dict = []
-        keys(_data,nodeKey,child,_dictKeys)
+        getKeysFromRequestedData(_data,nodeKey,child,_dictKeys)
       }
     }
   }
@@ -511,14 +539,6 @@ function _byte_xor(_ba1,_ba2){
 
   return ret
 }
-
-/*
-const hexToBytes = hexString =>
-  new Uint8Array(hexString.match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
-
-  const bytesToHex = bytes =>
-  Array.from(bytes).reduce((str, byte) => str + byte.toString(16).padStart(2, '0'), '');
-*/
 
 // CONNECTION TO METAMASK
 //*************************************************************************
