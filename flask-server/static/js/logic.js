@@ -389,7 +389,7 @@ async function updateCapList(){
 
 async function getKeys(){
   data = _capHash(["a","b"])
-  Keys = Object.create(null)
+  Keys = []
   var root = await contract.methods.getTokens(window.userWalletAddress)
   .call()
   .catch((e) => {
@@ -398,12 +398,13 @@ async function getKeys(){
   })
   root = _dataToStruct(root)
   
-  res = await keys(window.userKey,root[0],Keys)
+  res = await getKeysFromRequestedData(data,window.userKey,root[0],Keys)
+
   console.log(Keys)
 
 }
 
-async function keys(_privKey, _node,_dictKeys){
+async function getAllKeys(_privKey, _node,_dictKeys){
   label = await contract.methods.getLabel(_node.id)
   .call()
   .catch((e) => {
@@ -436,10 +437,48 @@ async function keys(_privKey, _node,_dictKeys){
     }
   }
   
-  
-
   }
 
+
+async function getKeysFromRequestedData(_data, _privKey, _node,_dictKeys){
+  if(_data.length > 0){
+    label = await contract.methods.getLabel(_node.id)
+    .call()
+    .catch((e) => {
+      console.error(e.message)
+      return
+    })
+    
+    token = (_node.token).slice(2)
+    label = label.slice(2)
+    nodeId = (_node.id).slice(2)
+    nodeKey = _createNodeKey(_privKey,label,token)
+    
+    if(_data.includes(nodeId)){
+      _dictKeys.push({
+        id: nodeId,
+        key: nodeKey
+      })
+
+      _data = _data.diff(nodeId)
+    }
+  
+    var nodes = await contract.methods.getTokens("0x"+nodeId)
+    .call()
+    .catch((e) => {
+      console.error(e.message)
+      return
+    })
+    childrens = _dataToStruct(nodes)
+  
+    for(const child of childrens){
+      if(child.token != "0x0000000000000000000000000000000000000000000000000000000000000000"){
+        child_dict = []
+        keys(_data,nodeKey,child,_dictKeys)
+      }
+    }
+  }
+}
 
 function _createNodeKey(_privKey,_label,_token){
   xor_Kl = bytesToHex(_byte_xor(hexToBytes(_privKey) , hexToBytes(_label)))
