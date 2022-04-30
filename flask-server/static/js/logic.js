@@ -1,7 +1,7 @@
 const ganache_url = "http://127.0.0.1:8545"
 window.web3 = new Web3(ganache_url);
 window.userWalletAddress = null
-window.newCap = null
+
 
 //-----------------------------------------------------
 // data for testing
@@ -344,21 +344,20 @@ async function getCapList(){
               })
   console.log(result)
 
-  cap = _capHash(result)
+  return result
+}
+
+
+async function updateCapList(){
+  cap = _capHash(await getCapList())
   new_cap = window.resourcesToBuy
   data_to_upload = []
   for (const el of new_cap){
     hash = sha3_256(el)
     if (!cap.includes(hash)){data_to_upload.push(el)}
   }
-  
-  window.newCap = data_to_upload
-}
 
-
-async function updateCapList(){
-  
-  const tx = contract.methods.buyResources(window.newCap)
+  const tx = contract.methods.buyResources(data_to_upload)
   const gas = await tx.estimateGas({from: window.userWalletAddress})
   const gasPrice = await window.web3.eth.getGasPrice()
   const data = tx.encodeABI()
@@ -389,55 +388,53 @@ async function updateCapList(){
 }
 
 async function getKeys(){
-  res = await keys(_capHash(["a","e"]),window.userKey, window.userWalletAddress)
-  console.log(res)
+  dictKeys = []
+  res = await keys(window.userKey, window.userWalletAddress,dictKeys)
+  console.log(dictKeys)
 }
 
-async function keys(_resources, _privKey, _from){
+async function keys(_privKey, _from,_dictKeys){
   var nodes = await contract.methods.getTokens(_from)
   .call()
   .catch((e) => {
     console.error(e.message)
     return
   })
-  debugger
   nodes = _dataToStruct(nodes)
-  //nodes = JSON.parse(nodes)  
+
   for(const node of nodes){
-    token = (node.token).slice(2)
     label = await contract.methods.getLabel(node.id)
     .call()
     .catch((e) => {
       console.error(e.message)
       return
     })
-    
+
+    token = (node.token).slice(2)
     label = label.slice(2)
     nodeId = (node.id).slice(2)
-
-    xor_Kl = bytesToHex(_byte_xor(hexToBytes(_privKey) , hexToBytes(label)))
-
-    hash_Kl = hexToBytes(sha3_256(xor_Kl))
-    nodekey = bytesToHex(_byte_xor(hexToBytes(token) , hash_Kl))
+    nodeKey = _createNodeKey(_privKey,label,token)
     
-    if(_resources.includes(nodeId)){
-      return {
-        id: nodeId,
-        key: nodekey
-      }
-    }else{
-      return [{
-        id: nodeId,
-        key: nodekey
-      },
-      await keys(_resources,nodekey,node.id)]
-    
-      //.push(await keys(_resources,nodekey,node.id))
+    _dictKeys.push({
+      id: nodeId,
+      key: nodekey
+    })
+    child_dict = []
+    keys(nodeKey,node.id,child_dict)
+    _dictKeys["children"]= child_dict
     }
 
   }
 
-  return 
+
+
+function _createNodeKey(_privKey,_label,_token){
+  xor_Kl = bytesToHex(_byte_xor(hexToBytes(_privKey) , hexToBytes(_label)))
+
+  hash_Kl = hexToBytes(sha3_256(xor_Kl))
+  nodekey = bytesToHex(_byte_xor(hexToBytes(_token) , hash_Kl))
+
+  return nodekey
 }
 
 function _dataToStruct(_data){
