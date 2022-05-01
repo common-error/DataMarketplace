@@ -4,14 +4,14 @@
     <div class="container mt-2">
         <div class="input-group mb-3">
             <input type="text" id="privKey" class="form-control" placeholder="Inserisci la chiave privata" aria-label="Inserisci la chiave privata" aria-describedby="button-addon2">
-            <button class="btn btn-outline-secondary privKeyBTN" type="button">Imposta</button>
+            <button class="btn btn-outline-secondary btn-outline-danger privKeyBTN" type="button">Imposta</button>
         </div>
     </div>
     <div class="container mt-2">
         <ul class="list-group">
             {% if 'error' not in data %}
-                {% for key,value in data.items()%}
-                    <li class="list-group-item text-break">{{key}}</li>
+                {% for el in data%}
+                    <li class="list-group-item text-break">{{el}}:{{data[el]}}</li>
                 {% endfor %}
             {% else %}
                 <li class="list-group-item">{{data['error']}}</li>

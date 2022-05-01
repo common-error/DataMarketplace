@@ -5,8 +5,8 @@ window.userWalletAddress = null
 
 //-----------------------------------------------------
 // data for testing
-window.resourcesToBuy = ["a","b","c"]
-window.userKey = "4518473d776c0b41b8e4d96ef9a5ba9dd6607e439e0883d2ac884c7f99b30cd0"
+window.resourcesToBuy = ["0","1","23","12","5"]
+window.userKey = ""
 //-----------------------------------------------------
 
 // VARIABLES
@@ -390,7 +390,7 @@ async function updateCapList(){
 }
 
 async function getKeys(){
-  data = _capHash(["a","b"])
+  data = _capHash(["1","23","101"])
   
   Keys = []
   var root = await contract.methods.getTokens(window.userWalletAddress)
@@ -519,8 +519,13 @@ function _byte_xor(_ba1,_ba2){
 
 function getprivKey(){
   window.userKey = document.getElementById('privKey').value
-  
-  document.getElementById('privKey').value = ""
+  debugger
+  if(window.userKey != ""){
+    privKeyButton.classList.remove("btn-outline-danger")
+    privKeyButton.classList.add("btn-outline-success")
+    document.getElementById('privKey').value = ""
+  }
+
 }
 
 // CONNECTION TO METAMASK

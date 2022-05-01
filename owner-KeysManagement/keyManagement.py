@@ -40,17 +40,22 @@ args = parser.parse_args()
 if args.command == "add":
     if args.path:
         resources = json.load(open(args.path[0]))
-        enk_dict = {}
+        enk_list = []
         
         for x in resources["data"]:
             if kds.addResource(x['id']):
                 id,key = kds.getResourceEncKey(x['id'])
                 enk_data = util.crypt(key,bytes(x['data'].encode()))
-                enk_dict.update({id:enk_data})
+                enk_list.append({
+                    "id": id,
+                    "data":enk_data,
+                    "metadata":x["metadata"]
+                    })
         
-        if enk_dict:
+        
+        if enk_list:
             data_to_send = {
-                "resources":json.dumps(enk_dict)
+                "resources":json.dumps(enk_list)
             }
 
             url = "{}addResources/{}".format(os.getenv("BASE_URL"),os.getenv("PUBLIC_KEY"))

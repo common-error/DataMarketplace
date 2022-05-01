@@ -1,6 +1,7 @@
 from flask import Flask,render_template
 from flask_restful import Api
 from dotenv import load_dotenv
+from collections import defaultdict
 import os,pickle,json
 
 from numpy import require
@@ -33,4 +34,13 @@ def index():
     if os.path.exists('contractAddress.pkl'):
         loaded_CtcAddress = json.loads(pickle.load(open('contractAddress.pkl', 'rb')))
    
-    return render_template("index.html",data=loaded_dict,addrs=loaded_CtcAddress)
+    temp_dict = defaultdict(set)
+    for item in loaded_dict:
+        for key,value in item["metadata"].items():
+            temp_dict[key].add(value)
+
+    distinct_el = {}
+    for key,value in temp_dict.items():
+        distinct_el[key] = list(value)
+
+    return render_template("index.html",data=distinct_el,addrs=loaded_CtcAddress)
