@@ -43,8 +43,10 @@ class chain():
             "from":self.owner["pubKey"],
             "nonce":nonce
         })
-        self.contractAddress = self._completeTransaction(transaction)
-        return self.contractAddress
+
+        receipt = self._completeTransaction(transaction)
+        self.contractAddress = receipt.contractAddress
+        return receipt
 
     def getCapabilityListByAddress(self,_buyer):
 
@@ -80,7 +82,7 @@ class chain():
         tx_hash = self.w3.eth.send_raw_transaction(signed_tx.rawTransaction)
         tx_receipt = self.w3.eth.wait_for_transaction_receipt(tx_hash)
 
-        return tx_receipt.contractAddress
+        return tx_receipt
 
     def _safeContractAddress(self):
         if (contractAddress := os.getenv("CONTRACT_ADDRESS")) == "" and self.contractAddress == "":

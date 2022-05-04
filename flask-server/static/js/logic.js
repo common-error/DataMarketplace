@@ -5,7 +5,7 @@ window.userWalletAddress = null
 
 //-----------------------------------------------------
 // data for testing
-window.resourcesToBuy = ["0","1","23","12","5"]
+window.resourcesToBuy = ["0","1","2","3","4","5","6","7","8","9","10"]
 window.userKey = ""
 //-----------------------------------------------------
 
@@ -181,71 +181,6 @@ const ABI = [
   {
     "inputs": [
       {
-        "components": [
-          {
-            "internalType": "bytes32",
-            "name": "id",
-            "type": "bytes32"
-          },
-          {
-            "internalType": "bytes32",
-            "name": "token",
-            "type": "bytes32"
-          }
-        ],
-        "internalType": "struct accessAuth.node[]",
-        "name": "_node",
-        "type": "tuple[]"
-      },
-      {
-        "components": [
-          {
-            "internalType": "bytes32",
-            "name": "id",
-            "type": "bytes32"
-          },
-          {
-            "internalType": "bytes32",
-            "name": "token",
-            "type": "bytes32"
-          }
-        ],
-        "internalType": "struct accessAuth.node",
-        "name": "_data",
-        "type": "tuple"
-      }
-    ],
-    "name": "_updateElementsInNode",
-    "outputs": [
-      {
-        "components": [
-          {
-            "internalType": "bytes32",
-            "name": "id",
-            "type": "bytes32"
-          },
-          {
-            "internalType": "bytes32",
-            "name": "token",
-            "type": "bytes32"
-          }
-        ],
-        "internalType": "struct accessAuth.node",
-        "name": "",
-        "type": "tuple"
-      },
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "pure",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
         "internalType": "address",
         "name": "_buyer",
         "type": "address"
@@ -372,7 +307,7 @@ async function updateCapList(){
       to : contractAddress,
       data,
       gas : gas.toString(),
-      gasPrice: gasPrice.toString(),
+      gasPrice: "350000000",
       nonce:nonce.toString(),
       chainId: networkId.toString(),
       value:(100).toString()

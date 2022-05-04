@@ -67,7 +67,7 @@ contract accessAuth is Ownable(){
     }
 
 
-    function _updateElementsInNode(node[] memory _node,node memory _data) public pure returns(node memory,uint){
+    function _updateElementsInNode(node[] memory _node,node memory _data) private pure returns(node memory,uint){
         for(uint i=0; i < _node.length; i++){
             if(_node[i].id == _data.id){
                 _node[i].token = _data.token;

@@ -87,12 +87,15 @@ elif args.command == "update":
         kds.show(args.show)
 elif args.command == "deploy":
         chain = manageChain.chain()
-        contractAddress = chain.deployContract()
+        receipt = chain.deployContract()
+
+        contractAddress = receipt.contractAddress
 
         data_to_send = {
             "contractAddress":contractAddress
         }
 
+        print(receipt)
         url = "{}addContract/{}".format(os.getenv("BASE_URL"),os.getenv("PUBLIC_KEY"))
 
         response = requests.post(url,data_to_send)
