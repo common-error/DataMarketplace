@@ -1,11 +1,13 @@
 const ganache_url = "http://127.0.0.1:8545"
 window.web3 = new Web3(ganache_url);
 window.userWalletAddress = null
+window.TestGas = []
+window.CurrentResource = 0
 
 
 //-----------------------------------------------------
 // data for testing
-window.resourcesToBuy = ["0","1","2","3","4","5","6","7","8","9","10"]
+window.resourcesToBuy = ["0"]
 window.userKey = ""
 //-----------------------------------------------------
 
@@ -257,18 +259,34 @@ const contract = new window.web3.eth.Contract(ABI,contractAddress)
 
 const metaButton = document.querySelector('.connectoToMetaMask');
 const getCapListButton = document.querySelector('.getCapList');
+const updateCapListTestingButton = document.querySelector('.UpdateCapListTesting');
 const updateCapListButton = document.querySelector('.UpdateCapList');
 const getKeysButton = document.querySelector('.GetKeys');
 const privKeyButton = document.querySelector('.privKeyBTN');
+const printDataButton = document.querySelector('.PrintData');
+
 
 
 
 // EVENT LISTENER
 //*************************************************************************
 getCapListButton.addEventListener('click', () => {getCapList()})
+updateCapListTestingButton.addEventListener('click', async () => {
+  while(window.CurrentResource <= 100){
+    await updateCapListTesting()
+  }
+})
 updateCapListButton.addEventListener('click', () => {updateCapList()})
 getKeysButton.addEventListener('click', () => {getKeys()})
 privKeyButton.addEventListener('click',getprivKey,false)
+printDataButton.addEventListener('click', () => {
+  let output = 'index,gas\n'
+  for(const [idx,value] of window.TestGas.entries()){
+    output += idx.toString()+','+value+'\n'
+  }
+  console.log(output)
+})
+
 
 // ON CHAIN FUNCTIONS 
 //*************************************************************************
@@ -284,10 +302,11 @@ async function getCapList(){
   return result
 }
 
-
 async function updateCapList(){
   cap = _capHash(await getCapList())
   new_cap = window.resourcesToBuy
+  console.log("Buying : "+new_cap)
+
   data_to_upload = []
   for (const el of new_cap){
     hash = sha3_256(el)
@@ -314,14 +333,60 @@ async function updateCapList(){
     },
   ]
 
-  const result = await ethereum.request({
+  const txhash = await window.ethereum.request({
     method: 'eth_sendTransaction',
     params
   }).catch((e) => {
     console.log(e.message)
   })
 
-  console.log(result)
+  
+  var txGas = (await web3.eth.getTransaction(txhash))//.gas
+  //window.TestGas.push(txGas)
+  console.log(txGas)
+}
+
+
+async function updateCapListTesting(){
+  cap = _capHash(await getCapList())
+  increment = 70
+  dimension = 70
+  new_cap = Array(dimension).fill().map((x,i)=>(i+window.CurrentResource).toString())
+  console.log("Buying : "+new_cap)
+  window.CurrentResource += increment
+
+  data_to_upload = []
+  for (const el of new_cap){
+    hash = sha3_256(el)
+    if (!cap.includes(hash)){data_to_upload.push(el)}
+  }
+
+  
+  const nonce = await window.web3.eth.getTransactionCount(window.userWalletAddress)
+  data = contract.methods.buyResources(data_to_upload)
+  const gas = await data.estimateGas({from: window.userWalletAddress})
+  txObj = {
+    nonce: web3.utils.toHex(nonce),
+    to: contractAddress,
+    value: web3.utils.toHex(web3.utils.toWei('0', 'ether')),
+    gasLimit: web3.utils.toHex(2100000),
+    gasPrice: web3.utils.toHex(web3.utils.toWei('57', 'wei')),
+    data : data.encodeABI(),
+    value: web3.utils.toHex(web3.utils.toWei((6469331.115997997*dimension).toString(), 'gwei'))
+  }
+  
+
+  var tx = new ethereumjs.Tx(txObj)
+  privateKey = new ethereumjs.Buffer.Buffer('6cbed15c793ce57650b9877cf6fa156fbef513c4e6134f022a85b1ffdd59b2a1', 'hex');
+  tx.sign(privateKey)
+  var serializedTx = tx.serialize()
+
+  receipt = await window.web3.eth.sendSignedTransaction('0x'+serializedTx.toString('hex'))
+
+  
+  window.TestGas.push(receipt["gasUsed"])
+  console.log(receipt["gasUsed"])
+
 }
 
 async function getKeys(){
@@ -454,7 +519,7 @@ function _byte_xor(_ba1,_ba2){
 
 function getprivKey(){
   window.userKey = document.getElementById('privKey').value
-  debugger
+  
   if(window.userKey != ""){
     privKeyButton.classList.remove("btn-outline-danger")
     privKeyButton.classList.add("btn-outline-success")

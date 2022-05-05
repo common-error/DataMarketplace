@@ -95,7 +95,7 @@ elif args.command == "deploy":
             "contractAddress":contractAddress
         }
 
-        print(receipt)
+        #print(receipt)
         url = "{}addContract/{}".format(os.getenv("BASE_URL"),os.getenv("PUBLIC_KEY"))
 
         response = requests.post(url,data_to_send)

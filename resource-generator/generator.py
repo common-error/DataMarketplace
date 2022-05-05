@@ -112,4 +112,4 @@ class randomize():
 
         
 
-r = randomize().generate(0,30)
+r = randomize().generate(0,100)

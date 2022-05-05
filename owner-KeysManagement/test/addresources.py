@@ -27,18 +27,18 @@ z = {
 contractAddress = os.getenv("CONTRACT_ADDRESS")
 
 accessAuth = web3.eth.contract(address=contractAddress,abi=abi)
-nonce = web3.eth.getTransactionCount(z["publicKey"])
+nonce = web3.eth.getTransactionCount(w["publicKey"])
 
-strore_transaction = accessAuth.functions.buyResources(["a","b"]).buildTransaction({
-    "gasPrice":web3.eth.gas_price,
+strore_transaction = accessAuth.functions.buyResources(["0"]).buildTransaction({
+    "gasPrice":350000000,
     "chainId":chain_id,
-    "from":z["publicKey"],
+    "from":w["publicKey"],
     "nonce":nonce,
-    "value": 50
+    "value": web3.toWei(6469331.115997997, 'gwei')
 })
 sign_store_tnx = web3.eth.account.sign_transaction(
     strore_transaction,
-    private_key=z["privateKey"]
+    private_key=w["privateKey"]
 )
 send_store_tx = web3.eth.send_raw_transaction(sign_store_tnx.rawTransaction)
 tx_receipt = web3.eth.wait_for_transaction_receipt(send_store_tx)

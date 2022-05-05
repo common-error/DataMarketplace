@@ -7,26 +7,49 @@
             <button class="btn btn-outline-secondary btn-outline-danger privKeyBTN" type="button">Imposta</button>
         </div>
     </div>
+    <div class="container mt-3">
+        <button class="btn btn-outline-success me-2 getCapList" type="button">Get Capability List</button>
+        <button class="btn btn-outline-success me-2 UpdateCapList" type="button">Update CapList | with Matamask</button>
+        <button class="btn btn-outline-success me-2 UpdateCapListTesting" type="button">Update CapList | for testing</button>
+        <button class="btn btn-outline-success me-2 GetKeys" type="button">Get Keys</button>
+        <button class="btn btn-outline-success me-2 PrintData" type="button">Print Results</button>
+    </div>
     <div class="container mt-2">
-        <ul class="list-group">
-            {% if 'error' not in data %}
-                {% for el in data%}
-                    <li class="list-group-item text-break">{{el}}:{{data[el]}}</li>
-                {% endfor %}
-            {% else %}
-                <li class="list-group-item">{{data['error']}}</li>
-            {% endif%}
-        </ul>
+        <table class="table table-striped table-hover">
+            <thead>
+              <tr>
+                <th scope="col">Etichetta</th>
+                <th scope="col">Valori</th>
+              </tr>
+            </thead>
+            <tbody>
+                <ul class="list-group">
+                    {% if 'error' not in data %}
+                        {% for el in data%}
+                            <tr>
+                                <td>{{el}}</td>
+                                <td>{{data[el]}}</td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    {% endif%}
+                </ul>
+            </tbody>
+          </table>
     </div>
 
-    <button class="btn btn-outline-success me-2 getCapList" type="button">Get CapList</button>
-    <button class="btn btn-outline-success me-2 UpdateCapList" type="button">Update CapList</button>
-    <button class="btn btn-outline-success me-2 GetKeys" type="button">Get Keys</button>
+
 
     
     <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
     <script src="{{ url_for('static',filename='js/logic.js')}}"></script>
     <script src="{{ url_for('static',filename='node_modules/js-sha3/src/sha3.js')}}"></script>
+    
+    <script src="https://cdn.jsdelivr.net/gh/ethereumjs/browser-builds/dist/ethereumjs-tx/ethereumjs-tx-1.3.3.min.js"></script>
 
     
 {%endblock%}
