@@ -7,7 +7,7 @@ window.CurrentResource = 0
 
 //-----------------------------------------------------
 // data for testing
-window.resourcesToBuy = ["0"]
+window.resourcesToBuy = ["4","5"]
 window.userKey = ""
 //-----------------------------------------------------
 
@@ -390,7 +390,7 @@ async function updateCapListTesting(){
 }
 
 async function getKeys(){
-  data = _capHash(["1","23","101"])
+  data = _capHash(["0","4"])
   
   Keys = []
   var root = await contract.methods.getTokens(window.userWalletAddress)
@@ -400,6 +400,7 @@ async function getKeys(){
     return
   })
   root = _dataToStruct(root)
+  root = root.filter((obj) => obj.token !== "0x0000000000000000000000000000000000000000000000000000000000000000");
   
   res = await getKeysFromRequestedData(data,window.userKey,root[0],Keys)
   //res = await getAllKeys(window.userKey,root[0],Keys)

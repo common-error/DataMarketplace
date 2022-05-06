@@ -77,7 +77,7 @@ elif args.command == "update":
         new_catalogue = set(kds.generateCatalogue())
 
         to_add = util.modifiedResources(old_catalogue,new_catalogue)
-
+        
         chain.updateCatalogue(to_add)
 
         kds.save()
