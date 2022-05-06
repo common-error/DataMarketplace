@@ -11,17 +11,17 @@ class converter():
     _ethEUR is the given value of one eth in EUR
     _gasPrice is how many Gwei you are willing to pay per gas Unit
     """
-    def __init__(self, _ethEUR,_gasPrice = 55):
+    def __init__(self, _ethEUR,_gasPrice = 54.65733):
         self.ethEUR = _ethEUR
         self.gasPrice = _gasPrice
     
-    def EURperGas(self,_transactionCost):
-        eur = _transactionCost*(self.gasPrice)*10**-9*self.ethEUR
+    def EURperGas(self,_usedGas):
+        eur = _usedGas*(self.gasPrice)*10**-9*self.ethEUR
 
         return round(eur,4)
 
 
-c = converter(2665)
+c = converter(3117.467)
 
 gasUnit_forDeploy = 1529555
 gasUnit_addOneRes = 49272
@@ -148,7 +148,7 @@ fifty = [
 res = []
 
 
-for idx,el in enumerate(one):
+for idx,el in enumerate(fifty):
     res.append(c.EURperGas(el))
 
-print(sum(res))
+print(round(sum(res),3))
