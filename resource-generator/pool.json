@@ -1,0 +1,31 @@
+{
+    "corsa": {
+        "bpm": {
+            "start": 100,
+            "end": 200,
+            "GDD": 2
+        },
+        "date": {
+            "start": "2021-01-01",
+            "end": "2022-04-01",
+            "GDD": 4
+        },
+        "step": {
+            "start": 10,
+            "end": 10000,
+            "GDD": 2
+        },
+        "sex": {
+            "value": [
+                "M",
+                "F"
+            ],
+            "GDD": 2
+        },
+        "duration": {
+            "start": "PT1M",
+            "end": "PT3H",
+            "GDD" : 4
+        }
+    }
+}

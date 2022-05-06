@@ -1,4 +1,2 @@
 /.vscode
-*.json
 /node_modules
-flask-server/static/*.js
