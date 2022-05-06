@@ -7,7 +7,7 @@ window.CurrentResource = 0
 
 //-----------------------------------------------------
 // data for testing
-window.resourcesToBuy = ["0"]
+window.resourcesToBuy = ["1","2","3"]
 window.userKey = ""
 //-----------------------------------------------------
 
@@ -390,7 +390,7 @@ async function updateCapListTesting(){
 }
 
 async function getKeys(){
-  data = _capHash(["1","23","101"])
+  data = _capHash(["0","1","2","3"])
   
   Keys = []
   var root = await contract.methods.getTokens(window.userWalletAddress)
