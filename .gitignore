@@ -1,5 +1,4 @@
 /.vscode
 *.json
 /node_modules
-flask-server/static/node_modules
 flask-server/static/*.js
