@@ -20,6 +20,14 @@ class converter():
 
         return round(eur,4)
 
+    def min(self,_arr):
+        c = []
+        for idx,el in enumerate(_arr):
+            if idx < len(_arr)-1:
+                c.append(_arr[idx+1]-el)
+        
+        return c
+
 
 c = converter(3117.467)
 
@@ -151,4 +159,8 @@ res = []
 for idx,el in enumerate(fifty):
     res.append(c.EURperGas(el))
 
-print(round(sum(res),3))
+#print(round(sum(res),3))
+
+#print(c.min(one))ù
+
+print(c.EURperGas(1529555))

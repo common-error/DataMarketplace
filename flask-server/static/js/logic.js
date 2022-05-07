@@ -2,12 +2,15 @@ const ganache_url = "http://127.0.0.1:8545"
 window.web3 = new Web3(ganache_url);
 window.userWalletAddress = null
 window.TestGas = []
-window.CurrentResource = 0
+window.CurrentResourceIdx = 0
+window.Resources = ['28307', '7061', '10892', '49355', '8323', '15054', '43651', '29676', '23219', '28116', '3107', '32675', '23490', '18008', '8538', '27200', '6513', '949', '31151', '13108', '6823', 
+'5180', '7013', '22242', '33162', '41703', '6749', '24272', '13736', '40419', '8947', '34058', '1851', '2045', '11241', '47473', '5716', '94', '29767', '5877', '43064', '1975', '47591', '36278', '49413', '7612', '26224', '15314', '29755', '18901', '38728', '12617', '32795', '43799', '32277', '5173', '3407', '27402', '40941', '19600', '36554', '1891', '24023', '39681', '35569', '22849', '48567', '8448', '46649', '43298', '12637', '20504', '11300', '2927', '23195', '31980', '1360', '30203', '3093', '21844', '13498', '36429', '2471', '39937', 
+'41827', '41536', '24265', '6464', '15300', '44588', '33521', '16808', '10793', '43793', '28281', '5251', '38887', '26179', '32662', '36343']
 
 
 //-----------------------------------------------------
 // data for testing
-window.resourcesToBuy = ["4","5"]
+window.resourcesToBuy = ["s simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with"]
 window.userKey = ""
 //-----------------------------------------------------
 
@@ -272,7 +275,7 @@ const printDataButton = document.querySelector('.PrintData');
 //*************************************************************************
 getCapListButton.addEventListener('click', () => {getCapList()})
 updateCapListTestingButton.addEventListener('click', async () => {
-  while(window.CurrentResource <= 100){
+  while(window.CurrentResourceIdx <= 100){
     await updateCapListTesting()
   }
 })
@@ -315,6 +318,7 @@ async function updateCapList(){
 
   const tx = contract.methods.buyResources(data_to_upload)
   const gas = await tx.estimateGas({from: window.userWalletAddress})
+  console.log("Estimated gas: "+gas)
   const gasPrice = await window.web3.eth.getGasPrice()
   const data = tx.encodeABI()
   const nonce = await window.web3.eth.getTransactionCount(window.userWalletAddress)
@@ -348,12 +352,14 @@ async function updateCapList(){
 
 
 async function updateCapListTesting(){
+  
   cap = _capHash(await getCapList())
-  increment = 70
-  dimension = 70
-  new_cap = Array(dimension).fill().map((x,i)=>(i+window.CurrentResource).toString())
+  increment = 1
+  dimension = 1
+  //new_cap = Array(dimension).fill().map((x,i)=>(i+window.CurrentResource).toString())
+  new_cap = window.Resources.slice(window.CurrentResourceIdx,window.CurrentResourceIdx+dimension)
   console.log("Buying : "+new_cap)
-  window.CurrentResource += increment
+  window.CurrentResourceIdx += increment
 
   data_to_upload = []
   for (const el of new_cap){
@@ -365,6 +371,7 @@ async function updateCapListTesting(){
   const nonce = await window.web3.eth.getTransactionCount(window.userWalletAddress)
   data = contract.methods.buyResources(data_to_upload)
   const gas = await data.estimateGas({from: window.userWalletAddress})
+  console.log("Estimated gas: "+gas)
   txObj = {
     nonce: web3.utils.toHex(nonce),
     to: contractAddress,
