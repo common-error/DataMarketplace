@@ -3,14 +3,14 @@ window.web3 = new Web3(ganache_url);
 window.userWalletAddress = null
 window.TestGas = []
 window.CurrentResourceIdx = 0
-window.Resources = ['28307', '7061', '10892', '49355', '8323', '15054', '43651', '29676', '23219', '28116', '3107', '32675', '23490', '18008', '8538', '27200', '6513', '949', '31151', '13108', '6823', 
+window.Resources =  ['28307', '7061', '10892', '49355', '8323', '15054', '43651', '29676', '23219', '28116', '3107', '32675', '23490', '18008', '8538', '27200', '6513', '949', '31151', '13108', '6823', 
 '5180', '7013', '22242', '33162', '41703', '6749', '24272', '13736', '40419', '8947', '34058', '1851', '2045', '11241', '47473', '5716', '94', '29767', '5877', '43064', '1975', '47591', '36278', '49413', '7612', '26224', '15314', '29755', '18901', '38728', '12617', '32795', '43799', '32277', '5173', '3407', '27402', '40941', '19600', '36554', '1891', '24023', '39681', '35569', '22849', '48567', '8448', '46649', '43298', '12637', '20504', '11300', '2927', '23195', '31980', '1360', '30203', '3093', '21844', '13498', '36429', '2471', '39937', 
 '41827', '41536', '24265', '6464', '15300', '44588', '33521', '16808', '10793', '43793', '28281', '5251', '38887', '26179', '32662', '36343']
-
+window.timeDelta = []
 
 //-----------------------------------------------------
 // data for testing
-window.resourcesToBuy = ["3","4"]
+window.resourcesToBuy = ["a"]
 window.userKey = ""
 //-----------------------------------------------------
 
@@ -275,9 +275,11 @@ const printDataButton = document.querySelector('.PrintData');
 //*************************************************************************
 getCapListButton.addEventListener('click', () => {getCapList()})
 updateCapListTestingButton.addEventListener('click', async () => {
-  while(window.CurrentResourceIdx <= 100){
+  while(window.CurrentResourceIdx <= 1){
     await updateCapListTesting()
   }
+
+  console.log(window.timeDelta)
 })
 updateCapListButton.addEventListener('click', () => {updateCapList()})
 getKeysButton.addEventListener('click', () => {getKeys()})
@@ -388,11 +390,18 @@ async function updateCapListTesting(){
   tx.sign(privateKey)
   var serializedTx = tx.serialize()
 
+  time = Date.now()
   receipt = await window.web3.eth.sendSignedTransaction('0x'+serializedTx.toString('hex'))
 
   
   window.TestGas.push(receipt["gasUsed"])
-  console.log(receipt["gasUsed"])
+
+  //var txGas = (await web3.eth.getTransaction(receipt["transactionHash"]))
+  var block = await web3.eth.getBlock(receipt["blockNumber"])
+
+  delta = (block["timestamp"] - time).toString()
+   console.log(time- block["timestamp"])
+  window.timeDelta.push(delta.toHHMMSS())
 
 }
 
@@ -601,4 +610,16 @@ function bytesToHex(bytes) {
       hex.push((current & 0xF).toString(16));
   }
   return hex.join("");
+}
+
+String.prototype.toHHMMSS = function () {
+  var sec_num = parseInt(this, 10); // don't forget the second param
+  var hours   = Math.floor(sec_num / 3600);
+  var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
+  var seconds = sec_num - (hours * 3600) - (minutes * 60);
+
+  if (hours   < 10) {hours   = "0"+hours;}
+  if (minutes < 10) {minutes = "0"+minutes;}
+  if (seconds < 10) {seconds = "0"+seconds;}
+  return hours+':'+minutes+':'+seconds;
 }

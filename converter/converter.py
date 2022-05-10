@@ -1,5 +1,5 @@
 
-
+import math
 
 
 class converter():
@@ -18,7 +18,7 @@ class converter():
     def EURperGas(self,_usedGas):
         eur = _usedGas*(self.gasPrice)*10**-9*self.ethEUR
 
-        return round(eur,4)
+        return math.ceil(eur)
 
     def min(self,_arr):
         c = []
@@ -153,14 +153,28 @@ fifty = [
 1693029,
 2018962
 ]
-res = []
 
-
-for idx,el in enumerate(fifty):
-    res.append(c.EURperGas(el))
 
 #print(round(sum(res),3))
 
-#print(c.min(one))ù
+#print(c.min(one))
 
-print(c.EURperGas(1529555))
+#print(c.EURperGas(1529555))
+
+res = []
+for idx,el in enumerate(fifty):
+    res.append(c.EURperGas(el))
+
+print(sum(res))
+
+
+res = []
+for idx,el in enumerate(ten):
+    res.append(c.EURperGas(el))
+print(sum(res))
+
+
+res = []
+for idx,el in enumerate(one):
+    res.append(c.EURperGas(el))
+print(sum(res))

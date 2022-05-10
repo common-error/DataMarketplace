@@ -4,6 +4,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract accessAuth is Ownable(){
 
+    
     struct updateData{
         bytes32 from;
         bytes32 to;
@@ -30,6 +31,10 @@ contract accessAuth is Ownable(){
     event UpdateData(updateData[]);
 
 
+    /** 
+       @notice Updates a user's capability list (after a payment) adding the new purchased resources to the list. The ETH tokens are directly transfered to the owner of the contract. The capability list is a list of strings where a string identifies a resource
+       @param _resources List of strings
+    */
     function buyResources(string[] memory _resources) external payable {
         string[] memory oldCap = capabilityList[msg.sender];
 
@@ -42,6 +47,11 @@ contract accessAuth is Ownable(){
         emit CapabilityListUpdated(msg.sender, msg.value, oldCap,capabilityList[msg.sender]);
     }
 
+
+    /**
+        @notice Thanks to the changes in the local KDS the catalog is updated allowing a buyer to access the recources according to his capability list. It also adds the labels for the key derivation.
+        @param _updateData List of tuple of the form: (from,to,token,label)
+     */
     function updateCatalogue(updateData[] memory _updateData) onlyOwner() external{
         node memory tempNode;
         uint idx;
@@ -66,11 +76,16 @@ contract accessAuth is Ownable(){
         emit UpdateData(_updateData);
     }
 
-
+    /**
+        @notice A node can have a bunch of nodes connected to it. This function tries to find if a new node (_data) is already connected and then the value is changed, otherwise it must be pushed as a new node.
+        @param _node List of nodes connected to a parent node. For example the node "abc" may be connected to the nodes "a,b,c"
+        @param _data Data of a node that needs to be changed or added
+        @return A tuple with the node and the position index 
+    */
     function _updateElementsInNode(node[] memory _node,node memory _data) private pure returns(node memory,uint){
         for(uint i=0; i < _node.length; i++){
             if(_node[i].id == _data.id){
-                _node[i].token = _data.token;
+                //_node[i].token = _data.token;
                 return (_data,i);
             }
         }
