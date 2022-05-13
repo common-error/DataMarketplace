@@ -35,12 +35,6 @@ const ABI = [
       {
         "indexed": false,
         "internalType": "string[]",
-        "name": "oldCababilityList",
-        "type": "string[]"
-      },
-      {
-        "indexed": false,
-        "internalType": "string[]",
         "name": "newCapabilityList",
         "type": "string[]"
       }
@@ -275,7 +269,7 @@ const printDataButton = document.querySelector('.PrintData');
 //*************************************************************************
 getCapListButton.addEventListener('click', () => {getCapList()})
 updateCapListTestingButton.addEventListener('click', async () => {
-  while(window.CurrentResourceIdx <= 1){
+  while(window.CurrentResourceIdx < 100){
     await updateCapListTesting()
   }
 
@@ -287,7 +281,7 @@ privKeyButton.addEventListener('click',getprivKey,false)
 printDataButton.addEventListener('click', () => {
   let output = 'index,gas\n'
   for(const [idx,value] of window.TestGas.entries()){
-    output += idx.toString()+','+value+'\n'
+    output += (idx+1).toString()+','+value+'\n'
   }
   console.log(output)
 })
@@ -356,8 +350,8 @@ async function updateCapList(){
 async function updateCapListTesting(){
   
   cap = _capHash(await getCapList())
-  increment = 1
-  dimension = 1
+  increment = 50
+  dimension = 50
   //new_cap = Array(dimension).fill().map((x,i)=>(i+window.CurrentResource).toString())
   new_cap = window.Resources.slice(window.CurrentResourceIdx,window.CurrentResourceIdx+dimension)
   console.log("Buying : "+new_cap)

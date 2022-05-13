@@ -78,7 +78,8 @@ elif args.command == "update":
 
         to_add = util.modifiedResources(old_catalogue,new_catalogue)
         
-        chain.updateCatalogue(to_add)
+        rpt = chain.updateCatalogue(to_add)
+        print("{},{}".format(args.alias[0],rpt["gasUsed"]))
 
         kds.save()
         kds.show(args.show)

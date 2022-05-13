@@ -1,0 +1,60 @@
+{
+    "data": [
+        {
+            "id": "a",
+            "data": "b'risorsa a'",
+            "metadata": {
+                "date": "2021",
+                "sex": null,
+                "duration": "PT1H51M"
+            }
+        },
+        {
+            "id": "b",
+            "data": "b'risorsa b'",
+            "metadata": {
+                "bpm": null,
+                "sex": "M",
+                "duration": "PT1H10M"
+            }
+        },
+        {
+            "id": "c",
+            "data": "b'risorsa c'",
+            "metadata": {
+                "bpm": 100,
+                "sex": null,
+                "duration": "PT2H55M"
+            }
+        },
+        {
+            "id": "d",
+            "data": "b'risorsa d'",
+            "metadata": {
+                "step": 3510,
+                "sex": "M",
+                "duration": "PT2H56M"
+            }
+        },
+        {
+            "id": "e",
+            "data": "b'risorsa e'",
+            "metadata": {
+                "step": null,
+                "date": null,
+                "bpm": null,
+                "sex": null,
+                "duration": "PT1H8M"
+            }
+        },
+        {
+            "id": "f",
+            "data": "b'risorsa f'",
+            "metadata": {
+                "bpm": 192,
+                "sex": "F",
+                "duration": "PT45M"
+            }
+        }
+    ]
+}

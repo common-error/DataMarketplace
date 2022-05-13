@@ -70,7 +70,9 @@ class chain():
             "nonce":nonce
         })
 
-        self._completeTransaction(transaction)
+        return self._completeTransaction(transaction)
+
+        
 
     def _completeTransaction(self,_transaction):
 

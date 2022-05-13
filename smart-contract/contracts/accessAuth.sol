@@ -24,7 +24,6 @@ contract accessAuth is Ownable(){
     event CapabilityListUpdated(
         address indexed _buyer,
         uint price,
-        string[] oldCababilityList,
         string[] newCapabilityList
     );
 
@@ -36,7 +35,7 @@ contract accessAuth is Ownable(){
        @param _resources List of strings
     */
     function buyResources(string[] memory _resources) external payable {
-        string[] memory oldCap = capabilityList[msg.sender];
+        //string[] memory oldCap = capabilityList[msg.sender];
 
         for(uint i=0; i < _resources.length; i++){
             capabilityList[msg.sender].push(_resources[i]); 
@@ -44,7 +43,7 @@ contract accessAuth is Ownable(){
         
         payable(owner()).transfer(msg.value);
 
-        emit CapabilityListUpdated(msg.sender, msg.value, oldCap,capabilityList[msg.sender]);
+        emit CapabilityListUpdated(msg.sender, msg.value,capabilityList[msg.sender]);
     }
 
 
