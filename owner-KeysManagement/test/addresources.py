@@ -39,7 +39,7 @@ z = {
 }
 
 user =z
-resources = ["949"]
+resources = ["c","d","e","f"]
 
 contractAddress = os.getenv("CONTRACT_ADDRESS")
 
