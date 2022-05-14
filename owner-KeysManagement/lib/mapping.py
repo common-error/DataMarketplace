@@ -6,6 +6,7 @@ DEFAULTPATH = "../mapping.json"
 class map():
 
     def __init__(self, _mappingName = DEFAULTPATH,_bytes=2):
+        #print(os.getcwd())
         self.bytes = _bytes
         if(exists(_mappingName)):
             self.M = self._readFile(_mappingName)
@@ -13,7 +14,7 @@ class map():
             self.M = {}
 
     def add(self,_value):
-        if(_value not in self.M):
+        if(_value not in self.M and _value != ""):
             rndMap = ""
             while(True):
                 rndMap = os.urandom(self.bytes)
@@ -22,8 +23,12 @@ class map():
 
             self.M[_value] = rndMap.hex()
 
+            return self.M.get(_value)
+
     def get(self,_value):
-        return self.M[_value]
+        
+        return self.M.get(_value)
+        
         
 
     def save(self, _mappingName = DEFAULTPATH):
@@ -38,12 +43,5 @@ class map():
         except Exception as ex:
             print(ex)      
         
-
 m = map()
-m.add("a")
-m.add("b")
-m.add("w")
-m.add("ab")
-
-print(m.get("ab"))
-m.save()
+print(m.get(""))

@@ -4,6 +4,8 @@ from cryptography.fernet import Fernet
 from itertools import combinations
 from numpy import byte
 
+from .mapping import map
+
 DEFAULTPATH = "../KDS.gml"
 
 """
@@ -20,6 +22,7 @@ NOTE:   Every node in the KDS is identified by an unique value built as the hash
 class KDS():
 
     def __init__(self, _graphName = DEFAULTPATH):
+        self.map = map()
         if(exists(_graphName)):
             self.G = nx.read_gml(_graphName)
         else:
@@ -37,7 +40,7 @@ class KDS():
                     Essential for the resolution of the cover set problem.
     """
     def addResource(self,_resource):
-        idResource = self._hash(_resource)
+        idResource = self.map.add(_resource)
         if idResource not in self.G:
             self.G.add_node(
                 idResource,
@@ -45,7 +48,7 @@ class KDS():
                 key= base64.urlsafe_b64decode(Fernet.generate_key()).hex(),
                 user = False,
                 tag=secrets.token_hex(32),
-                elements = [self._hash(_resource)]
+                elements = [self.map.get(_resource)]
             )
             return True
         return False
@@ -64,7 +67,10 @@ class KDS():
         
         oldCap,R = self._previousState(_buyer,_capList)
 
-        n_cap_u = (self._capHash(oldCap)).hex()
+        if(len(R)==0):
+            return None
+
+        n_cap_u = self._customCapHash(oldCap) 
         if  n_cap_u in self.G:
             self.G.remove_edge(_buyer,n_cap_u)
             if not self._existAnotherUser(_buyer,n_cap_u):
@@ -78,17 +84,18 @@ class KDS():
                             self.G.add_edge(n_par, n_desc)
                     self.G.remove_node(n_cap_u)
         
-        n_cap_u = (self._capHash(_capList)).hex()
+        n_cap_u = self._customCapHash(_capList)
         if n_cap_u in self.G:
             self.G.add_edge(_buyer,n_cap_u)
         else:
+            n_cap_u = self.map.add("".join(sorted(_capList,key=str.lower)))
             self.G.add_node(
                 n_cap_u,
-                unHashName=','.join(_capList),
+                unHashName=",".join(sorted(_capList,key=str.lower)),
                 key= base64.urlsafe_b64decode(Fernet.generate_key()).hex(),
                 user = False,
                 tag=secrets.token_hex(32),
-                elements = [self._hash(el) for el in _capList]
+                elements = [self.map.get(el) for el in _capList]
             )
             self.G.add_edge(_buyer,n_cap_u)
 
@@ -111,14 +118,17 @@ class KDS():
                     self.G.add_edge(n_par,n_cap_u)
                     for n_par,n_z in ToRemove:
                         self.G.remove_edge(n_par,n_z)
+            
+        return True
 
 
     def getResourceEncKey(self,_resource):
-        idResource = self._hash(_resource)
+        idResource = self.map.get(_resource)
         return idResource,self.G.nodes[idResource]["key"]
 
     def save(self,_path=DEFAULTPATH):
         nx.write_gml(self.G,_path)
+        self.map.save()
     
     def _byte_xor(self,ba1, ba2):
         return bytes([_a ^ _b for _a, _b in zip(ba1, ba2)])
@@ -126,12 +136,6 @@ class KDS():
     def _hash(self,_data):
         return hashlib.sha3_256(_data.encode('utf-8')).hexdigest()
 
-    def _capHash(self,_data):
-        tempHash = bytearray(32)
-        for el in _data:
-            tempHash = self._byte_xor(tempHash, hashlib.sha3_256(el.encode('utf-8')).digest())
-        
-        return tempHash
     
     def _existAnotherUser(self,_buyer,_node):
         for fr,to in self.G.in_edges(_node):
@@ -140,6 +144,8 @@ class KDS():
             
         return False
     
+    def _customCapHash(self,_capList):
+        return self.map.get("".join(sorted(_capList,key=str.lower)))
 
     """
     Compare the capability list with the current state in the KDS and returns the already accessible
@@ -149,13 +155,13 @@ class KDS():
     def _previousState(self,_buyer,_capList):
         edge = [to for frm,to in list(self.G.out_edges(_buyer))]
         if len(edge) == 1:
-            target = bytes.fromhex(edge[0])
-            capHash = bytearray(32) 
+            target = edge[0]
+            capHash = "" 
 
             for idx,el in enumerate(_capList):
-                capHash = (self._byte_xor(capHash, bytes.fromhex(self._hash(el))))
+                capHash = self._customCapHash(_capList[:idx+1])
                 if capHash == target:
-                    return (_capList[:idx+1],_capList[idx:])
+                    return (_capList[:idx+1],_capList[idx+1:])
 
         return ([],_capList)
 
@@ -172,7 +178,7 @@ class KDS():
         comb = [list(combinations(_capList,size)) for size in range(len(_capList))]
         flattenedComb = [item for sublist in comb for item in sublist]
         flattenedComb = flattenedComb[1::]
-        hashedComb = [(self._capHash(el)).hex() for el in flattenedComb]
+        hashedComb = [self._customCapHash(el) for el in flattenedComb]
 
         potentialSubset = self._potentialSubset(_capList)
 
@@ -183,7 +189,7 @@ class KDS():
     Startign from the capability list of a buyer is possible to find the distinct ancestors
     """
     def _potentialSubset(self, _capList):
-        capHashes = [self._hash(el) for el in _capList]
+        capHashes = [self.map.get(el) for el in _capList]
 
         ancestors = [list(nx.ancestors(self.G,el)) for el in capHashes]
         flattenedAnc = [item for sublist in ancestors for item in sublist]
@@ -194,7 +200,7 @@ class KDS():
     Considering the set cover problem, the function follows the implementation of a greedy solution
     """
     def _greedySetCover(self,_capList,_desc):
-        capHashes = [self._hash(el) for el in _capList]
+        capHashes = [self.map.get(el) for el in _capList]
         DescCover = []
 
         while len(capHashes) != 0:
@@ -215,13 +221,15 @@ class KDS():
     The following function return all the nodes that are superset of a given node
     """
     def _getPar(self,_capList,_currentNode):
-        capHashes = set([self._hash(el) for el in _capList])
+        capHashes = set([self.map.get(el) for el in _capList])
         Par = []
 
         nodes = [x for x,y in self.G.nodes(data = True) if y['user']==0 and x != _currentNode]
+        
         for node in nodes:
             if set(self.G.nodes[node]["elements"]).issuperset(capHashes):
                 Par = list(set(Par) | set([node]))
+
         
         return Par
 

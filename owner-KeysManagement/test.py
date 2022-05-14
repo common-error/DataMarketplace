@@ -297,5 +297,9 @@ print(response.json())
 """
 kds = KDS.KDS()
 
-kds.generateCatalogue()
 
+
+kds.enforcePurchase("0xE11BA2b4D45Eaed5996Cd0823791E0C93114882d","y",["a","b"])
+kds.show(True)
+kds.enforcePurchase("0xE11BA2b4D45Eaed5996Cd0823791E0C93114882d","y",["a","b","c"])
+kds.show(True)

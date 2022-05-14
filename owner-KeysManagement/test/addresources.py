@@ -38,7 +38,7 @@ z = {
     "privateKey" : "0xadd53f9a7e588d003326d1cbf9e4a43c061aadd9bc938c843a79e7b4fd2ad743"
 }
 
-user =z
+user = z
 resources = ["c","d","e","f"]
 
 contractAddress = os.getenv("CONTRACT_ADDRESS")

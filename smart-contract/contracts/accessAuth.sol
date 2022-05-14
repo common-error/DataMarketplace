@@ -6,18 +6,18 @@ contract accessAuth is Ownable(){
 
     
     struct updateData{
-        bytes32 from;
-        bytes32 to;
+        bytes2 from;
+        bytes2 to;
         bytes32 token;
         bytes32 label;
     }
 
     struct node{
-        bytes32 id;
+        bytes2 id;
         bytes32 token;
     }
 
-    mapping(bytes32 => node[]) catalogue;
+    mapping(bytes2 => node[]) catalogue;
     mapping(address => string[]) capabilityList;
     mapping(bytes32 => bytes32) labels;
 
@@ -56,8 +56,8 @@ contract accessAuth is Ownable(){
         uint idx;
 
         for(uint i=0; i < _updateData.length; i++){
-            bytes32 from = _updateData[i].from;
-            bytes32 to = _updateData[i].to;
+            bytes2 from = _updateData[i].from;
+            bytes2 to = _updateData[i].to;
 
             tempNode.id = to;
             tempNode.token = _updateData[i].token;
@@ -96,7 +96,7 @@ contract accessAuth is Ownable(){
         return capabilityList[_buyer];
     }
 
-    function getTokens(bytes32 _from) external view returns(node[] memory){
+    function getTokens(bytes2 _from) external view returns(node[] memory){
         return catalogue[_from];
     }
 

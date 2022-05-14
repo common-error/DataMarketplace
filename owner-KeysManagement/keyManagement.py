@@ -73,16 +73,18 @@ elif args.command == "update":
         print("Current cap list: {}".format(resources))
         
         old_catalogue = set(kds.generateCatalogue())
-        kds.enforcePurchase(args.address[0],args.alias[0],resources)
-        new_catalogue = set(kds.generateCatalogue())
+        if(kds.enforcePurchase(args.address[0],args.alias[0],resources) != None):
+            new_catalogue = set(kds.generateCatalogue())
 
-        to_add = util.modifiedResources(old_catalogue,new_catalogue)
-        
-        rpt = chain.updateCatalogue(to_add)
-        print("{},{},{}".format(args.alias[0],rpt["gasUsed"],len(to_add)))
+            to_add = util.modifiedResources(old_catalogue,new_catalogue)
+            
+            rpt = chain.updateCatalogue(to_add)
+            print("{},{},{}".format(args.alias[0],rpt["gasUsed"],len(to_add)))
 
-        kds.save()
-        kds.show(args.show)
+            kds.save()
+            kds.show(args.show)
+        else:
+            print("No update on capList!")
 elif args.command == "deploy":
         chain = manageChain.chain()
         receipt = chain.deployContract()
