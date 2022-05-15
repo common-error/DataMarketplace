@@ -57,6 +57,13 @@ class KDS():
     The following procedure updates the KDS allowing a buyer to access the resources they are entitled to
     """
     def enforcePurchase(self,_buyer,_name,_capList):
+        _buyer = _buyer.lower()
+        if(self.map.get(_buyer)):
+            _buyer = self.map.get(_buyer)
+        else:
+            _buyer = self.map.add(_buyer)
+        
+
         if _buyer not in self.G:
             self.G.add_node(
                 _buyer,
@@ -89,6 +96,7 @@ class KDS():
             self.G.add_edge(_buyer,n_cap_u)
         else:
             n_cap_u = self.map.add("".join(sorted(_capList,key=str.lower)))
+            print(n_cap_u)
             self.G.add_node(
                 n_cap_u,
                 unHashName=",".join(sorted(_capList,key=str.lower)),

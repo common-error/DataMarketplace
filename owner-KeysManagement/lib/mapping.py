@@ -15,7 +15,9 @@ class map():
             self.M = {}
 
     def add(self,_value):
-        if(_value not in self.M and _value != ""):
+        if(_value != ""):
+            if(_value  in self.M):
+                return self.M[_value]
             rndMap = ""
             while(True):
                 rndMap = os.urandom(self.bytes)

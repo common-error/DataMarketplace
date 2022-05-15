@@ -4,13 +4,13 @@
     <div class="container mt-2">
         <div class="input-group mb-3">
             <input type="text" id="buyResources" class="form-control" placeholder="Enter the resources to be purchased separated by ','" aria-label="Enter the resources to be purchased separated by ','" aria-describedby="button-addon2">
-            <button class="btn btn-outline-success UpdateCapList" type="button">Compra!</button>
+            <button class="btn btn-outline-success UpdateCapList" type="button">Buy</button>
         </div>
     </div>
     <div class="container mt-2">
         <div class="input-group mb-3">
             <input type="text" id="getKeysInput" class="form-control" placeholder="Enter the resources to be derived separated by ','" aria-label="Enter the resources to be derived separated by ','" aria-describedby="button-addon2">
-            <button class="btn btn-outline-success GetKeys" type="button" data-bs-toggle="modal" data-bs-target="#reg-modal">Get Keys</button>
+            <button class="btn btn-outline-success GetKeys" type="button" >Get Keys</button>
         </div>
     </div>
 
@@ -64,6 +64,8 @@
           </div>
         </div>
       </div>
+
+      <div id="test"></div>
     
     <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
     <script src="{{ url_for('static',filename='js/logic.js')}}"></script>
