@@ -126,9 +126,9 @@ class KDS():
         idResource = self.map.get(_resource)
         return idResource,self.G.nodes[idResource]["key"]
 
-    def save(self,_path=DEFAULTPATH):
+    def save(self,_path=DEFAULTPATH,_pubKey = "",_baseUrl=""):
         nx.write_gml(self.G,_path)
-        self.map.save()
+        self.map.save(_pubKey=_pubKey,_baseUrl=_baseUrl)
     
     def _byte_xor(self,ba1, ba2):
         return bytes([_a ^ _b for _a, _b in zip(ba1, ba2)])

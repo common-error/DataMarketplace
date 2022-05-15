@@ -10,8 +10,8 @@ window.timeDelta = []
 
 //-----------------------------------------------------
 // data for testing
-window.resourcesToBuy = ["a"]
-window.userKey = ""
+window.resourcesToBuy = []
+window.secretKey = ""
 //-----------------------------------------------------
 
 // VARIABLES
@@ -67,14 +67,14 @@ const ABI = [
       {
         "components": [
           {
-            "internalType": "bytes32",
+            "internalType": "bytes2",
             "name": "from",
-            "type": "bytes32"
+            "type": "bytes2"
           },
           {
-            "internalType": "bytes32",
+            "internalType": "bytes2",
             "name": "to",
-            "type": "bytes32"
+            "type": "bytes2"
           },
           {
             "internalType": "bytes32",
@@ -147,14 +147,14 @@ const ABI = [
       {
         "components": [
           {
-            "internalType": "bytes32",
+            "internalType": "bytes2",
             "name": "from",
-            "type": "bytes32"
+            "type": "bytes2"
           },
           {
-            "internalType": "bytes32",
+            "internalType": "bytes2",
             "name": "to",
-            "type": "bytes32"
+            "type": "bytes2"
           },
           {
             "internalType": "bytes32",
@@ -199,9 +199,9 @@ const ABI = [
   {
     "inputs": [
       {
-        "internalType": "bytes32",
+        "internalType": "bytes2",
         "name": "_from",
-        "type": "bytes32"
+        "type": "bytes2"
       }
     ],
     "name": "getTokens",
@@ -209,9 +209,9 @@ const ABI = [
       {
         "components": [
           {
-            "internalType": "bytes32",
+            "internalType": "bytes2",
             "name": "id",
-            "type": "bytes32"
+            "type": "bytes2"
           },
           {
             "internalType": "bytes32",
@@ -297,53 +297,60 @@ async function getCapList(){
                 return
               })
   console.log(result)
-
+  
+  
+  document.getElementById('modalData').textContent = result
+  document.getElementById('modalTitle').textContent = "Bought Resources"
   return result
 }
 
 async function updateCapList(){
-  cap = _capHash(await getCapList())
-  new_cap = window.resourcesToBuy
-  console.log("Buying : "+new_cap)
-
-  data_to_upload = []
-  for (const el of new_cap){
-    hash = sha3_256(el)
-    if (!cap.includes(hash)){data_to_upload.push(el)}
-  }
-
-  const tx = contract.methods.buyResources(data_to_upload)
-  const gas = await tx.estimateGas({from: window.userWalletAddress})
-  console.log("Estimated gas: "+gas)
-  const gasPrice = await window.web3.eth.getGasPrice()
-  const data = tx.encodeABI()
-  const nonce = await window.web3.eth.getTransactionCount(window.userWalletAddress)
-  const networkId = await window.web3.eth.net.getId()
-
-  var params= [
-    {
-      from : window.userWalletAddress,
-      to : contractAddress,
-      data,
-      gas : gas.toString(),
-      gasPrice: "350000000",
-      nonce:nonce.toString(),
-      chainId: networkId.toString(),
-      value:(100).toString()
-    },
-  ]
-
-  const txhash = await window.ethereum.request({
-    method: 'eth_sendTransaction',
-    params
-  }).catch((e) => {
-    console.log(e.message)
-  })
-
   
-  var txGas = (await web3.eth.getTransaction(txhash))//.gas
-  //window.TestGas.push(txGas)
-  console.log(txGas)
+  new_cap = document.getElementById('buyResources').value
+  if(new_cap){
+    cap = _capHash(await getCapList())
+    new_cap = new_cap.split(",").map(String)
+    console.log("Buying : "+new_cap)
+  
+    data_to_upload = []
+    for (const el of new_cap){
+      hash = sha3_256(el)
+      if (!cap.includes(hash)){data_to_upload.push(el)}
+    }
+  
+    const tx = contract.methods.buyResources(data_to_upload)
+    const gas = await tx.estimateGas({from: window.userWalletAddress})
+    console.log("Estimated gas: "+gas)
+    const gasPrice = await window.web3.eth.getGasPrice()
+    const data = tx.encodeABI()
+    const nonce = await window.web3.eth.getTransactionCount(window.userWalletAddress)
+    const networkId = await window.web3.eth.net.getId()
+  
+    var params= [
+      {
+        from : window.userWalletAddress,
+        to : contractAddress,
+        data,
+        gas : gas.toString(),
+        gasPrice: "350000000",
+        nonce:nonce.toString(),
+        chainId: networkId.toString(),
+        value:(100).toString()
+      },
+    ]
+  
+    const txhash = await window.ethereum.request({
+      method: 'eth_sendTransaction',
+      params
+    }).catch((e) => {
+      console.log(e.message)
+    })
+  
+    
+    var txGas = (await web3.eth.getTransaction(txhash))//.gas
+    //window.TestGas.push(txGas)
+    console.log(txGas)
+  }
 }
 
 
@@ -400,21 +407,32 @@ async function updateCapListTesting(){
 }
 
 async function getKeys(){
-  data = _capHash(["1","4"])
+  document.getElementById('modalData').textContent = ""
+  document.getElementById('modalTitle').textContent = "Resource Keys"
+  data = document.getElementById('getKeysInput').value
   
-  Keys = []
-  var root = await contract.methods.getTokens(window.userWalletAddress)
-  .call()
-  .catch((e) => {
-    console.error(e.message)
-    return
-  })
-  root = _dataToStruct(root)
-  root = root.filter((obj) => obj.token !== "0x0000000000000000000000000000000000000000000000000000000000000000");
-  
-  res = await getKeysFromRequestedData(data,window.userKey,root[0],Keys)
-  //res = await getAllKeys(window.userKey,root[0],Keys)
-  console.log(Keys)
+  if(data && window.secretKey){
+    data = data.split(",").map(String)
+    data = _capHash(data)
+    debugger
+    Keys = []
+    var root = await contract.methods.getTokens(window.userWalletAddress)
+    .call()
+    .catch((e) => {
+      console.error(e.message)
+      return
+    })
+    root = _dataToStruct(root)
+    root = root.filter((obj) => obj.token !== "0x0000000000000000000000000000000000000000000000000000000000000000");
+    
+    res = await getKeysFromRequestedData(data,window.secretKey,root[0],Keys)
+    //res = await getAllKeys(window.userKey,root[0],Keys)
+    console.log(Keys)
+
+    document.getElementById('modalData').textContent = Keys
+  }
+
+
 }
 
 async function getAllKeys(_privKey, _node,_dictKeys){
@@ -529,9 +547,9 @@ function _byte_xor(_ba1,_ba2){
 }
 
 function getprivKey(){
-  window.userKey = document.getElementById('privKey').value
+  window.secretKey = document.getElementById('privKey').value
   
-  if(window.userKey != ""){
+  if(window.secretKey != ""){
     privKeyButton.classList.remove("btn-outline-danger")
     privKeyButton.classList.add("btn-outline-success")
     document.getElementById('privKey').value = ""
@@ -581,7 +599,7 @@ window.addEventListener('DOMContentLoaded',() => {
 function _capHash(capabilityList){
   hashed_res = []
   for (const el of capabilityList){
-    hashed_res.push(sha3_256(el))
+    hashed_res.push(mapping[el])
   }
   
   return hashed_res
@@ -617,3 +635,5 @@ String.prototype.toHHMMSS = function () {
   if (seconds < 10) {seconds = "0"+seconds;}
   return hours+':'+minutes+':'+seconds;
 }
+
+

@@ -32,3 +32,14 @@ class Contract(Resource):
         })
         with open('contractAddress.pkl','wb') as f:
                 pickle.dump(dataToSave,f)
+
+
+class Mapping(Resource):
+
+    def post(self,address):
+
+        dataToSave = json.dumps({
+            "address":request.form['map']
+        })
+        with open('mapping.pkl','wb') as f:
+                pickle.dump(dataToSave,f)

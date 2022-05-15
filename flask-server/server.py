@@ -21,12 +21,17 @@ api = Api(app, prefix="/api/v1/")
 
 api.add_resource(utils.Data,"addResources/<string:address>")
 api.add_resource(utils.Contract,"addContract/<string:address>")
+api.add_resource(utils.Mapping,"mapping/<string:address>")
 
 @app.route('/')
 
 def index():
     loaded_CtcAddress = {}
     distinct_el = {}
+    mapping = {}
+
+    if(os.path.exists('mapping.pkl')):
+        mapping = json.loads(pickle.load(open('mapping.pkl','rb')))
 
     if os.path.exists('dictionary.pkl'):
         loaded_dict = json.loads(pickle.load(open('dictionary.pkl', 'rb')))
@@ -45,4 +50,4 @@ def index():
    
 
 
-    return render_template("index.html",data=distinct_el,addrs=loaded_CtcAddress)
+    return render_template("index.html",data=distinct_el,addrs=loaded_CtcAddress,map=mapping)

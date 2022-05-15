@@ -1,9 +1,33 @@
-<nav class="navbar navbar-light bg-light">
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
   <div class="container-fluid">
     <a class="navbar-brand mb-0 h1" href="{{url_for('index')}}">Catalogue</a>
-    <span class="navbar-brand" id="contractAddress">{{addrs['address']}}</span>
-    <form class="d-flex">
-      <button class="btn btn-outline-success me-2 connectoToMetaMask" type="button">Connect MetaMask</button>
-    </form>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Utilities
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <li class="nav-item">
+              <a class="nav-link active getCapList" data-bs-toggle="modal" data-bs-target="#reg-modal" aria-current="page" href="#">Get Capability List</a>
+            </li>
+            <div class="dropdown-divider"></div>
+            <li class="nav-item">
+              <div class="input-group p-2">
+                <input type="text" id="privKey" class="form-control" placeholder="Enter the secret key to access the purchased resources" aria-label="Enter the secret key to access the purchased resources" aria-describedby="button-addon2">
+                <button class="btn btn-outline-secondary btn-outline-danger privKeyBTN" type="button">Imposta</button>
+              </div>
+            </li>
+          </ul>
+        </li>
+      </ul>
+      <span class="nav navbar-brand flex-fill justify-content-center" id="contractAddress">{{addrs['address']}}</span>
+      <form class="d-flex">
+        <button class="btn btn-outline-success me-2 connectoToMetaMask" type="button">Connect MetaMask</button>
+      </form>
+    </div>
   </div>
 </nav>

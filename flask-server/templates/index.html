@@ -3,15 +3,20 @@
 {%block content%}
     <div class="container mt-2">
         <div class="input-group mb-3">
-            <input type="text" id="privKey" class="form-control" placeholder="Inserisci la chiave privata" aria-label="Inserisci la chiave privata" aria-describedby="button-addon2">
-            <button class="btn btn-outline-secondary btn-outline-danger privKeyBTN" type="button">Imposta</button>
+            <input type="text" id="buyResources" class="form-control" placeholder="Enter the resources to be purchased separated by ','" aria-label="Enter the resources to be purchased separated by ','" aria-describedby="button-addon2">
+            <button class="btn btn-outline-success UpdateCapList" type="button">Compra!</button>
         </div>
     </div>
+    <div class="container mt-2">
+        <div class="input-group mb-3">
+            <input type="text" id="getKeysInput" class="form-control" placeholder="Enter the resources to be derived separated by ','" aria-label="Enter the resources to be derived separated by ','" aria-describedby="button-addon2">
+            <button class="btn btn-outline-success GetKeys" type="button" data-bs-toggle="modal" data-bs-target="#reg-modal">Get Keys</button>
+        </div>
+    </div>
+
+
     <div class="container mt-3">
-        <button class="btn btn-outline-success me-2 getCapList" type="button">Get Capability List</button>
-        <button class="btn btn-outline-success me-2 UpdateCapList" type="button">Update CapList | with Metamask</button>
         <button class="btn btn-outline-success me-2 UpdateCapListTesting" type="button">Update CapList | for testing</button>
-        <button class="btn btn-outline-success me-2 GetKeys" type="button">Get Keys</button>
         <button class="btn btn-outline-success me-2 PrintData" type="button">Print Results</button>
     </div>
     <div class="container mt-2">
@@ -44,6 +49,21 @@
 
 
 
+    <div class="modal fade" tabindex="-1" role="dialog" id="reg-modal">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="modalTitle"></h5>
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+                <div id="modalData"></div>
+            </div>
+          </div>
+        </div>
+      </div>
     
     <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
     <script src="{{ url_for('static',filename='js/logic.js')}}"></script>
@@ -51,5 +71,9 @@
     
     <script src="https://cdn.jsdelivr.net/gh/ethereumjs/browser-builds/dist/ethereumjs-tx/ethereumjs-tx-1.3.3.min.js"></script>
 
+    <script>
+         var mapping = JSON.parse('{{map["address"]|safe}}');
+
+    </script>
     
 {%endblock%}

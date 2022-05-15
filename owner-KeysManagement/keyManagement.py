@@ -60,7 +60,7 @@ if args.command == "add":
             response = requests.post(url,data_to_send)
             print(response.json())
     
-        kds.save()
+        kds.save(_pubKey = os.getenv("PUBLIC_KEY"),_baseUrl=os.getenv("BASE_URL"))
         kds.show(args.show)
 elif args.command == "update":
     if os.getenv("CONTRACT_ADDRESS") == "":
@@ -81,7 +81,7 @@ elif args.command == "update":
             rpt = chain.updateCatalogue(to_add)
             print("{},{},{}".format(args.alias[0],rpt["gasUsed"],len(to_add)))
 
-            kds.save()
+            kds.save(_pubKey = os.getenv("PUBLIC_KEY"),_baseUrl=os.getenv("BASE_URL"))
             kds.show(args.show)
         else:
             print("No update on capList!")

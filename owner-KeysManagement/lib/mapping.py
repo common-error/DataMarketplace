@@ -1,5 +1,6 @@
-import json,os
+import json,os,requests
 from os.path import exists
+from pickle import FALSE
 
 DEFAULTPATH = "../mapping.json"
 
@@ -31,9 +32,19 @@ class map():
         
         
 
-    def save(self, _mappingName = DEFAULTPATH):
+    def save(self, _mappingName = DEFAULTPATH,_pubKey = "",_baseUrl=""):
         with open(_mappingName, 'w') as f:
             json.dump(self.M, f)
+        
+        if _pubKey != "":
+            data_to_send = {
+                "map":json.dumps(self.M)
+            }
+
+            url = "{}mapping/{}".format(_baseUrl,_pubKey)
+
+            response = requests.post(url,data_to_send)
+
 
 
     def _readFile(self,_path):
@@ -43,5 +54,3 @@ class map():
         except Exception as ex:
             print(ex)      
         
-m = map()
-print(m.get(""))
