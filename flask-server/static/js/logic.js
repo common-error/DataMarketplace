@@ -415,7 +415,7 @@ async function getKeys(){
     data = data.split(",").map(String)
     data = _capHash(data)
     
-    let Keys = []
+    
     var root = await contract.methods.getTokens("0x"+mapping[window.userWalletAddress])
     .call()
     .catch((e) => {
@@ -426,7 +426,8 @@ async function getKeys(){
     root = root.filter((obj) => obj.token !== "0x0000000000000000000000000000000000000000000000000000000000000000");
     
     
-    await getKeysFromRequestedData(data,window.secretKey,root[0],Keys).then(result => console.log(result))
+    await getKeysFromRequestedData(data,window.secretKey,root[0]).then(result => console.log(result))
+    
     
     //res = await getAllKeys(window.userKey,root[0],Keys)
  
@@ -474,48 +475,55 @@ async function getAllKeys(_privKey, _node,_dictKeys){
   }
 
 
-async function getKeysFromRequestedData(_data, _privKey, _node,_dictKeys){
-  
-  if(_data.length === 0){
-    return _dictKeys
-  }
-  label = await contract.methods.getLabel(_node.id)
-  .call()
-  .catch((e) => {
-    console.error(e.message)
-  })
-  
-  token = (_node.token).slice(2)
-  label = label.slice(2)
-  nodeId = (_node.id).slice(2)
-  nodeKey = _createNodeKey(_privKey,label,token)
-
-  //console.log("id:\t"+nodeId,"key:\t"+nodeKey)
-  
-  if(_data.includes(nodeId)){
-    _dictKeys.push({
-      id: nodeId,
-      key: nodeKey
+async function getKeysFromRequestedData(_data, _privKey, _node,_result = []){
+  if(_data.length > 0){
+      label = await contract.methods.getLabel(_node.id)
+    .call()
+    .catch((e) => {
+      console.error(e.message)
     })
+    
+    token = (_node.token).slice(2)
+    label = label.slice(2)
+    nodeId = (_node.id).slice(2)
+    nodeKey = _createNodeKey(_privKey,label,token)
 
-    _data = _data.diff(nodeId)
-  }
-
-  var nodes = await contract.methods.getTokens("0x"+nodeId)
-  .call()
-  .catch((e) => {
-    console.error(e.message)
-  })
-  childrens = _dataToStruct(nodes)
-
-  for(const child of childrens){
-    if(child.token != "0x0000000000000000000000000000000000000000000000000000000000000000"){
-      child_dict = []
-      getKeysFromRequestedData(_data,nodeKey,child,_dictKeys)
+    //console.log("id:\t"+nodeId,"key:\t"+nodeKey)
+    
+    if(_data.includes(nodeId)){
+      _result.push( {
+        id: nodeId,
+        key: nodeKey
+      })
+      _data = _data.diff(nodeId)
     }
+
+    
+    var nodes = await contract.methods.getTokens("0x"+nodeId)
+    .call()
+    .catch((e) => {
+      console.error(e.message)
+    })
+    childrens = _dataToStruct(nodes)
+    
+    if(childrens.length > 0){
+      child_dict = []
+      for(const child of childrens){
+        if(child.token != "0x0000000000000000000000000000000000000000000000000000000000000000"){
+          _result = await getKeysFromRequestedData(_data,nodeKey,child,_result)
+          
+        }
+      }
+    }
+
   }
-  return _dictKeys
+  
+
+  return _result
 }
+  
+  
+
 
 function _createNodeKey(_privKey,_label,_token){
   xor_Kl = bytesToHex(_byte_xor(hexToBytes(_privKey) , hexToBytes(_label)))
