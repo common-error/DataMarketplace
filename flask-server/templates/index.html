@@ -10,7 +10,7 @@
     <div class="container mt-2">
         <div class="input-group mb-3">
             <input type="text" id="getKeysInput" class="form-control" placeholder="Enter the resources to be derived separated by ','" aria-label="Enter the resources to be derived separated by ','" aria-describedby="button-addon2">
-            <button class="btn btn-outline-success GetKeys" type="button" >Get Keys</button>
+            <button class="btn btn-outline-success GetKeys" type="button"  data-bs-toggle="modal" data-bs-target="#modal-keys">Get Keys</button>
         </div>
     </div>
 
@@ -49,23 +49,46 @@
 
 
 
-    <div class="modal fade" tabindex="-1" role="dialog" id="reg-modal">
+    <div class="modal fade" tabindex="-1" role="dialog" id="modal-cap">
         <div class="modal-dialog" role="document">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title" id="modalTitle"></h5>
+              <h5 class="modal-title" id="modal-cap-Title"></h5>
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>
             <div class="modal-body">
-                <div id="modalData"></div>
+                <div id="modal-cap-Data"></div>
             </div>
           </div>
         </div>
-      </div>
+    </div>
 
-      <div id="test"></div>
+    <div class="modal fade" tabindex="-1" role="dialog" id="modal-keys">
+        <div class="modal-dialog modal-lg" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="modal-keys-Title"></h5>
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+                <table class="table text-break" id="modal-keys-Data">
+                    <thead>
+                      <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">KEY</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                  </table>
+            </div>
+          </div>
+        </div>
+    </div>
     
     <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
     <script src="{{ url_for('static',filename='js/logic.js')}}"></script>

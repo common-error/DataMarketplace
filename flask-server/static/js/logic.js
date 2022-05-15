@@ -299,8 +299,8 @@ async function getCapList(){
   console.log(result)
   
   
-  document.getElementById('modalData').textContent = result
-  document.getElementById('modalTitle').textContent = "Bought Resources"
+  document.getElementById('modal-cap-Data').textContent = result
+  document.getElementById('modal-cap-Title').textContent = "Bought Resources"
   return result
 }
 
@@ -407,8 +407,7 @@ async function updateCapListTesting(){
 }
 
 async function getKeys(){
-  document.getElementById('modalData').textContent = ""
-  document.getElementById('modalTitle').textContent = "Resource Keys"
+  document.getElementById('modal-keys-Title').textContent = "Resource Keys"
   data = document.getElementById('getKeysInput').value
   
   if(data && window.secretKey){
@@ -426,7 +425,21 @@ async function getKeys(){
     root = root.filter((obj) => obj.token !== "0x0000000000000000000000000000000000000000000000000000000000000000");
     
     
-    await getKeysFromRequestedData(data,window.secretKey,root[0]).then(result => console.log(result))
+    await getKeysFromRequestedData(data,window.secretKey,root[0]).then(result => {
+      var table = document.getElementById('modal-keys-Data')
+      while(table.rows.length > 1){
+        table.deleteRow(1);
+      }
+
+      for(let idx = 0; idx <= result.length-1; idx++){
+        id = Object.keys(mapping).find(key => mapping[key] === result[idx]['id']);
+        var row = table.insertRow(idx+1);
+        var idR = row.insertCell(0);
+        var keyR = row.insertCell(1);
+        idR.innerHTML = id;
+        keyR.innerHTML = result[idx]['key'];
+      }
+    })
     
     
     //res = await getAllKeys(window.userKey,root[0],Keys)
