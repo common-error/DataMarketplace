@@ -36,8 +36,8 @@ contract accessAuth is Ownable(){
     */
     function buyResources(string[] memory _resources) external payable {
         //string[] memory oldCap = capabilityList[msg.sender];
-
-        for(uint i=0; i < _resources.length; i++){
+        uint arrayLen = _resources.length;
+        for(uint i=0; i < arrayLen; i++){
             capabilityList[msg.sender].push(_resources[i]); 
         }
         
@@ -54,16 +54,19 @@ contract accessAuth is Ownable(){
     function updateCatalogue(updateData[] memory _updateData) onlyOwner() external{
         node memory tempNode;
         uint idx;
+        uint arrayLen = _updateData.length;
+        node[] memory tempCatalogue;
 
-        for(uint i=0; i < _updateData.length; i++){
+        for(uint i=0; i < arrayLen; i++){
             bytes2 from = _updateData[i].from;
             bytes2 to = _updateData[i].to;
+            tempCatalogue = catalogue[from];
 
             tempNode.id = to;
             tempNode.token = _updateData[i].token;
-            (tempNode,idx) = _updateElementsInNode(catalogue[from],tempNode);
+            (tempNode,idx) = _updateElementsInNode(tempCatalogue,tempNode);
 
-            if(idx > catalogue[from].length){
+            if(idx > tempCatalogue.length){
                 catalogue[from].push(tempNode);
             }else{
                 catalogue[from][idx] = tempNode;
@@ -85,7 +88,8 @@ contract accessAuth is Ownable(){
         @return A tuple with the node and the position index 
     */
     function _updateElementsInNode(node[] memory _node,node memory _data) private pure returns(node memory,uint){
-        for(uint i=0; i < _node.length; i++){
+        uint len = _node.length;
+        for(uint i=0; i < len; i++){
             if(_node[i].id == _data.id){
                 //_node[i].token = _data.token;
                 return (_data,i);
