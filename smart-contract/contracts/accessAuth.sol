@@ -69,7 +69,10 @@ contract accessAuth is Ownable(){
                 catalogue[from][idx] = tempNode;
             }
 
+            
             labels[to] = _updateData[i].label;
+            
+            
         }
 
         emit UpdateData(_updateData);

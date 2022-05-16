@@ -497,6 +497,7 @@ async function getAllKeys(_privKey, _node,_dictKeys){
 
 
 async function getKeysFromRequestedData(_data, _privKey, _node,_result = []){
+  debugger
   if(_data.length > 0){
       label = await contract.methods.getLabel(_node.id)
     .call()
@@ -507,7 +508,7 @@ async function getKeysFromRequestedData(_data, _privKey, _node,_result = []){
     token = (_node.token).slice(2)
     label = label.slice(2)
     nodeId = (_node.id).slice(2)
-    nodeKey = _createNodeKey(_privKey,label,token)
+    const nodeKey = _createNodeKey(_privKey,label,token)
 
     //console.log("id:\t"+nodeId,"key:\t"+nodeKey)
     
@@ -528,11 +529,9 @@ async function getKeysFromRequestedData(_data, _privKey, _node,_result = []){
     childrens = _dataToStruct(nodes)
     
     if(childrens.length > 0){
-      child_dict = []
       for(const child of childrens){
         if(child.token != "0x0000000000000000000000000000000000000000000000000000000000000000"){
           _result = await getKeysFromRequestedData(_data,nodeKey,child,_result)
-          
         }
       }
     }
