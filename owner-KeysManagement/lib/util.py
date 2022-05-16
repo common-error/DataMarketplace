@@ -25,4 +25,4 @@ def modifiedResources(_oldCatalogue,_newCatalogue):
 
     ret.extend(to_add)
     
-    return ret
+    return ret,len(to_remove),len(to_add)

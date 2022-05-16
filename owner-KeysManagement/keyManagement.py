@@ -76,10 +76,10 @@ elif args.command == "update":
         if(kds.enforcePurchase(args.address[0],args.alias[0],resources) != None):
             new_catalogue = set(kds.generateCatalogue())
 
-            to_add = util.modifiedResources(old_catalogue,new_catalogue)
+            (to_add,num_removed,num_added) = util.modifiedResources(old_catalogue,new_catalogue)
             
             rpt = chain.updateCatalogue(to_add)
-            print("{},{},{}".format(args.alias[0],rpt["gasUsed"],len(to_add)))
+            print("{},{},{},{}".format(args.alias[0],rpt["gasUsed"],num_removed,num_added))
 
             kds.save(_pubKey = os.getenv("PUBLIC_KEY"),_baseUrl=os.getenv("BASE_URL"))
             kds.show(args.show)

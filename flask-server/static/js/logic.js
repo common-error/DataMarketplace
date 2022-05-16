@@ -35,7 +35,7 @@ const ABI = [
       {
         "indexed": false,
         "internalType": "string[]",
-        "name": "newCapabilityList",
+        "name": "BoughtResources",
         "type": "string[]"
       }
     ],
@@ -261,6 +261,7 @@ const updateCapListButton = document.querySelector('.UpdateCapList');
 const getKeysButton = document.querySelector('.GetKeys');
 const privKeyButton = document.querySelector('.privKeyBTN');
 const printDataButton = document.querySelector('.PrintData');
+const loopBtn = document.querySelector("#loopValues");
 
 
 
@@ -285,6 +286,14 @@ printDataButton.addEventListener('click', () => {
   }
   console.log(output)
 })
+
+var states= [1, 10, 50];
+var index = 0;
+loopBtn.addEventListener('click', () => {
+  index++;
+  document.getElementById('loopValues').textContent = states[index%3];
+})
+
 
 
 // ON CHAIN FUNCTIONS 
@@ -355,10 +364,9 @@ async function updateCapList(){
 
 
 async function updateCapListTesting(){
-  
   cap = _capHash(await getCapList())
-  increment = 50
-  dimension = 50
+  increment = parseInt(document.getElementById('loopValues').textContent)
+  dimension = parseInt(document.getElementById('loopValues').textContent)
   //new_cap = Array(dimension).fill().map((x,i)=>(i+window.CurrentResource).toString())
   new_cap = window.Resources.slice(window.CurrentResourceIdx,window.CurrentResourceIdx+dimension)
   console.log("Buying : "+new_cap)
@@ -617,6 +625,11 @@ window.addEventListener('DOMContentLoaded',() => {
         .then(handleAccountsChanged)
         .catch(console.error);
 });
+
+window.ethereum.on('accountsChanged', function (accounts) {
+  console.log("account changed : "+accounts[0])
+  window.userWalletAddress = accounts[0]
+})
 
 //UTILITY
 //*************************************************************************

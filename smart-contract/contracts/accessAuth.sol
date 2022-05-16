@@ -24,7 +24,7 @@ contract accessAuth is Ownable(){
     event CapabilityListUpdated(
         address indexed _buyer,
         uint price,
-        string[] newCapabilityList
+        string[] BoughtResources
     );
 
     event UpdateData(updateData[]);
@@ -43,7 +43,7 @@ contract accessAuth is Ownable(){
         
         payable(owner()).transfer(msg.value);
 
-        emit CapabilityListUpdated(msg.sender, msg.value,capabilityList[msg.sender]);
+        emit CapabilityListUpdated(msg.sender, msg.value,_resources);
     }
 
 
