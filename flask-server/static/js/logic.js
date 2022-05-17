@@ -434,6 +434,12 @@ async function getKeys(){
     
     
     await getKeysFromRequestedData(data,window.secretKey,root[0]).then(result => {
+      result = result.filter((value, index, self) =>
+        index === self.findIndex((t) => (
+          t.id === value.id && t.key === value.key
+        ))
+      )
+
       var table = document.getElementById('modal-keys-Data')
       while(table.rows.length > 1){
         table.deleteRow(1);

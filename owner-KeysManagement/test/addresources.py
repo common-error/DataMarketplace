@@ -100,7 +100,6 @@ user = z
 resources = ["c","d","e","f"]
 tx(user,resources)
 
-input()
 
 
 

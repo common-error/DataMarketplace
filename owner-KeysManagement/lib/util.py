@@ -23,6 +23,7 @@ def modifiedResources(_oldCatalogue,_newCatalogue):
     for fr,to,token,label in to_remove:
         ret.append((fr,to,"",""))
 
-    print(ret)
+    
     ret.extend(to_add)
-    return ret,len(to_remove),len(to_add)
+    print(ret)
+    return to_add,len(to_remove),len(to_add)
