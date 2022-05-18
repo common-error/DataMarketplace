@@ -355,7 +355,7 @@ async function updateCapList(){
       console.log(e.message)
     })
   
-    
+    console.log(txhash)
     var txGas = (await web3.eth.getTransaction(txhash))//.gas
     //window.TestGas.push(txGas)
     console.log(txGas)
@@ -388,9 +388,9 @@ async function updateCapListTesting(){
     to: contractAddress,
     value: web3.utils.toHex(web3.utils.toWei('0', 'ether')),
     gasLimit: web3.utils.toHex(2100000),
-    gasPrice: web3.utils.toHex(web3.utils.toWei('57', 'wei')),
+    gasPrice: web3.utils.toHex(web3.utils.toWei('1', 'wei')),
     data : data.encodeABI(),
-    value: web3.utils.toHex(web3.utils.toWei((6469331.115997997*dimension).toString(), 'gwei'))
+    value: web3.utils.toHex(web3.utils.toWei((540000*dimension).toString(), 'gwei'))
   }
   
 
@@ -399,18 +399,23 @@ async function updateCapListTesting(){
   tx.sign(privateKey)
   var serializedTx = tx.serialize()
 
-  time = Date.now()
+  txtTime = {}
+  time = Math.floor(Date.now()/1000)
   receipt = await window.web3.eth.sendSignedTransaction('0x'+serializedTx.toString('hex'))
 
+  txtTime['transactionHash'] = receipt['transactionHash']
+  txtTime['blockHash'] = receipt['blockHash']
   
   window.TestGas.push(receipt["gasUsed"])
 
   //var txGas = (await web3.eth.getTransaction(receipt["transactionHash"]))
   var block = await web3.eth.getBlock(receipt["blockNumber"])
 
-  delta = (block["timestamp"] - time).toString()
-   console.log(time- block["timestamp"])
-  window.timeDelta.push(delta.toHHMMSS())
+  delta = (block["timestamp"]) - time
+  txtTime['delta'] = delta.toHHMMSS()
+  console.log(txtTime['delta'])
+
+  window.timeDelta.push(txtTime)
 
 }
 
@@ -666,7 +671,7 @@ function bytesToHex(bytes) {
   return hex.join("");
 }
 
-String.prototype.toHHMMSS = function () {
+Number.prototype.toHHMMSS = function () {
   var sec_num = parseInt(this, 10); // don't forget the second param
   var hours   = Math.floor(sec_num / 3600);
   var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
@@ -676,6 +681,15 @@ String.prototype.toHHMMSS = function () {
   if (minutes < 10) {minutes = "0"+minutes;}
   if (seconds < 10) {seconds = "0"+seconds;}
   return hours+':'+minutes+':'+seconds;
+}
+
+function _deltaToCSV(){
+  out =""
+  for(const el of window.timeDelta){
+    out += el['transactionHash']+","+el['blockHash']+","+el["delta"]+"\n"
+  }
+
+  console.log(out)
 }
 
 
