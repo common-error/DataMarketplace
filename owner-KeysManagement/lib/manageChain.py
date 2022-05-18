@@ -1,4 +1,5 @@
 import json,os,sys
+from pickle import FALSE
 from numpy import byte
 from web3 import Web3
 from dotenv import load_dotenv
@@ -9,7 +10,7 @@ PATH_TO_ABI = "../smart-contract/build/contracts/accessAuth.json"
 
 class chain():
 
-    def __init__(self,_pathToAbi=PATH_TO_ABI):
+    def __init__(self,_pathToAbi=PATH_TO_ABI,_ropsten = False):
         data = json.load(open(_pathToAbi))
 
         self.abi = data['abi']
@@ -18,10 +19,17 @@ class chain():
             "privKey":os.getenv("PRIVATE_KEY"),
             "pubKey": os.getenv("PUBLIC_KEY")
         }
-        self.network = {
-            "url": os.getenv("GANACHE_URL"),
-            "chainId": int(os.getenv("CHAIN_ID"))
-        }
+        if(_ropsten):
+            self.ropsten = True
+            self.network = {
+                "url": os.getenv("ROPSTEN")
+            }
+        else:
+            self.ropsten = False
+            self.network = {
+                "url": os.getenv("GANACHE_URL"),
+                "chainId": int(os.getenv("CHAIN_ID"))
+            }
 
         self.w3 = Web3(Web3.HTTPProvider(self.network["url"]))
 
@@ -37,12 +45,19 @@ class chain():
         #Get the latest transaction
         nonce = self.w3.eth.getTransactionCount(self.owner["pubKey"])
 
-        transaction = self.contract.constructor().buildTransaction({
-            "gasPrice":self.w3.eth.gas_price,
-            "chainId":self.network["chainId"],
-            "from":self.owner["pubKey"],
-            "nonce":nonce
-        })
+        if(self.ropsten):
+            transaction = self.contract.constructor().buildTransaction({
+                "gasPrice":self.w3.toWei('21', 'gwei'),
+                "from":self.owner["pubKey"],
+                "nonce":nonce
+            })
+        else:
+            transaction = self.contract.constructor().buildTransaction({
+                "gasPrice":self.w3.toWei('21', 'gwei'),
+                "chainId":self.network["chainId"],
+                "from":self.owner["pubKey"],
+                "nonce":nonce
+            })
 
         receipt = self._completeTransaction(transaction)
         self.contractAddress = receipt.contractAddress
@@ -63,12 +78,19 @@ class chain():
         
         nonce = self.w3.eth.getTransactionCount(self.owner["pubKey"])
 
-        transaction = contract.functions.updateCatalogue(_catalogue).buildTransaction({
-            "gasPrice":self.w3.eth.gas_price,
-            "chainId":self.network["chainId"],
-            "from":self.owner["pubKey"],
-            "nonce":nonce
-        })
+        if(self.ropsten):
+            transaction = contract.functions.updateCatalogue(_catalogue).buildTransaction({
+                "gasPrice":self.w3.toWei('21', 'gwei'),
+                "from":self.owner["pubKey"],
+                "nonce":nonce
+            })
+        else:
+            transaction = contract.functions.updateCatalogue(_catalogue).buildTransaction({
+                "gasPrice":self.w3.toWei('21', 'gwei'),
+                "chainId":self.network["chainId"],
+                "from":self.owner["pubKey"],
+                "nonce":nonce
+            })
 
         return self._completeTransaction(transaction)
 

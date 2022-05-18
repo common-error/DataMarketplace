@@ -24,6 +24,7 @@ def bytes_address(arg_value, pat=re.compile(r"^0x[a-fA-F0-9]{40}$")):
 parser = argparse.ArgumentParser()
 
 parser.add_argument("-s","--show",action="store_true",help="Show the current visual representation of the graph")
+parser.add_argument("-r","--ropsten",action="store_true",help="Use the ropsten test network")
 subparser = parser.add_subparsers(dest = "command")
 add_resources = subparser.add_parser("add",help="Used when there is the need to add new resources")
 add_resources.add_argument("path",nargs=1,type=input_file,help="Path to the json file containing the resources")
@@ -68,7 +69,7 @@ elif args.command == "update":
         sys.exit(0)
 
     if args.address:
-        chain = manageChain.chain()
+        chain = manageChain.chain(_ropsten = args.ropsten)
         resources = chain.getCapabilityListByAddress(args.address[0])   
         print("Current cap list: {}".format(resources))
         
@@ -86,7 +87,7 @@ elif args.command == "update":
         else:
             print("No update on capList!")
 elif args.command == "deploy":
-        chain = manageChain.chain()
+        chain = manageChain.chain(_ropsten = args.ropsten)
         receipt = chain.deployContract()
 
         contractAddress = receipt.contractAddress
