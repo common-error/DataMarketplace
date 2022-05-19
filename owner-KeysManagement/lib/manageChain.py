@@ -47,7 +47,7 @@ class chain():
 
         if(self.ropsten):
             transaction = self.contract.constructor().buildTransaction({
-                "gasPrice":self.w3.toWei('21', 'gwei'),
+                "gasPrice":self.w3.toWei('50', 'gwei'),
                 "from":self.owner["pubKey"],
                 "nonce":nonce
             })

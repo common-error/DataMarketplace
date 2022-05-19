@@ -1,6 +1,6 @@
 const ropsten_url = "https://ropsten.infura.io/v3/36f070bc6251423c8466175d6a49ec77"
 const ganache_url = "http://127.0.0.1:8545"
-window.web3 = new Web3(ganache_url);
+window.web3 = new Web3(ropsten_url);
 window.userWalletAddress = null
 window.TestGas = []
 window.CurrentResourceIdx = 0
@@ -271,7 +271,7 @@ const loopBtn = document.querySelector("#loopValues");
 //*************************************************************************
 getCapListButton.addEventListener('click', () => {getCapList()})
 updateCapListTestingButton.addEventListener('click', async () => {
-  while(window.CurrentResourceIdx < 100){
+  while(window.CurrentResourceIdx < 1){
     await updateCapListTesting()
   }
 
@@ -363,7 +363,6 @@ async function updateCapList(){
   }
 }
 
-
 async function updateCapListTesting(){
   cap = _capHash(await getCapList())
   increment = parseInt(document.getElementById('loopValues').textContent)
@@ -378,25 +377,29 @@ async function updateCapListTesting(){
     hash = sha3_256(el)
     if (!cap.includes(hash)){data_to_upload.push(el)}
   }
-
   
   const nonce = await window.web3.eth.getTransactionCount(window.userWalletAddress)
   data = contract.methods.buyResources(data_to_upload)
+  const gasPrice = await window.web3.eth.getGasPrice()
   const gas = await data.estimateGas({from: window.userWalletAddress})
   console.log("Estimated gas: "+gas)
   txObj = {
-    nonce: web3.utils.toHex(nonce),
+    nonce: web3.utils.toHex(parseInt(nonce)),
     to: contractAddress,
-    value: web3.utils.toHex(web3.utils.toWei('0', 'ether')),
+    //maxFeePerGas : (2 * parseInt(gasPrice)*10**-9) +  parseInt('2.5'),
+    maxPriorityFeePerGas : web3.utils.toHex(web3.utils.toWei('30','gwei')),
+    //gas: gas,
+    //value: web3.utils.toWei('1', 'wei'),
+    //gasLimit: web3.utils.toHex(2100000),
+    gasPrice: web3.utils.toHex(gasPrice),
     gasLimit: web3.utils.toHex(2100000),
-    gasPrice: web3.utils.toHex(web3.utils.toWei('1', 'wei')),
     data : data.encodeABI(),
-    value: web3.utils.toHex(web3.utils.toWei((540000*dimension).toString(), 'gwei'))
+    //value: web3.utils.toHex(web3.utils.toWei((540000*dimension).toString(), 'gwei'))
   }
   
 
   var tx = new ethereumjs.Tx(txObj)
-  privateKey = new ethereumjs.Buffer.Buffer('6cbed15c793ce57650b9877cf6fa156fbef513c4e6134f022a85b1ffdd59b2a1', 'hex');
+  privateKey = new ethereumjs.Buffer.Buffer('3d9c07817ad0af82ef569eb8954c689b7ca8745e9016a29643f534849181aed3', 'hex');
   tx.sign(privateKey)
   var serializedTx = tx.serialize()
 
@@ -404,6 +407,8 @@ async function updateCapListTesting(){
   time = Math.floor(Date.now()/1000)
   receipt = await window.web3.eth.sendSignedTransaction('0x'+serializedTx.toString('hex'))
 
+
+  console.log(receipt)
   txtTime['transactionHash'] = receipt['transactionHash']
   txtTime['blockHash'] = receipt['blockHash']
   
@@ -412,13 +417,16 @@ async function updateCapListTesting(){
   //var txGas = (await web3.eth.getTransaction(receipt["transactionHash"]))
   var block = await web3.eth.getBlock(receipt["blockNumber"])
 
-  delta = (block["timestamp"]) - time
+  console.log("Start Time: "+time.HumanTime())
+  console.log("End time: "+block['timestamp'].HumanTime())
+  delta = Math.abs((block["timestamp"]) - time)
   txtTime['delta'] = delta.toHHMMSS()
   console.log(txtTime['delta'])
 
   window.timeDelta.push(txtTime)
 
 }
+
 
 async function getKeys(){
   document.getElementById('modal-keys-Title').textContent = "Resource Keys"
@@ -682,6 +690,23 @@ Number.prototype.toHHMMSS = function () {
   if (minutes < 10) {minutes = "0"+minutes;}
   if (seconds < 10) {seconds = "0"+seconds;}
   return hours+':'+minutes+':'+seconds;
+}
+
+Number.prototype.HumanTime = function(){
+  let unix_timestamp = this
+// Create a new JavaScript Date object based on the timestamp
+// multiplied by 1000 so that the argument is in milliseconds, not seconds.
+var date = new Date(unix_timestamp * 1000);
+// Hours part from the timestamp
+var hours = date.getHours();
+// Minutes part from the timestamp
+var minutes = "0" + date.getMinutes();
+// Seconds part from the timestamp
+var seconds = "0" + date.getSeconds();
+
+// Will display time in 10:30:23 format
+return formattedTime = hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
+
 }
 
 function _deltaToCSV(){
