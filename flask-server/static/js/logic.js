@@ -271,7 +271,7 @@ const loopBtn = document.querySelector("#loopValues");
 //*************************************************************************
 getCapListButton.addEventListener('click', () => {getCapList()})
 updateCapListTestingButton.addEventListener('click', async () => {
-  while(window.CurrentResourceIdx < 1){
+  while(window.CurrentResourceIdx < 20){
     await updateCapListTesting()
   }
 
@@ -387,12 +387,11 @@ async function updateCapListTesting(){
     nonce: web3.utils.toHex(parseInt(nonce)),
     to: contractAddress,
     //maxFeePerGas : (2 * parseInt(gasPrice)*10**-9) +  parseInt('2.5'),
-    maxPriorityFeePerGas : web3.utils.toHex(web3.utils.toWei('30','gwei')),
+    maxPriorityFeePerGas : web3.utils.toHex(web3.utils.toWei('27000','gwei')),
     //gas: gas,
     //value: web3.utils.toWei('1', 'wei'),
-    //gasLimit: web3.utils.toHex(2100000),
-    gasPrice: web3.utils.toHex(gasPrice),
     gasLimit: web3.utils.toHex(2100000),
+    gasPrice: web3.utils.toHex(gasPrice),
     data : data.encodeABI(),
     //value: web3.utils.toHex(web3.utils.toWei((540000*dimension).toString(), 'gwei'))
   }
