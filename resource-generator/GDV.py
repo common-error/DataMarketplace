@@ -1,13 +1,15 @@
 from itertools import count
 import networkx as nx,random
 import json
-import matplotlib.pyplot as plt
 from random import choice
 from networkx.readwrite import json_graph
+from os.path import exists
+
+DEFAULTFILE = 'GDV.json'
 
 class GDV():
 
-    def __init__ (self,_numLabels,_maxNodesXlabel,_seed=0):
+    def generate(self,_numLabels,_maxNodesXlabel,_seed=0):
         self.labels = {}
         for idx,label in enumerate(range(_numLabels)):
             numNodes = random.randint(2,_maxNodesXlabel)
@@ -39,12 +41,24 @@ class GDV():
         out = json.dumps({ key:json_graph.node_link_data(self.labels[key]) for key in keys})
         with open('GDV.json', 'w') as f:
             f.write(out)
+        
+    def load(self,_file=DEFAULTFILE):
+        if(exists(_file)):
+            self.labels = {}
+            with open(_file,'r') as f:
+                data = json.load(f)
+                keys = list(data.keys())
+                for key in keys:
+                    self.labels[key] = json_graph.node_link_graph(data[key])
+        else:
+            print("file not found!")
     
     def _randomIdx(self, _len):
         return random.sample(range(_len),random.randint(0,_len))
             
 
 
-gdv = GDV(2,30)
-gdv.populate(50)
-gdv.save()
+gdv = GDV()
+#gdv.populate(50)
+gdv.load()
+gdv.show()
