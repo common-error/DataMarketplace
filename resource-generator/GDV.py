@@ -24,10 +24,6 @@ class SearchNot(UnaryOperation):
     def __repr__(self):
         return 'set().union(*[set(el) for el in nx.get_node_attributes(self.labels[{0}],"resources").values() if len(el) > 0]) - {1}'.format(self.label,self.operands)
 
-class SearchGreatThan(UnaryOperation):
-    def __repr__(self):
-        return 'set().union(*[set(nx.get_node_attributes(self.labels[{}],"resources")[el]) for el in list(nx.descendants(self.labels[{}], 2)) if len(nx.get_node_attributes(self.labels[{}],"resources")[el]) > 0])'.format(self.label)
-
 class SearchAnd(BinaryOperation):
     def __repr__(self):
         return '(' + ' & '.join(['{}'.format(oper) for oper in self.operands]) + ')'
