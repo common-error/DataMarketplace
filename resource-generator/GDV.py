@@ -12,8 +12,6 @@ DEFAULTFILE = 'GDV.json'
 class UnaryOperation(object):
     def __init__(self, tokens):
         self.op, self.operands = tokens[0]
-        st = str(tokens[0][1])
-        self.label = st[st.index("[")+1:st.index("]")]
 
 class BinaryOperation(object):
     def __init__(self, tokens):
@@ -22,7 +20,8 @@ class BinaryOperation(object):
 
 class SearchNot(UnaryOperation):
     def __repr__(self):
-        return 'set().union(*[set(el) for el in nx.get_node_attributes(self.labels[{0}],"resources").values() if len(el) > 0]) - {1}'.format(self.label,self.operands)
+        
+        return 'set().union(*[res for label in self.labels.values() for res in nx.get_node_attributes(label,"resources").values() if len(res) > 0 ]) - {0}'.format(self.operands)
 
 class SearchAnd(BinaryOperation):
     def __repr__(self):
@@ -37,13 +36,17 @@ class SearchTerm(object):
         self.term = tokens[0]
 
     def __repr__(self):
-        'instead of just the  term, we represent it as TAGS[term]'
-        return 'set(self.labels[\'{0}\'].nodes()[{2}]["resources"])'.format(self.term[0],self.term[1],self.term[2])
+        if self.term[1] == "=":
+            return 'set(self.labels[\'{0}\'].nodes()[{2}]["resources"])'.format(self.term[0],self.term[1],self.term[2])
+        elif self.term[1] == '>':
+            return "set().union(*[set(self.labels[\'{0}\'].nodes()[node]['resources']) for node in list(nx.descendants(self.labels[\'{0}\'],{2})) if len(self.labels[\'{0}\'].nodes()[node]['resources'])>0])".format(self.term[0],self.term[1],self.term[2])
+        elif self.term[1] == '>=':
+            return "set().union(*[set(self.labels[\'{0}\'].nodes()[node]['resources']) for node in list(nx.descendants(self.labels[\'{0}\'],{2})) if len(self.labels[\'{0}\'].nodes()[node]['resources'])>0] + self.labels[\'{0}\'].nodes()[{2}]['resources'])".format(self.term[0],self.term[1],self.term[2])
 
 class GDV():
 
     def __init__(self):
-        operator = pp.Regex("=").setName("operator")
+        operator = pp.Regex(">=|>|=").setName("operator")
         number = pp.Regex(r"[+-]?\d+(:?\.\d*)?(:?[eE][+-]?\d+)?")
         identifier = pp.Word(pp.alphas, pp.alphanums + "_")
         comparison_term = identifier | number 
@@ -69,6 +72,7 @@ class GDV():
             numNodes = random.randint(2,_maxNodesXlabel)
             name = "label{}".format(idx)
             self.labels[name] = nx.random_tree(n=numNodes, seed=_seed)
+            self.labels[name] = nx.DiGraph([(u,v) for (u,v) in self.labels[name].edges() if u<v])
             node_list = list(self.labels[name].nodes())
             count_dict = { k:{'resources':[]} for k in node_list}
             nx.set_node_attributes(self.labels[name], count_dict)
@@ -87,8 +91,8 @@ class GDV():
         
 
     def show(self):
-        #[print(nx.forest_str(tree)) for tree in self.labels.values()]
-        [print(json.dumps(json_graph.node_link_data(tree),indent=2)) for tree in self.labels.values()]
+        [print("{}\n{}".format(key,nx.forest_str(self.labels[key]))) for key in self.labels.keys()]
+        #[print(json.dumps(json_graph.node_link_data(tree),indent=2)) for tree in self.labels.values()]
     
     def save(self):
         keys = list(self.labels.keys())
@@ -149,18 +153,27 @@ class GDV():
 
     def search(self,_exprString):
         #return self.labels[_label].nodes()[_value]['resources']
-
-        #return set().union(*[set(nx.get_node_attributes(self.labels['label0'],'resources')[el]) for el in list(nx.descendants(self.labels['label0'], 2)) if len(nx.get_node_attributes(self.labels['label0'],'resources')[el]) > 0])
         
         tokens = self.expr.parseString(_exprString)[0]
-        return eval(str(tokens))
+        return eval(str(tokens),{"self":self,"nx":nx})
         
                 
 
 
 gdv = GDV()
-#gdv.generate(20,200)
-#gdv.populate(500)
+#gdv.generate(2,50)
+#gdv.populate(30)
+#gdv.save()
 gdv.load()
 #gdv.exportResources()
 #print(gdv.search(input("Query: ")))
+
+#gdv.show()
+
+##TESTING
+print("Testing -> \t label0=0 \t\t\t{}".format(gdv.search("label0=0") == {20}))
+print("Testing -> \t label0=2 or label1=10 \t\t{}".format(gdv.search("label0=2 or label1=10") == {11, 13, 15}))
+print("Testing -> \t label0=2 and label1=10 \t{}".format(gdv.search("label0=2 and label1=10") == {11}))
+print("Testing -> \t not (label0=2 or label1=10) \t{}".format(gdv.search("not (label0=2 or label1=10)") == {0, 1, 3, 4, 5, 6, 8, 9, 14, 16, 18, 20, 25, 26, 28}))
+print("Testing -> \t label1>2 \t\t\t{}".format(gdv.search("label1>2") == {25, 3}))
+print("Testing -> \t label1>=2 \t\t\t{}".format(gdv.search("label1>=2") == {25, 3}))
