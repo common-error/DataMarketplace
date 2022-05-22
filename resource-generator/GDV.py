@@ -95,6 +95,42 @@ class GDV():
         out = json.dumps({ key:json_graph.node_link_data(self.labels[key]) for key in keys})
         with open('GDV.json', 'w') as f:
             f.write(out)
+
+    def exportResources(self):
+        resources = []
+        data = { 
+            "resources" : []
+        }
+        for label in self.labels.values():
+            tmp = set().union(*[set(el) for el in nx.get_node_attributes(label,"resources").values() if len(el) > 0])
+            resources.append(tmp)
+       
+        resources = set().union(*resources)
+
+        for res in resources:
+            resData = {
+                "id" : str(res),
+                "data" : str(bytes("risorsa "+str(res),"utf-8")),
+                "metadata" : self._getMetadata(res)
+            }
+            data['resources'].append(resData)
+
+        with open('resources.json', 'w') as f:
+            json.dump(data, f)
+    
+    def _getMetadata(self,_res):
+        metadata = {}
+
+        for label in self.labels.keys():
+            tmpRes = [x for x,y in self.labels[str(label)].nodes(data=True) if _res in y['resources']]
+            if len(tmpRes) > 0:
+                tmpRes = str(tmpRes[0])
+                metadata[str(label)] = tmpRes
+
+
+        return metadata
+
+
         
     def load(self,_file=DEFAULTFILE):
         if(exists(_file)):
@@ -123,6 +159,8 @@ class GDV():
 
 
 gdv = GDV()
-#gdv.populate(50)
+#gdv.generate(20,200)
+#gdv.populate(500)
 gdv.load()
-print(gdv.search(input("Query: ")))
+#gdv.exportResources()
+#print(gdv.search(input("Query: ")))
