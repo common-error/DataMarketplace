@@ -4,7 +4,9 @@ import os
 from dotenv import load_dotenv
 
 load_dotenv()
-PATH_TO_TRUFFLE = "../../smart-contract/build/contracts/"
+PATH_TO_TRUFFLE = "D:\\Users\\richi\\Desktop\\DataMarketplace\\smart-contract\\build\\contracts\\"
+#"../../smart-contract/build/contracts/"
+
 trufflefile = json.load(open(PATH_TO_TRUFFLE+"accessAuth.json"))
 
 abi = trufflefile['abi']
@@ -65,13 +67,13 @@ def tx(_user,_resources):
 
     print("{},{}".format(_user["lb"],tx_receipt["gasUsed"]))
 
-
-user = x
-resources = ["0","8"]
-tx(user,resources)
 """
-input()
+user = x
+resources = ["a","b"]
+tx(user,resources)
 
+input()
+"""
 user = w
 resources = ["d","e","f"]
 tx(user,resources)
@@ -102,4 +104,3 @@ tx(user,resources)
 
 
 
-"""

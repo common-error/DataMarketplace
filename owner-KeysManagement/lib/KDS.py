@@ -183,6 +183,7 @@ class KDS():
     Thanks to _potentialSubset() all the combination set that does not exist will be eliminated
     """
     def _findDesc(self, _capList):
+        """
         comb = [list(combinations(_capList,size)) for size in range(len(_capList))]
         flattenedComb = [item for sublist in comb for item in sublist]
         flattenedComb = flattenedComb[1::]
@@ -192,6 +193,19 @@ class KDS():
 
         temp = set(potentialSubset) - set(hashedComb)
         return list(set(potentialSubset) - temp)
+        """
+        Desc = []
+        capHashes = set([self.map.get(el) for el in _capList])
+        potentialSubsets = self._potentialSubset(_capList)
+        print(potentialSubsets)
+        for ptsbst in potentialSubsets:
+            if set(self.G.nodes[ptsbst]["elements"]).issubset(capHashes):
+                Desc = list(set(Desc) | set([ptsbst]))
+        
+        return Desc
+
+
+
     
     """
     Startign from the capability list of a buyer is possible to find the distinct ancestors
@@ -201,8 +215,9 @@ class KDS():
 
         ancestors = [list(nx.ancestors(self.G,el)) for el in capHashes]
         flattenedAnc = [item for sublist in ancestors for item in sublist]
+        flattenedAncNoUser = [node for node in flattenedAnc if self.G.nodes(data = True)[node]['user'] == 0]
         
-        return list(set(flattenedAnc) | set(capHashes))
+        return list(set(flattenedAncNoUser) | set(capHashes))
     
     """
     Considering the set cover problem, the function follows the implementation of a greedy solution

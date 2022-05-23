@@ -68,14 +68,14 @@ const ABI = [
       {
         "components": [
           {
-            "internalType": "bytes2",
+            "internalType": "bytes3",
             "name": "from",
-            "type": "bytes2"
+            "type": "bytes3"
           },
           {
-            "internalType": "bytes2",
+            "internalType": "bytes3",
             "name": "to",
-            "type": "bytes2"
+            "type": "bytes3"
           },
           {
             "internalType": "bytes32",
@@ -148,14 +148,14 @@ const ABI = [
       {
         "components": [
           {
-            "internalType": "bytes2",
+            "internalType": "bytes3",
             "name": "from",
-            "type": "bytes2"
+            "type": "bytes3"
           },
           {
-            "internalType": "bytes2",
+            "internalType": "bytes3",
             "name": "to",
-            "type": "bytes2"
+            "type": "bytes3"
           },
           {
             "internalType": "bytes32",
@@ -200,9 +200,9 @@ const ABI = [
   {
     "inputs": [
       {
-        "internalType": "bytes2",
+        "internalType": "bytes3",
         "name": "_from",
-        "type": "bytes2"
+        "type": "bytes3"
       }
     ],
     "name": "getTokens",
@@ -210,9 +210,9 @@ const ABI = [
       {
         "components": [
           {
-            "internalType": "bytes2",
+            "internalType": "bytes3",
             "name": "id",
-            "type": "bytes2"
+            "type": "bytes3"
           },
           {
             "internalType": "bytes32",
@@ -248,7 +248,6 @@ const ABI = [
     "type": "function"
   }
 ]
-
 
 const contractAddress = document.getElementById("contractAddress").textContent
 const contract = new window.web3.eth.Contract(ABI,contractAddress)

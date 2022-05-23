@@ -6,7 +6,7 @@ DEFAULTPATH = "../mapping.json"
 
 class map():
 
-    def __init__(self, _mappingName = DEFAULTPATH,_bytes=2):
+    def __init__(self, _mappingName = DEFAULTPATH,_bytes=3):
         #print(os.getcwd())
         self.bytes = _bytes
         if(exists(_mappingName)):
