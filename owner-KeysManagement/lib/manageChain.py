@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-PATH_TO_ABI = "../smart-contract/build/contracts/accessAuth.json"
+PATH_TO_ABI = "D:\\Users\\richi\\Desktop\\DataMarketplace\\smart-contract\\build\\contracts\\accessAuth.json"
 
 class chain():
 

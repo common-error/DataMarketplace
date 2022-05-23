@@ -72,6 +72,9 @@ elif args.command == "update":
         chain = manageChain.chain(_ropsten = args.ropsten)
         resources = chain.getCapabilityListByAddress(args.address[0])   
         print("Current cap list: {}".format(resources))
+
+        print("buyer :"+args.address[0])
+        print("Identifier :"+args.alias[0])
         
         old_catalogue = set(kds.generateCatalogue())
         if(kds.enforcePurchase(args.address[0],args.alias[0],resources) != None):
@@ -80,7 +83,8 @@ elif args.command == "update":
             (to_add,num_removed,num_added) = util.modifiedResources(old_catalogue,new_catalogue)
             
             rpt = chain.updateCatalogue(to_add)
-            print("{},{},{},{}".format(args.alias[0],rpt["gasUsed"],num_removed,num_added))
+            
+            util.saveResult("{},{},{},{}\n".format(args.address[0],rpt["gasUsed"],num_removed,num_added))
 
             kds.save(_pubKey = os.getenv("PUBLIC_KEY"),_baseUrl=os.getenv("BASE_URL"))
             kds.show(args.show)

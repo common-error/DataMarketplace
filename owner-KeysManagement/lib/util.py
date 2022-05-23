@@ -25,5 +25,9 @@ def modifiedResources(_oldCatalogue,_newCatalogue):
 
     
     ret.extend(to_add)
-    print(ret)
+    #print(ret)
     return to_add,len(to_remove),len(to_add)
+
+def saveResult(_text):
+    with open("updateProcess.txt", "a+") as f:
+        f.write(_text)

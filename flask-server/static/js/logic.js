@@ -1,6 +1,6 @@
 const ropsten_url = "https://ropsten.infura.io/v3/36f070bc6251423c8466175d6a49ec77"
 const ganache_url = "http://127.0.0.1:8545"
-window.web3 = new Web3(ropsten_url);
+window.web3 = new Web3(ganache_url);
 window.userWalletAddress = null
 window.TestGas = []
 window.CurrentResourceIdx = 0

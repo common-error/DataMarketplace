@@ -67,9 +67,9 @@ def tx(_user,_resources):
 
 
 user = x
-resources = ["a","b","c"]
+resources = ["0","8"]
 tx(user,resources)
-
+"""
 input()
 
 user = w
@@ -102,4 +102,4 @@ tx(user,resources)
 
 
 
-
+"""

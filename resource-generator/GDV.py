@@ -80,7 +80,11 @@ class GDV():
     def populate(self,_numResources):
         for res in range(_numResources):
             keys = list(self.labels.keys())
-            random_idx = [keys[idx] for idx in self._randomIdx(len(keys))]
+            randomSet = []
+            while(len(randomSet)==0):
+                randomSet = self._randomIdx(len(keys))
+
+            random_idx = [keys[idx] for idx in randomSet]
             
             for idx in random_idx:
                 random_node = random.choice(list(self.labels[idx].nodes()))
@@ -103,7 +107,7 @@ class GDV():
     def exportResources(self):
         resources = []
         data = { 
-            "resources" : []
+            "data" : []
         }
         for label in self.labels.values():
             tmp = set().union(*[set(el) for el in nx.get_node_attributes(label,"resources").values() if len(el) > 0])
@@ -117,7 +121,7 @@ class GDV():
                 "data" : str(bytes("risorsa "+str(res),"utf-8")),
                 "metadata" : self._getMetadata(res)
             }
-            data['resources'].append(resData)
+            data['data'].append(resData)
 
         with open('resources.json', 'w') as f:
             json.dump(data, f)
@@ -161,15 +165,18 @@ class GDV():
 
 
 gdv = GDV()
-#gdv.generate(2,50)
-#gdv.populate(30)
-#gdv.save()
+"""
+gdv.generate(2,50)
+gdv.populate(30)
+gdv.save()
+
+gdv.exportResources()
+"""
 gdv.load()
-#gdv.exportResources()
-#print(gdv.search(input("Query: ")))
+print(gdv.search(input("Query: ")))
 
 #gdv.show()
-
+"""
 ##TESTING
 print("Testing -> \t label0=0 \t\t\t{}".format(gdv.search("label0=0") == {20}))
 print("Testing -> \t label0=2 or label1=10 \t\t{}".format(gdv.search("label0=2 or label1=10") == {11, 13, 15}))
@@ -177,3 +184,4 @@ print("Testing -> \t label0=2 and label1=10 \t{}".format(gdv.search("label0=2 an
 print("Testing -> \t not (label0=2 or label1=10) \t{}".format(gdv.search("not (label0=2 or label1=10)") == {0, 1, 3, 4, 5, 6, 8, 9, 14, 16, 18, 20, 25, 26, 28}))
 print("Testing -> \t label1>2 \t\t\t{}".format(gdv.search("label1>2") == {25, 3}))
 print("Testing -> \t label1>=2 \t\t\t{}".format(gdv.search("label1>=2") == {25, 3}))
+"""
