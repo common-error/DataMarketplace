@@ -65,7 +65,9 @@ class GDV():
 
 
 
-
+    """
+    Procedure that can generate n (_numLabels) trees with a random number of nodes (max = _maxNodesXlabel)
+    """
     def generate(self,_numLabels,_maxNodesXlabel,_seed=0):
         self.labels = {}
         for idx,label in enumerate(range(_numLabels)):
@@ -77,6 +79,9 @@ class GDV():
             count_dict = { k:{'resources':[]} for k in node_list}
             nx.set_node_attributes(self.labels[name], count_dict)
 
+    """
+    The procedure pseudo-randomly assigns labels to a resource, adding for each label the resource in question in a node. A label may not even be chosen
+    """
     def populate(self,_numResources):
         for res in range(_numResources):
             keys = list(self.labels.keys())
@@ -98,12 +103,18 @@ class GDV():
         [print("{}\n{}".format(key,nx.forest_str(self.labels[key]))) for key in self.labels.keys()]
         #[print(json.dumps(json_graph.node_link_data(tree),indent=2)) for tree in self.labels.values()]
     
+    """
+    This procedure save all the graphs describing the labels
+    """
     def save(self):
         keys = list(self.labels.keys())
         out = json.dumps({ key:json_graph.node_link_data(self.labels[key]) for key in keys})
         with open('GDV.json', 'w') as f:
             f.write(out)
 
+    """
+    This procedure exports in json format all resources with randomly chosen labels
+    """
     def exportResources(self):
         resources = []
         data = { 
@@ -165,9 +176,9 @@ class GDV():
 
 
 gdv = GDV()
-"""
-gdv.generate(2,50)
-gdv.populate(30)
+
+gdv.generate(20,200)
+gdv.populate(10000)
 gdv.save()
 
 gdv.exportResources()
@@ -176,6 +187,7 @@ gdv.load()
 print(gdv.search(input("Query: ")))
 
 #gdv.show()
+"""
 """
 ##TESTING
 print("Testing -> \t label0=0 \t\t\t{}".format(gdv.search("label0=0") == {20}))
