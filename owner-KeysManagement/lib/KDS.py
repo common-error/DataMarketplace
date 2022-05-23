@@ -6,7 +6,7 @@ from numpy import byte
 
 from .mapping import map
 
-DEFAULTPATH = "../KDS.gml"
+DEFAULTPATH = "D:\\Users\\richi\\Desktop\\DataMarketplace\\KDS.gml"
 
 """
 Class used for the purpose of managing a key derivation structure 

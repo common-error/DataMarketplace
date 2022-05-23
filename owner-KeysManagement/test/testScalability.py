@@ -107,7 +107,7 @@ class tester():
         self._saveResult("{},{},{}\n".format(self.iteration,_user["publicKey"],tx_receipt["gasUsed"]))
     
     def _saveResult(self,_text):
-        with open("buyProcess.txt", "a+") as f:
+        with open("D:\\Users\\richi\\Desktop\\DataMarketplace\\scalabilityResults\\buyProcess.txt", "a+") as f:
             f.write(_text)
 
 

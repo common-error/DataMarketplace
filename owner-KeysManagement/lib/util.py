@@ -29,5 +29,5 @@ def modifiedResources(_oldCatalogue,_newCatalogue):
     return to_add,len(to_remove),len(to_add)
 
 def saveResult(_text):
-    with open("updateProcess.txt", "a+") as f:
+    with open("D:\\Users\\richi\\Desktop\\DataMarketplace\\scalabilityResults\\updateProcess.txt", "a+") as f:
         f.write(_text)

@@ -2,7 +2,7 @@ import json,os,requests
 from os.path import exists
 from pickle import FALSE
 
-DEFAULTPATH = "../mapping.json"
+DEFAULTPATH = "D:\\Users\\richi\\Desktop\\DataMarketplace\\mapping.json"
 
 class map():
 
@@ -12,6 +12,7 @@ class map():
         if(exists(_mappingName)):
             self.M = self._readFile(_mappingName)
         else:
+            print("Mapping not founf!\nCreating one from scratch")
             self.M = {}
 
     def add(self,_value):
