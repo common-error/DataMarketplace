@@ -1,8 +1,11 @@
 from copy import copy
+import datetime
 from distutils.command.build import build
 import json
 import random
 from web3 import Web3
+import signal
+import sys
 import os
 import subprocess
 from dotenv import load_dotenv
@@ -21,7 +24,20 @@ bytecode = trufflefile['bytecode']
 ganache_url = "http://127.0.0.1:8545"
 web3 = Web3(Web3.HTTPProvider(ganache_url))
 chain_id = 1337
+bougthResources = {
+    "bougthRes" : []
+}
 
+
+def signal_handler(signal, frame):
+    print("\nChiusura.... salvataggio file!")
+    
+    with open("D:\\Users\\richi\\Desktop\\DataMarketplace\\scalabilityResults\\savedBought.json", "w") as f:
+        json.dump(bougthResources, f)
+
+    sys.exit(0)
+
+signal.signal(signal.SIGINT, signal_handler)
 
 class tester():
 
@@ -42,27 +58,49 @@ class tester():
 
         self.accessAuth = web3.eth.contract(address=contractAddress,abi=abi)
 
-    def startTest(self):
+    def startTest(self,_file=""):
         numBuy = 0
-        while(len(self.stillToBuy.keys())>1):
-            numBuy+=1
-            pubKey,privKey,idxBuyer = self._chooseRndBuyer()
-            buyer = {
-                "publicKey" : web3.toChecksumAddress(pubKey),
-                "privateKey" : privKey 
-            }
-            print(buyer['publicKey'])
-            resToBuy = self._fixList(pubKey,random.randint(1,min(len(self.stillToBuy[pubKey]),MAX_X_BUY)))
+        if(_file == ""):
+            while(len(self.stillToBuy.keys())>1):
+                numBuy+=1
+                pubKey,privKey,idxBuyer = self._chooseRndBuyer()
+                buyer = {
+                    "publicKey" : web3.toChecksumAddress(pubKey),
+                    "privateKey" : privKey 
+                }
+                resToBuy = self._fixList(pubKey,random.randint(1,min(len(self.stillToBuy[pubKey]),MAX_X_BUY)))
+                numBuy += len(resToBuy)
+                bougthResources['bougthRes'].append({
+                    'key' : pubKey,
+                    'res' : resToBuy,
+                    'idx' : idxBuyer 
+                })
 
-            self._tx(buyer,resToBuy)
-            self.iteration+=1
 
-            subprocess.call(["python","D:\\Users\\richi\\Desktop\\DataMarketplace\\owner-KeysManagement\\keyManagement.py","update",buyer['publicKey'],str(idxBuyer)],shell=True)
-        print("Numero acquisti:\t{}".format(numBuy))
+                self._tx(buyer,resToBuy)
+                self.iteration+=1
+
+                subprocess.call(["python","D:\\Users\\richi\\Desktop\\DataMarketplace\\owner-KeysManagement\\keyManagement.py","update",buyer['publicKey'],str(idxBuyer)],shell=True)
+        else:
+            with open(_file,'r') as f:
+                data = json.load(f)
+            for el in data["bougthRes"]:
+                buyer = {
+                    "publicKey" : web3.toChecksumAddress(el["key"]),
+                    "privateKey" : self.keys[el["key"]] 
+                }
+                resToBuy = el["res"]
+                numBuy += len(resToBuy)
+                
+                self._tx(buyer,resToBuy)
+                self.iteration+=1
+
+                subprocess.call(["python","D:\\Users\\richi\\Desktop\\DataMarketplace\\owner-KeysManagement\\keyManagement.py","update",buyer['publicKey'],str(el["idx"])],shell=True)
+
+        print("Numero risorse acquistate:\t{}".format(numBuy))
 
     
     def _fixList(self,_buyer,_wantedRes):
-        print(self.stillToBuy[_buyer])
         resToBuy = []
         for idx in range(_wantedRes):
             rndIdx = random.randint(0,(len(self.stillToBuy[_buyer])-1))
@@ -112,4 +150,5 @@ class tester():
 
 
 ts = tester()
+#ts.startTest("D:\\Users\\richi\\Desktop\\DataMarketplace\\savedBought.json")
 ts.startTest()
