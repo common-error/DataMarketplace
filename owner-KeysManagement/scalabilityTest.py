@@ -74,7 +74,7 @@ class tester():
         contractAddress = os.getenv("CONTRACT_ADDRESS")
 
         self.accessAuth = web3.eth.contract(address=contractAddress,abi=abi)
-        self.chain = manageChain.chain()
+        self.chain = manageChain.chain(paths['abi'])
         self.kds = KDS.KDS(paths['graph'],paths['mapping'])
 
     def startTest(self,_file=""):
@@ -225,5 +225,5 @@ class tester():
 
 ts = tester()
 
-ts.deployAndAdd()
-ts.startTest()
+#ts.deployAndAdd()
+#ts.startTest()
