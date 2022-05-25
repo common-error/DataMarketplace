@@ -66,35 +66,13 @@ const ABI = [
     "anonymous": false,
     "inputs": [
       {
-        "components": [
-          {
-            "internalType": "bytes3",
-            "name": "from",
-            "type": "bytes3"
-          },
-          {
-            "internalType": "bytes3",
-            "name": "to",
-            "type": "bytes3"
-          },
-          {
-            "internalType": "bytes32",
-            "name": "token",
-            "type": "bytes32"
-          },
-          {
-            "internalType": "bytes32",
-            "name": "label",
-            "type": "bytes32"
-          }
-        ],
         "indexed": false,
-        "internalType": "struct accessAuth.updateData[]",
-        "name": "",
-        "type": "tuple[]"
+        "internalType": "bytes32",
+        "name": "KDS_Hash",
+        "type": "bytes32"
       }
     ],
-    "name": "UpdateData",
+    "name": "UpdateKDS",
     "type": "event"
   },
   {
@@ -146,31 +124,9 @@ const ABI = [
   {
     "inputs": [
       {
-        "components": [
-          {
-            "internalType": "bytes3",
-            "name": "from",
-            "type": "bytes3"
-          },
-          {
-            "internalType": "bytes3",
-            "name": "to",
-            "type": "bytes3"
-          },
-          {
-            "internalType": "bytes32",
-            "name": "token",
-            "type": "bytes32"
-          },
-          {
-            "internalType": "bytes32",
-            "name": "label",
-            "type": "bytes32"
-          }
-        ],
-        "internalType": "struct accessAuth.updateData[]",
-        "name": "_updateData",
-        "type": "tuple[]"
+        "internalType": "bytes32",
+        "name": "_newCatalogueHash",
+        "type": "bytes32"
       }
     ],
     "name": "updateCatalogue",
@@ -192,56 +148,6 @@ const ABI = [
         "internalType": "string[]",
         "name": "",
         "type": "string[]"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "bytes3",
-        "name": "_from",
-        "type": "bytes3"
-      }
-    ],
-    "name": "getTokens",
-    "outputs": [
-      {
-        "components": [
-          {
-            "internalType": "bytes3",
-            "name": "id",
-            "type": "bytes3"
-          },
-          {
-            "internalType": "bytes32",
-            "name": "token",
-            "type": "bytes32"
-          }
-        ],
-        "internalType": "struct accessAuth.node[]",
-        "name": "",
-        "type": "tuple[]"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "_edge",
-        "type": "bytes32"
-      }
-    ],
-    "name": "getLabel",
-    "outputs": [
-      {
-        "internalType": "bytes32",
-        "name": "",
-        "type": "bytes32"
       }
     ],
     "stateMutability": "view",
