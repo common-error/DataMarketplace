@@ -1,8 +1,9 @@
-import secrets,hashlib,base64,networkx as nx,matplotlib.pyplot as plt
+import secrets,hashlib,base64,networkx as nx,matplotlib.pyplot as plt,json
 from os.path import exists
 from cryptography.fernet import Fernet
-from itertools import combinations
+from networkx.readwrite import json_graph
 from numpy import byte
+import canonicaljson
 
 from .mapping import map
 
@@ -284,6 +285,11 @@ class KDS():
             catalogue.append((frm,to,token,label))
 
         return catalogue
+
+    def generateHash(self):
+        jsonGraph = json.dumps(json_graph.node_link_data(self.G))
+        canonicalGraph = canonicaljson.encode_canonical_json(jsonGraph)
+        return "0x"+hashlib.sha3_256(canonicalGraph).hexdigest()
 
     def show(self,_do):
         if _do:
