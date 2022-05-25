@@ -4,22 +4,8 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract accessAuth is Ownable(){
 
-    
-    struct updateData{
-        bytes3 from;
-        bytes3 to;
-        bytes32 token;
-        bytes32 label;
-    }
-
-    struct node{
-        bytes3 id;
-        bytes32 token;
-    }
-
-    mapping(bytes3 => node[]) catalogue;
+    bytes32 KDS_Hash;
     mapping(address => string[]) capabilityList;
-    mapping(bytes32 => bytes32) labels;
 
     event CapabilityListUpdated(
         address indexed _buyer,
@@ -27,7 +13,7 @@ contract accessAuth is Ownable(){
         string[] BoughtResources
     );
 
-    event UpdateData(updateData[]);
+    event UpdateKDS(bytes32 KDS_Hash);
 
 
     /** 
@@ -49,66 +35,15 @@ contract accessAuth is Ownable(){
 
     /**
         @notice Thanks to the changes in the local KDS the catalog is updated allowing a buyer to access the recources according to his capability list. It also adds the labels for the key derivation.
-        @param _updateData List of tuple of the form: (from,to,token,label)
+        @param _newCatalogueHash Hash of the updated KDS
      */
-    function updateCatalogue(updateData[] memory _updateData) onlyOwner() external{
-        node memory tempNode;
-        uint idx;
-        uint arrayLen = _updateData.length;
-        node[] memory tempCatalogue;
-
-        for(uint i=0; i < arrayLen; i++){
-            bytes3 from = _updateData[i].from;
-            bytes3 to = _updateData[i].to;
-            tempCatalogue = catalogue[from];
-
-            tempNode.id = to;
-            tempNode.token = _updateData[i].token;
-            (tempNode,idx) = _updateElementsInNode(tempCatalogue,tempNode);
-
-            if(idx > tempCatalogue.length){
-                catalogue[from].push(tempNode);
-            }else{
-                catalogue[from][idx] = tempNode;
-            }
-
-            
-            labels[to] = _updateData[i].label;
-            
-            
-        }
-
-        emit UpdateData(_updateData);
-    }
-
-    /**
-        @notice A node can have a bunch of nodes connected to it. This function tries to find if a new node (_data) is already connected and then the value is changed, otherwise it must be pushed as a new node.
-        @param _node List of nodes connected to a parent node. For example the node "abc" may be connected to the nodes "a,b,c"
-        @param _data Data of a node that needs to be changed or added
-        @return A tuple with the node and the position index 
-    */
-    function _updateElementsInNode(node[] memory _node,node memory _data) private pure returns(node memory,uint){
-        uint len = _node.length;
-        for(uint i=0; i < len; i++){
-            if(_node[i].id == _data.id){
-                //_node[i].token = _data.token;
-                return (_data,i);
-            }
-        }
-
-        return (_data,_node.length+1);
+    function updateCatalogue(bytes32 _newCatalogueHash) onlyOwner() external{
+        KDS_Hash = _newCatalogueHash;
+        emit UpdateKDS(_newCatalogueHash);
     }
 
     function getCapabilityListByAddress(address _buyer) external view returns(string[] memory) {
         return capabilityList[_buyer];
-    }
-
-    function getTokens(bytes3 _from) external view returns(node[] memory){
-        return catalogue[_from];
-    }
-
-    function getLabel(bytes32 _edge) external view returns(bytes32){
-        return labels[_edge];
     }
 
 
