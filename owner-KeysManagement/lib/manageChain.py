@@ -1,6 +1,8 @@
 import json,os,sys
 from pickle import FALSE
+from async_timeout import timeout
 from numpy import byte
+import requests
 from web3 import Web3
 from dotenv import load_dotenv
 
@@ -31,7 +33,12 @@ class chain():
                 "chainId": int(os.getenv("CHAIN_ID"))
             }
 
-        self.w3 = Web3(Web3.HTTPProvider(self.network["url"]))
+        adapter = requests.adapters.HTTPAdapter(pool_connections=20, pool_maxsize=20)
+        session = requests.Session()
+        session.mount('http://', adapter)
+        session.mount('https://', adapter)
+        self.w3 = Web3(Web3.HTTPProvider(self.network["url"],session=session,request_kwargs={'timeout':600}))
+        #self.w3 = Web3(Web3.HTTPProvider(self.network["url"], request_kwargs={'timeout': 600}))
 
         if self.w3.isConnected():
             print("Connected to {}".format(self.network["url"]))

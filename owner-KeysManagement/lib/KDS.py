@@ -96,7 +96,7 @@ class KDS():
             self.G.add_edge(_buyer,n_cap_u)
         else:
             n_cap_u = self.map.add("".join(sorted(_capList,key=str.lower)))
-            print(n_cap_u)
+            print("Updating -> \t{}".format(_capList))
             self.G.add_node(
                 n_cap_u,
                 unHashName=",".join(sorted(_capList,key=str.lower)),
@@ -134,9 +134,9 @@ class KDS():
         idResource = self.map.get(_resource)
         return idResource,self.G.nodes[idResource]["key"]
 
-    def save(self,_path=DEFAULTPATH,_pubKey = "",_baseUrl=""):
+    def save(self,_path=DEFAULTPATH,_pubKey = "",_baseUrl="",_publish=True):
         nx.write_gml(self.G,_path)
-        self.map.save(_pubKey=_pubKey,_baseUrl=_baseUrl)
+        self.map.save(_pubKey=_pubKey,_baseUrl=_baseUrl,_publish=_publish)
     
     def _byte_xor(self,ba1, ba2):
         return bytes([_a ^ _b for _a, _b in zip(ba1, ba2)])
@@ -197,7 +197,7 @@ class KDS():
         Desc = []
         capHashes = set([self.map.get(el) for el in _capList])
         potentialSubsets = self._potentialSubset(_capList)
-        print(potentialSubsets)
+
         for ptsbst in potentialSubsets:
             if set(self.G.nodes[ptsbst]["elements"]).issubset(capHashes):
                 Desc = list(set(Desc) | set([ptsbst]))

@@ -12,7 +12,7 @@ class map():
         if(exists(_mappingName)):
             self.M = self._readFile(_mappingName)
         else:
-            print("Mapping not founf!\nCreating one from scratch")
+            print("Mapping not found!\nCreating one from scratch.")
             self.M = {}
 
     def add(self,_value):
@@ -35,18 +35,19 @@ class map():
         
         
 
-    def save(self, _mappingName = DEFAULTPATH,_pubKey = "",_baseUrl=""):
+    def save(self, _mappingName = DEFAULTPATH,_pubKey = "",_baseUrl="",_publish=True):
         with open(_mappingName, 'w') as f:
             json.dump(self.M, f)
         
-        if _pubKey != "":
-            data_to_send = {
-                "map":json.dumps(self.M)
-            }
+        if _publish:
+            if _pubKey != "":
+                data_to_send = {
+                    "map":json.dumps(self.M)
+                }
 
-            url = "{}mapping/{}".format(_baseUrl,_pubKey)
+                url = "{}mapping/{}".format(_baseUrl,_pubKey)
 
-            response = requests.post(url,data_to_send)
+                response = requests.post(url,data_to_send)
 
 
 

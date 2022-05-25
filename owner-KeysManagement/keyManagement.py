@@ -71,10 +71,8 @@ elif args.command == "update":
     if args.address:
         chain = manageChain.chain(_ropsten = args.ropsten)
         resources = chain.getCapabilityListByAddress(args.address[0])   
-        print("Current cap list: {}".format(resources))
 
-        print("buyer :"+args.address[0])
-        print("Identifier :"+args.alias[0])
+        print("Buyer ->\t"+args.address[0])
         
         old_catalogue = set(kds.generateCatalogue())
         if(kds.enforcePurchase(args.address[0],args.alias[0],resources) != None):
@@ -90,6 +88,8 @@ elif args.command == "update":
             kds.show(args.show)
         else:
             print("No update on capList!")
+            kds.show(args.show)
+        
 elif args.command == "deploy":
         chain = manageChain.chain(_ropsten = args.ropsten)
         receipt = chain.deployContract()
