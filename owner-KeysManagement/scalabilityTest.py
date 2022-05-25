@@ -197,7 +197,6 @@ class tester():
         for x in resources["data"]:
             self.kds.addResource(x['id'])
 
-        self.kds.save(_pubKey = os.getenv("PUBLIC_KEY"),_baseUrl=os.getenv("BASE_URL"),_publish=False)
         print("Resources added -> {}".format(len(resources["data"])))
     
     def _update(self,_pubKey,_alias):
@@ -209,11 +208,11 @@ class tester():
 
             (to_add,num_removed,num_added) = util.modifiedResources(old_catalogue,new_catalogue)
             
-            rpt = self.chain.updateKDS_Hash(self.kds.generateHash())
+            hash= self.kds.generateHash()
+            rpt = self.chain.updateKDS_Hash(hash)
             
-            util.saveResult("{},{},{},{}\n".format(_pubKey,rpt["gasUsed"],num_removed,num_added))
+            util.saveResult("pubKey -> \t{}\ngasUsed ->\t{}\nKDS_Hash ->\t{}".format(_pubKey,rpt["gasUsed"],hash),paths['saveBuy'])
 
-            self.kds.save(_pubKey = os.getenv("PUBLIC_KEY"),_baseUrl=os.getenv("BASE_URL"),_publish=False)
         else:
             print("No update on capList!")
 
