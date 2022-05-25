@@ -212,7 +212,7 @@ class tester():
             rpt = self.chain.updateKDS_Hash(hash)
             
             print("pubKey -> \t{}\ngasUsed ->\t{}\nKDS_Hash ->\t{}".format(_pubKey,rpt["gasUsed"],hash))
-            util.saveResult("{},{},{}\n".format(_pubKey,rpt["gasUsed"],hash),paths['saveUpdate'])
+            util.saveResult("{},{},{},{}\n".format(self.iteration,_pubKey,rpt["gasUsed"],hash),paths['saveUpdate'])
 
         else:
             print("No update on capList!")
