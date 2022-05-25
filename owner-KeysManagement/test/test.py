@@ -11,7 +11,7 @@ import matplotlib.pyplot as pltpip
 from numpy import byte
 from rsa import sign
 
-from lib import KDS
+#from lib import KDS
 
 def byte_xor(ba1, ba2):
     return bytes([_a ^ _b for _a, _b in zip(ba1, ba2)])
@@ -295,11 +295,5 @@ response = requests.post(BASE + "addResources/"+address,dict)
 
 print(response.json())
 """
-kds = KDS.KDS()
-
-
-
-kds.enforcePurchase("0xE11BA2b4D45Eaed5996Cd0823791E0C93114882d","y",["a","b"])
-kds.show(True)
-kds.enforcePurchase("0xE11BA2b4D45Eaed5996Cd0823791E0C93114882d","y",["a","b","c"])
-kds.show(True)
+import os
+print(os.path.dirname(os.path.realpath(__file__)))
