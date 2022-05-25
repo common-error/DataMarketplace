@@ -96,7 +96,6 @@ class KDS():
             self.G.add_edge(_buyer,n_cap_u)
         else:
             n_cap_u = self.map.add("".join(sorted(_capList,key=str.lower)))
-            print("Updating -> \t{}".format(_capList))
             self.G.add_node(
                 n_cap_u,
                 unHashName=",".join(sorted(_capList,key=str.lower)),

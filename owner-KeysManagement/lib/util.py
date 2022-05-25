@@ -25,7 +25,7 @@ def modifiedResources(_oldCatalogue,_newCatalogue):
 
     
     ret.extend(to_add)
-    #print(ret)
+    print("{},{}".format(len(to_remove),len(to_add)))
     return to_add,len(to_remove),len(to_add)
 
 def saveResult(_text):

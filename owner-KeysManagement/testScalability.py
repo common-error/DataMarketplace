@@ -91,6 +91,7 @@ class tester():
                     print("==========================================")
                     print("Buying...")
                     print("Buyer ->\t{}".format(buyer['publicKey']))
+                    print("Buying ->\t{}".format(resToBuy))
                     self._tx(buyer,resToBuy)
                     self.iteration+=1
 
@@ -110,6 +111,7 @@ class tester():
                     print("==========================================")
                     print("Buying...")
                     print("Buyer ->\t{}".format(buyer['publicKey']))
+                    print("Buying ->\t{}".format(resToBuy))
                     self._tx(buyer,resToBuy)
                     self.iteration+=1
 
