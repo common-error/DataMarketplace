@@ -6,7 +6,6 @@ from numpy import byte
 
 from .mapping import map
 
-DEFAULTPATH = "D:\\Users\\richi\\Desktop\\DataMarketplace\\KDS.gml"
 
 """
 Class used for the purpose of managing a key derivation structure 
@@ -21,10 +20,11 @@ NOTE:   Every node in the KDS is identified by an unique value built as the hash
 """
 class KDS():
 
-    def __init__(self, _graphName = DEFAULTPATH):
-        self.map = map()
-        if(exists(_graphName)):
-            self.G = nx.read_gml(_graphName)
+    def __init__(self, _graphPath,_mappingPath):
+        self.graphPath = _graphPath
+        self.map = map(_mappingPath)
+        if(exists(_graphPath)):
+            self.G = nx.read_gml(_graphPath)
         else:
             self.G = nx.DiGraph()
 
@@ -133,8 +133,8 @@ class KDS():
         idResource = self.map.get(_resource)
         return idResource,self.G.nodes[idResource]["key"]
 
-    def save(self,_path=DEFAULTPATH,_pubKey = "",_baseUrl="",_publish=True):
-        nx.write_gml(self.G,_path)
+    def save(self,_pubKey = "",_baseUrl="",_publish=True):
+        nx.write_gml(self.G,self.graphPath)
         self.map.save(_pubKey=_pubKey,_baseUrl=_baseUrl,_publish=_publish)
     
     def _byte_xor(self,ba1, ba2):

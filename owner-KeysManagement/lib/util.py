@@ -28,6 +28,6 @@ def modifiedResources(_oldCatalogue,_newCatalogue):
     print("{},{}".format(len(to_remove),len(to_add)))
     return to_add,len(to_remove),len(to_add)
 
-def saveResult(_text):
-    with open("D:\\Users\\richi\\Desktop\\DataMarketplace\\scalabilityResults\\updateProcess.txt", "a+") as f:
+def saveResult(_text,_path):
+    with open(_path, "a+") as f:
         f.write(_text)

@@ -8,8 +8,14 @@ load_dotenv()
 #from brownie import Contract, network, web3
 
 from lib import KDS,util, manageChain
+curr_path = os.path.dirname(os.path.realpath(__file__))
+paths = {
+    'graph' : curr_path+"\\runTime\\KDS.gml",
+    'mapping' : curr_path+"\\runTime\\mapping.json",
+    'abi' :  curr_path+"\\ABI\\accessAuth.json"
+}
 
-kds = KDS.KDS()
+kds = KDS.KDS(paths['graph'],paths['mapping'])
 
 def input_file(arg_value, pat=re.compile(r".*\.(json)")):
     if not pat.match(arg_value):
@@ -69,7 +75,7 @@ elif args.command == "update":
         sys.exit(0)
 
     if args.address:
-        chain = manageChain.chain(_ropsten = args.ropsten)
+        chain = manageChain.chain(paths['abi'],args.ropsten)
         resources = chain.getCapabilityListByAddress(args.address[0])   
 
         print("Buyer ->\t"+args.address[0])
@@ -82,7 +88,7 @@ elif args.command == "update":
             
             rpt = chain.updateCatalogue(to_add)
             
-            util.saveResult("{},{},{},{}\n".format(args.address[0],rpt["gasUsed"],num_removed,num_added))
+            print("{},{},{},{}\n".format(args.address[0],rpt["gasUsed"],num_removed,num_added))
 
             kds.save(_pubKey = os.getenv("PUBLIC_KEY"),_baseUrl=os.getenv("BASE_URL"))
             kds.show(args.show)
@@ -91,7 +97,7 @@ elif args.command == "update":
             kds.show(args.show)
         
 elif args.command == "deploy":
-        chain = manageChain.chain(_ropsten = args.ropsten)
+        chain = manageChain.chain(paths['abi'],args.ropsten)
         receipt = chain.deployContract()
 
         contractAddress = receipt.contractAddress

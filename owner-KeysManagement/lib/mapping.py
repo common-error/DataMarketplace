@@ -2,15 +2,15 @@ import json,os,requests
 from os.path import exists
 from pickle import FALSE
 
-DEFAULTPATH = "D:\\Users\\richi\\Desktop\\DataMarketplace\\mapping.json"
 
 class map():
 
-    def __init__(self, _mappingName = DEFAULTPATH,_bytes=3):
+    def __init__(self, _mappingPath,_bytes=3):
         #print(os.getcwd())
+        self.mappingPath = _mappingPath
         self.bytes = _bytes
-        if(exists(_mappingName)):
-            self.M = self._readFile(_mappingName)
+        if(exists(_mappingPath)):
+            self.M = self._readFile(_mappingPath)
         else:
             print("Mapping not found!\nCreating one from scratch.")
             self.M = {}
@@ -35,8 +35,8 @@ class map():
         
         
 
-    def save(self, _mappingName = DEFAULTPATH,_pubKey = "",_baseUrl="",_publish=True):
-        with open(_mappingName, 'w') as f:
+    def save(self,_pubKey = "",_baseUrl="",_publish=True):
+        with open(self.mappingPath, 'w') as f:
             json.dump(self.M, f)
         
         if _publish:

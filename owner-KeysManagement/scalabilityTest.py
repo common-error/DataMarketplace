@@ -15,12 +15,20 @@ import time
 
 from lib import KDS,util,manageChain
 
+curr_path = os.path.dirname(os.path.realpath(__file__))
+paths = {
+    'graph' : curr_path+"\\runTime\\KDS.gml",
+    'mapping' : curr_path+"\\runTime\\mapping.json",
+    'abi' :  curr_path+"\\ABI\\accessAuth.json",
+    'wallets' : curr_path+"\\wallets\\wallets10x.json",
+    'resources' : curr_path+"\\resources\\resources1000x.json",
+    'saveUpdate' : curr_path+"\\runTime\\scalabilityResults\\savedUpdate.json",
+    'saveBuy' : curr_path+"\\runTime\\scalabilityResults\\savedBuy.json"
+}
+
 load_dotenv()
-PATH_TO_TRUFFLE = "../smart-contract/build/contracts/"
-WALLETS = "wallets10x.json"
-RESOURCES = "resources1000x.json"
 MAX_X_BUY = 50
-trufflefile = json.load(open(PATH_TO_TRUFFLE+"accessAuth.json"))
+trufflefile = json.load(open(paths['abi']))
 
 abi = trufflefile['abi']
 bytecode = trufflefile['bytecode']
@@ -41,7 +49,7 @@ bougthResources = {
 def signal_handler(signal, frame):
     print("\nChiusura.... salvataggio file!")
     
-    with open("D:\\Users\\richi\\Desktop\\DataMarketplace\\scalabilityResults\\savedBought.json", "w") as f:
+    with open(paths['saveUpdate'], "w") as f:
         json.dump(bougthResources, f)
 
     sys.exit(0)
@@ -50,7 +58,7 @@ signal.signal(signal.SIGINT, signal_handler)
 
 class tester():
 
-    def __init__(self,_wallets=WALLETS,_resources=RESOURCES):
+    def __init__(self,_wallets=paths['wallets'],_resources=paths['resources']):
         self.iteration = 0
         if(exists(_wallets)):
             with open(_wallets,'r') as f:
@@ -67,7 +75,7 @@ class tester():
 
         self.accessAuth = web3.eth.contract(address=contractAddress,abi=abi)
         self.chain = manageChain.chain()
-        self.kds = KDS.KDS()
+        self.kds = KDS.KDS(paths['graph'],paths['mapping'])
 
     def startTest(self,_file=""):
         numBuy = 0
@@ -121,7 +129,7 @@ class tester():
         except Exception as e:
             print("Errore!")
             print(e)
-            with open("D:\\Users\\richi\\Desktop\\DataMarketplace\\scalabilityResults\\savedBought.json", "w") as f:
+            with open(paths['saveUpdate'], "w") as f:
                 json.dump(bougthResources, f)
             sys.exit(0)
             
@@ -177,14 +185,14 @@ class tester():
 
 
     def _saveResult(self,_text):
-        with open("D:\\Users\\richi\\Desktop\\DataMarketplace\\scalabilityResults\\buyProcess.txt", "a+") as f:
+        with open(paths['saveBuy'], "a+") as f:
             f.write(_text)
     
     def deployAndAdd(self):
         receipt = self.chain.deployContract()
         print("Contract deployed at ->\t{}".format(receipt.contractAddress))
 
-        resources = json.load(open(RESOURCES))
+        resources = json.load(open(paths['resources']))
         
         for x in resources["data"]:
             self.kds.addResource(x['id'])
@@ -218,6 +226,4 @@ class tester():
 ts = tester()
 
 ts.deployAndAdd()
-ts.startTest("D:\\Users\\richi\\Desktop\\DataMarketplace\\savedBought.json")
-
-#ts.startTest()
+ts.startTest()

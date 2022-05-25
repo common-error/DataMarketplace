@@ -8,11 +8,9 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-PATH_TO_ABI = "D:\\Users\\richi\\Desktop\\DataMarketplace\\smart-contract\\build\\contracts\\accessAuth.json"
-
 class chain():
 
-    def __init__(self,_pathToAbi=PATH_TO_ABI,_ropsten = False):
+    def __init__(self,_pathToAbi,_ropsten = False):
         data = json.load(open(_pathToAbi))
 
         self.abi = data['abi']
