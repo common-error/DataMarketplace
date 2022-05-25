@@ -102,10 +102,11 @@ class tester():
                     print("Buyer ->\t{}".format(buyer['publicKey']))
                     print("Buying ->\t{}".format(resToBuy))
                     self._tx(buyer,resToBuy)
-                    self.iteration+=1
+                    
 
                     print("\t\tUpdating")
                     self._update(buyer['publicKey'],str(idxBuyer))
+                    self.iteration+=1
             else:
                 with open(_file,'r') as f:
                     data = json.load(f)
@@ -122,10 +123,11 @@ class tester():
                     print("Buyer ->\t{}".format(buyer['publicKey']))
                     print("Buying ->\t{}".format(resToBuy))
                     self._tx(buyer,resToBuy)
-                    self.iteration+=1
+                    
 
                     print("Updating...")
                     self._update(buyer['publicKey'],str(el["idx"]))
+                    self.iteration+=1
                     
         except Exception as e:
             print("Errore!")
