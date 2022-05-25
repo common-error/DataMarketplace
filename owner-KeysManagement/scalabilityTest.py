@@ -23,7 +23,8 @@ paths = {
     'wallets' : curr_path+"\\wallets\\wallets10x.json",
     'resources' : curr_path+"\\resources\\resources1000x.json",
     'saveUpdate' : curr_path+"\\runTime\\scalabilityResults\\savedUpdate.txt",
-    'saveBuy' : curr_path+"\\runTime\\scalabilityResults\\savedBuy.txt"
+    'saveBuy' : curr_path+"\\runTime\\scalabilityResults\\savedBuy.txt",
+    'saveBought' : curr_path+"\\runTime\\scalabilityResults\\savedBought.json"
 }
 
 load_dotenv()
@@ -49,7 +50,7 @@ bougthResources = {
 def signal_handler(signal, frame):
     print("\nChiusura.... salvataggio file!")
     
-    with open(paths['saveUpdate'], "w") as f:
+    with open(paths['saveBought'], "w") as f:
         json.dump(bougthResources, f)
 
     sys.exit(0)
@@ -129,7 +130,7 @@ class tester():
         except Exception as e:
             print("Errore!")
             print(e)
-            with open(paths['saveUpdate'], "w") as f:
+            with open(paths['saveBought'], "w") as f:
                 json.dump(bougthResources, f)
             sys.exit(0)
             
@@ -211,7 +212,7 @@ class tester():
             rpt = self.chain.updateKDS_Hash(hash)
             
             print("pubKey -> \t{}\ngasUsed ->\t{}\nKDS_Hash ->\t{}".format(_pubKey,rpt["gasUsed"],hash))
-            util.saveResult("{},{},{}".format(_pubKey,rpt["gasUsed"],hash),paths['saveBuy'])
+            util.saveResult("{},{},{}\n".format(_pubKey,rpt["gasUsed"],hash),paths['saveUpdate'])
 
         else:
             print("No update on capList!")
