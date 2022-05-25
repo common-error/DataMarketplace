@@ -34,12 +34,12 @@ contract accessAuth is Ownable(){
 
 
     /**
-        @notice Thanks to the changes in the local KDS the catalog is updated allowing a buyer to access the recources according to his capability list. It also adds the labels for the key derivation.
-        @param _newCatalogueHash Hash of the updated KDS
+        @notice Updates the KDS's hash
+        @param _newKDS_Hash Hash of the updated KDS
      */
-    function updateCatalogue(bytes32 _newCatalogueHash) onlyOwner() external{
-        KDS_Hash = _newCatalogueHash;
-        emit UpdateKDS(_newCatalogueHash);
+    function updateKDS_Hash(bytes32 _newKDS_Hash) onlyOwner() external{
+        KDS_Hash = _newKDS_Hash;
+        emit UpdateKDS(_newKDS_Hash);
     }
 
     function getCapabilityListByAddress(address _buyer) external view returns(string[] memory) {

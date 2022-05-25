@@ -125,11 +125,11 @@ const ABI = [
     "inputs": [
       {
         "internalType": "bytes32",
-        "name": "_newCatalogueHash",
+        "name": "_newKDS_Hash",
         "type": "bytes32"
       }
     ],
-    "name": "updateCatalogue",
+    "name": "updateKDS_Hash",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
