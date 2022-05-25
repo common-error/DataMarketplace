@@ -77,20 +77,20 @@ class chain():
 
         return  self.contract.functions.getCapabilityListByAddress(_buyer).call()
 
-    def updateCatalogue(self, _catalogue):
+    def updateKDS_Hash(self, _KDS_Hash):
         contract = self.w3.eth.contract(address=self._safeContractAddress(),abi=self.abi)
 
         
         nonce = self.w3.eth.getTransactionCount(self.owner["pubKey"])
 
         if(self.ropsten):
-            transaction = contract.functions.updateCatalogue(_catalogue).buildTransaction({
+            transaction = contract.functions.updateKDS_Hash(_KDS_Hash).buildTransaction({
                 "gasPrice":self.w3.toWei('21', 'gwei'),
                 "from":self.owner["pubKey"],
                 "nonce":nonce
             })
         else:
-            transaction = contract.functions.updateCatalogue(_catalogue).buildTransaction({
+            transaction = contract.functions.updateKDS_Hash(_KDS_Hash).buildTransaction({
                 "gasPrice":self.w3.toWei('21', 'gwei'),
                 "chainId":self.network["chainId"],
                 "from":self.owner["pubKey"],

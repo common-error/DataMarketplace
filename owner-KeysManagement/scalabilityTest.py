@@ -209,7 +209,7 @@ class tester():
 
             (to_add,num_removed,num_added) = util.modifiedResources(old_catalogue,new_catalogue)
             
-            rpt = self.chain.updateCatalogue(to_add)
+            rpt = self.chain.updateKDS_Hash(self.kds.generateHash())
             
             util.saveResult("{},{},{},{}\n".format(_pubKey,rpt["gasUsed"],num_removed,num_added))
 

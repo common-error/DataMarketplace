@@ -86,7 +86,7 @@ elif args.command == "update":
 
             (to_add,num_removed,num_added) = util.modifiedResources(old_catalogue,new_catalogue)
             
-            rpt = chain.updateCatalogue(to_add)
+            rpt = chain.updateKDS_Hash(kds.generateHash())
             
             print("{},{},{},{}\n".format(args.address[0],rpt["gasUsed"],num_removed,num_added))
 
