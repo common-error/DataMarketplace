@@ -22,8 +22,8 @@ paths = {
     'abi' :  curr_path+"\\ABI\\accessAuth.json",
     'wallets' : curr_path+"\\wallets\\wallets10x.json",
     'resources' : curr_path+"\\resources\\resources1000x.json",
-    'saveUpdate' : curr_path+"\\runTime\\scalabilityResults\\savedUpdate.json",
-    'saveBuy' : curr_path+"\\runTime\\scalabilityResults\\savedBuy.json"
+    'saveUpdate' : curr_path+"\\runTime\\scalabilityResults\\savedUpdate.txt",
+    'saveBuy' : curr_path+"\\runTime\\scalabilityResults\\savedBuy.txt"
 }
 
 load_dotenv()
@@ -97,13 +97,13 @@ class tester():
                     })
 
                     print("==========================================")
-                    print("Buying...")
+                    print("\t\tBuying")
                     print("Buyer ->\t{}".format(buyer['publicKey']))
                     print("Buying ->\t{}".format(resToBuy))
                     self._tx(buyer,resToBuy)
                     self.iteration+=1
 
-                    print("Updating...")
+                    print("\t\tUpdating")
                     self._update(buyer['publicKey'],str(idxBuyer))
             else:
                 with open(_file,'r') as f:
@@ -180,7 +180,6 @@ class tester():
         tx_receipt = web3.eth.wait_for_transaction_receipt(send_store_tx)
 
         self._saveResult("{},{},{},{}\n".format(self.iteration,_user["publicKey"],tx_receipt["gasUsed"],len(_resources)))
-        
         self.sleep()
 
 
@@ -211,7 +210,8 @@ class tester():
             hash= self.kds.generateHash()
             rpt = self.chain.updateKDS_Hash(hash)
             
-            util.saveResult("pubKey -> \t{}\ngasUsed ->\t{}\nKDS_Hash ->\t{}".format(_pubKey,rpt["gasUsed"],hash),paths['saveBuy'])
+            print("pubKey -> \t{}\ngasUsed ->\t{}\nKDS_Hash ->\t{}".format(_pubKey,rpt["gasUsed"],hash))
+            util.saveResult("{},{},{}".format(_pubKey,rpt["gasUsed"],hash),paths['saveBuy'])
 
         else:
             print("No update on capList!")
@@ -224,5 +224,5 @@ class tester():
 
 ts = tester()
 
-#ts.deployAndAdd()
-#ts.startTest()
+ts.deployAndAdd()
+ts.startTest()
