@@ -67,13 +67,13 @@ def tx(_user,_resources):
 
     print("{},{}".format(_user["lb"],tx_receipt["gasUsed"]))
 
-"""
+
 user = x
-resources = ["a","b"]
+resources = ["a","b","c"]
 tx(user,resources)
 
 input()
-"""
+
 user = w
 resources = ["d","e","f"]
 tx(user,resources)
