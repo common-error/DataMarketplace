@@ -59,4 +59,4 @@ class Graph(Resource):
 
     def post(self):
         with open('graph.json','w') as f:
-            json.dump(request.form['graph'],f)
+            f.write(json.loads(request.form['graph']))
