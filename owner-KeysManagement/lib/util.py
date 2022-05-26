@@ -36,10 +36,6 @@ def saveResult(_text,_path):
     with open(_path, "a+") as f:
         f.write(_text)
 
-def sendToWebServer(_idx,_data,_url):
-    data_to_send = {
-        _idx:json.dumps(_data)
-    }
-
-    response = requests.post(_url,data_to_send)
+def sendToWebServer(_data,_url):
+    response = requests.post(_url,_data)
     return(response.json())

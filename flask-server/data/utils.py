@@ -27,7 +27,7 @@ class Data(Resource):
 
 class Contract(Resource):
 
-    def post(self,address):
+    def post(self):
         contractAddress = request.form['contractAddress']
         dataToSave = json.dumps({
             "address":contractAddress

@@ -20,7 +20,7 @@ api = Api(app, prefix="/api/v1/")
 
 
 api.add_resource(utils.Data,"addResources/<string:address>")
-api.add_resource(utils.Contract,"addContract/<string:address>")
+api.add_resource(utils.Contract,"addContract/")
 api.add_resource(utils.Mapping,"mapping/<string:address>")
 api.add_resource(utils.Graph,"graph/")
 
