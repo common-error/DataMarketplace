@@ -257,7 +257,9 @@ class KDS():
         return Par
 
     def generateCatalogue(self):
-        catalogue=[]
+        catalogue={
+            'catalogue' : []
+        }
         for edge in self.G.edges:
             K_from = bytes.fromhex(self.G.nodes[edge[0]]["key"])
             K_to = bytes.fromhex(self.G.nodes[edge[1]]["key"])
@@ -277,12 +279,17 @@ class KDS():
                 K_from.hex()
                 ))
             """
-            frm = edge[0] if edge[0][:2] == "0x" else "0x"+edge[0]
-            to = edge[1] if edge[1][:2] == "0x" else "0x"+edge[1]
+            frm = edge[0]
+            to = edge[1]
 
-            label = "0x"+l_to.hex()
+            label = l_to.hex()
 
-            catalogue.append((frm,to,token,label))
+            catalogue['catalogue'].append({
+                'from' : frm,
+                'to':to,
+                'token':token,
+                'label':label
+            })
 
         return catalogue
 
@@ -292,7 +299,7 @@ class KDS():
         return "0x"+hashlib.sha3_256(canonicalGraph).hexdigest()
     
     def exportToWebServer(self):
-        return json.dumps(json_graph.node_link_data(self.G))
+        return json.dumps(self.generateCatalogue())
 
     def show(self,_do):
         if _do:
