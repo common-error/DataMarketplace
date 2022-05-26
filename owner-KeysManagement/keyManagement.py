@@ -58,14 +58,8 @@ if args.command == "add":
         
         
         if enk_list:
-            data_to_send = {
-                "resources":json.dumps(enk_list)
-            }
-
             url = "{}addResources/{}".format(os.getenv("BASE_URL"),os.getenv("PUBLIC_KEY"))
-
-            response = requests.post(url,data_to_send)
-            print(response.json())
+            print(util.sendToWebServer("resources",enk_list,url))
     
         kds.save(_pubKey = os.getenv("PUBLIC_KEY"),_baseUrl=os.getenv("BASE_URL"))
         kds.show(args.show)
@@ -90,6 +84,9 @@ elif args.command == "update":
             
             print("{},{},{},{}\n".format(args.address[0],rpt["gasUsed"],num_removed,num_added))
 
+            url = "{}graph".format(os.getenv("BASE_URL"))
+            print(util.sendToWebServer("graph",kds.exportToWebServer(),url))
+
             kds.save(_pubKey = os.getenv("PUBLIC_KEY"),_baseUrl=os.getenv("BASE_URL"))
             kds.show(args.show)
         else:
@@ -102,15 +99,9 @@ elif args.command == "deploy":
 
         contractAddress = receipt.contractAddress
 
-        data_to_send = {
-            "contractAddress":contractAddress
-        }
-
-        #print(receipt)
+        
         url = "{}addContract/{}".format(os.getenv("BASE_URL"),os.getenv("PUBLIC_KEY"))
-
-        response = requests.post(url,data_to_send)
-        print(response.json())
+        print(util.sendToWebServer("contractAddress",contractAddress,url))
 
         print("")
         print("Contract created with the following address\n\t -> {}".format(contractAddress))

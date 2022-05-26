@@ -58,4 +58,5 @@ class Graph(Resource):
         return args,201
 
     def post(self):
-        return "post",201
+        with open('graph.json','w') as f:
+            json.dump(request.form['graph'],f)

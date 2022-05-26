@@ -290,6 +290,9 @@ class KDS():
         jsonGraph = json.dumps(json_graph.node_link_data(self.G))
         canonicalGraph = canonicaljson.encode_canonical_json(jsonGraph)
         return "0x"+hashlib.sha3_256(canonicalGraph).hexdigest()
+    
+    def exportToWebServer(self):
+        return json.dumps(json_graph.node_link_data(self.G))
 
     def show(self,_do):
         if _do:
