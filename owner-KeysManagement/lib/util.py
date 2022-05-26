@@ -1,5 +1,9 @@
+import json
+import os
 from cryptography.fernet import Fernet
 import base64
+
+import requests
 
 def crypt(_key,_data):
     f = Fernet(base64.urlsafe_b64encode(bytes.fromhex(_key)))
@@ -31,3 +35,11 @@ def modifiedResources(_oldCatalogue,_newCatalogue):
 def saveResult(_text,_path):
     with open(_path, "a+") as f:
         f.write(_text)
+
+def sendToWebServer(_idx,_data,_url):
+    data_to_send = {
+        _idx:json.dumps(_data)
+    }
+
+    response = requests.post(_url,data_to_send)
+    return(response.json())
