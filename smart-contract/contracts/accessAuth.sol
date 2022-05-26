@@ -46,5 +46,9 @@ contract accessAuth is Ownable(){
         return capabilityList[_buyer];
     }
 
+    function getKDS_Hash() external view returns(bytes32){
+        return KDS_Hash;
+    }
+
 
 }
