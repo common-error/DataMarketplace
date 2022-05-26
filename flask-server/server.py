@@ -17,12 +17,20 @@ app.config["FLASK_APP"] = os.getenv("FLASK_APP")
 
 api = Api(app, prefix="/api/v1/")
 
+curr_path = os.path.dirname(os.path.realpath(__file__))
+paths = {
+    'mapping' : curr_path+"\\runTime\\mapping.pkl",
+    'dict' : curr_path+"\\runTime\\dictionary.pkl",
+    'contract' :  curr_path+"\\runTime\\contractAddress.pkl",
+    'graph' :  curr_path+"\\runTime\\graph.json"
+}
 
 
-api.add_resource(utils.Data,"addResources/<string:address>")
-api.add_resource(utils.Contract,"addContract/")
-api.add_resource(utils.Mapping,"mapping/<string:address>")
-api.add_resource(utils.Graph,"graph/")
+
+api.add_resource(utils.Data,"addResources/<string:address>", resource_class_kwargs={'_path': paths['dict']})
+api.add_resource(utils.Contract,"addContract/", resource_class_kwargs={'_path': paths['contract']})
+api.add_resource(utils.Mapping,"mapping/<string:address>", resource_class_kwargs={'_path': paths['mapping']})
+api.add_resource(utils.Graph,"graph/", resource_class_kwargs={'_path': paths['graph']})
 
 @app.route('/')
 def index():
@@ -30,11 +38,11 @@ def index():
     distinct_el = {}
     mapping = {}
 
-    if(os.path.exists('mapping.pkl')):
-        mapping = json.loads(pickle.load(open('mapping.pkl','rb')))
+    if(os.path.exists(paths['mapping'])):
+        mapping = json.loads(pickle.load(open(paths['mapping'],'rb')))
 
-    if os.path.exists('dictionary.pkl'):
-        loaded_dict = json.loads(pickle.load(open('dictionary.pkl', 'rb')))
+    if os.path.exists(paths['dict']):
+        loaded_dict = json.loads(pickle.load(open(paths['dict'], 'rb')))
 
         temp_dict = defaultdict(set)
         for item in loaded_dict:
@@ -45,8 +53,8 @@ def index():
         for key,value in temp_dict.items():
             distinct_el[key] = list(value)
 
-    if os.path.exists('contractAddress.pkl'):
-        loaded_CtcAddress = json.loads(pickle.load(open('contractAddress.pkl', 'rb')))
+    if os.path.exists(paths['contract']):
+        loaded_CtcAddress = json.loads(pickle.load(open(paths['contract'], 'rb')))
    
 
 

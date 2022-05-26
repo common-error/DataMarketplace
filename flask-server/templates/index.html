@@ -99,7 +99,7 @@
     <script src="https://cdn.jsdelivr.net/gh/ethereumjs/browser-builds/dist/ethereumjs-tx/ethereumjs-tx-1.3.3.min.js"></script>
 
     <script>
-         var mapping = JSON.parse('{{map["address"]|safe}}');
+        var mapping = JSON.parse('{{map["address"]| safe | default("{}", true)}}');
 
     </script>
     
