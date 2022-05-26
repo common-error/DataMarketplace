@@ -1,4 +1,6 @@
+from email.policy import default
 from webargs.flaskparser import parser
+from flask_restful import reqparse
 from flask_restful import Resource
 from flask import request
 import pickle,json,os
@@ -43,3 +45,17 @@ class Mapping(Resource):
         })
         with open('mapping.pkl','wb') as f:
                 pickle.dump(dataToSave,f)
+
+class Graph(Resource):
+
+    def __init__(self):
+        self.reqparse = reqparse.RequestParser()
+        self.reqparse.add_argument('node',type=str,default='')
+        super(Graph,self).__init__()
+
+    def get(self):
+        args = self.reqparse.parse_args()
+        return args,201
+
+    def post(self):
+        return "post",201

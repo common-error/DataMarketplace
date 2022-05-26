@@ -22,9 +22,9 @@ api = Api(app, prefix="/api/v1/")
 api.add_resource(utils.Data,"addResources/<string:address>")
 api.add_resource(utils.Contract,"addContract/<string:address>")
 api.add_resource(utils.Mapping,"mapping/<string:address>")
+api.add_resource(utils.Graph,"graph/")
 
 @app.route('/')
-
 def index():
     loaded_CtcAddress = {}
     distinct_el = {}
