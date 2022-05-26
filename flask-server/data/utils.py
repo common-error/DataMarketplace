@@ -55,7 +55,10 @@ class Graph(Resource):
 
     def get(self):
         args = self.reqparse.parse_args()
-        return args,201
+        with open('graph.json','r') as f:
+            data = json.load(f)
+     
+        return [node for node in data['catalogue'] if node['from'] == args['node']],201
 
     def post(self):
         with open('graph.json','w') as f:

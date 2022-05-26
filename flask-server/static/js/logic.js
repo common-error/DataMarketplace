@@ -341,37 +341,30 @@ async function getKeys(){
     data = _capHash(data)
     
     
-    var root = await contract.methods.getTokens("0x"+mapping[window.userWalletAddress])
-    .call()
-    .catch((e) => {
-      console.error(e.message)
-      return
-    })
-    root = _dataToStruct(root)
-    root = root.filter((obj) => obj.token !== "0x0000000000000000000000000000000000000000000000000000000000000000");
+    var root = _getNodes(mapping[window.userWalletAddress])    
     
-    
-    await getKeysFromRequestedData(data,window.secretKey,root[0]).then(result => {
-      result = result.filter((value, index, self) =>
+    result = getKeysFromRequestedData(data,window.secretKey,root[0])
+
+    result = result.filter((value, index, self) =>
         index === self.findIndex((t) => (
           t.id === value.id && t.key === value.key
         ))
       )
 
-      var table = document.getElementById('modal-keys-Data')
-      while(table.rows.length > 1){
-        table.deleteRow(1);
-      }
+    var table = document.getElementById('modal-keys-Data')
+    while(table.rows.length > 1){
+      table.deleteRow(1);
+    }
 
-      for(let idx = 0; idx <= result.length-1; idx++){
-        id = Object.keys(mapping).find(key => mapping[key] === result[idx]['id']);
-        var row = table.insertRow(idx+1);
-        var idR = row.insertCell(0);
-        var keyR = row.insertCell(1);
-        idR.innerHTML = id;
-        keyR.innerHTML = result[idx]['key'];
-      }
-    })
+    for(let idx = 0; idx <= result.length-1; idx++){
+      id = Object.keys(mapping).find(key => mapping[key] === result[idx]['id']);
+      var row = table.insertRow(idx+1);
+      var idR = row.insertCell(0);
+      var keyR = row.insertCell(1);
+      idR.innerHTML = id;
+      keyR.innerHTML = result[idx]['key'];
+    }
+    
     
     
     //res = await getAllKeys(window.userKey,root[0],Keys)
@@ -383,58 +376,14 @@ async function getKeys(){
 
 }
 
-
-async function getAllKeys(_privKey, _node,_dictKeys){
-  label = await contract.methods.getLabel(_node.id)
-  .call()
-  .catch((e) => {
-    console.error(e.message)
-    return
-  })
+function getKeysFromRequestedData(_data, _privKey, _node,_result = []){
   
-  token = (_node.token).slice(2)
-  label = label.slice(2)
-  nodeId = (_node.id).slice(2)
-  nodeKey = _createNodeKey(_privKey,label,token)
-  
-  _dictKeys["id"] = nodeId
-  _dictKeys["key"] = nodeKey
-  _dictKeys["children"] = []
-
-  var nodes = await contract.methods.getTokens("0x"+nodeId)
-  .call()
-  .catch((e) => {
-    console.error(e.message)
-    return
-  })
-  childrens = _dataToStruct(nodes)
-
-  for(const child of childrens){
-    if(child.token != "0x0000000000000000000000000000000000000000000000000000000000000000"){
-      child_dict = Object.create(null)
-      getAllKeys(nodeKey,child,child_dict)
-      _dictKeys["children"].push(child_dict)
-    }
-  }
-  
-  }
-
-
-async function getKeysFromRequestedData(_data, _privKey, _node,_result = []){
-  debugger
   if(_data.length > 0){
-      label = await contract.methods.getLabel(_node.id)
-    .call()
-    .catch((e) => {
-      console.error(e.message)
-    })
+      label = _node['label']
     
-    token = (_node.token).slice(2)
-    label = label.slice(2)
-    nodeId = (_node.id).slice(2)
+    token = _node['token']
+    nodeId = _node['to']
     const nodeKey = _createNodeKey(_privKey,label,token)
-
-    //console.log("id:\t"+nodeId,"key:\t"+nodeKey)
     
     if(_data.includes(nodeId)){
       _result.push( {
@@ -445,17 +394,12 @@ async function getKeysFromRequestedData(_data, _privKey, _node,_result = []){
     }
 
     
-    var nodes = await contract.methods.getTokens("0x"+nodeId)
-    .call()
-    .catch((e) => {
-      console.error(e.message)
-    })
-    childrens = _dataToStruct(nodes)
+    var nodes = _getNodes(nodeId)
     
-    if(childrens.length > 0){
-      for(const child of childrens){
-        if(child.token != "0x0000000000000000000000000000000000000000000000000000000000000000"){
-          _result = await getKeysFromRequestedData(_data,nodeKey,child,_result)
+    if(nodes.length > 0){
+      for(const child of nodes){
+        if(child['token'] != "0x0000000000000000000000000000000000000000000000000000000000000000"){
+          _result = getKeysFromRequestedData(_data,nodeKey,child,_result)
         }
       }
     }
@@ -478,17 +422,6 @@ function _createNodeKey(_privKey,_label,_token){
   return nodekey
 }
 
-function _dataToStruct(_data){
-  let nodes = []
-  for(let i = 0; i < _data.length; i++){
-    const node = {
-      id : _data[i].id,
-      token : _data[i].token
-    }
-    nodes.push(node)
-  }
-  return nodes
-}
 
 function _byte_xor(_ba1,_ba2){
   zip= rows=>rows[0].map((_,c)=>rows.map(row=>row[c]))
@@ -621,5 +554,28 @@ function _deltaToCSV(){
 
   console.log(out)
 }
+
+function _getNodes(from){
+    var result = null;
+    $.ajax({
+      url:"http://127.0.0.1:5000/api/v1/graph/",
+      type:"get",
+      async:false,
+      data:{
+        node : from
+      },
+      success : function(response){
+        result = response;
+      },
+      error : function(xhr){
+        console.log(xhr)
+      }
+    });
+  
+    return result;
+  }
+
+
+
 
 
