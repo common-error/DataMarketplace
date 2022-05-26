@@ -294,7 +294,8 @@ class KDS():
         return catalogue
 
     def generateHash(self):
-        jsonGraph = json.dumps(json_graph.node_link_data(self.G))
+        #jsonGraph = json.dumps(json_graph.node_link_data(self.G))
+        jsonGraph = self.generateCatalogue()
         canonicalGraph = canonicaljson.encode_canonical_json(jsonGraph)
         return "0x"+hashlib.sha3_256(canonicalGraph).hexdigest()
     
