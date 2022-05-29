@@ -189,7 +189,7 @@ const loopBtn = document.querySelector("#loopValues");
 //*************************************************************************
 getCapListButton.addEventListener('click', () => {getCapList()})
 updateCapListTestingButton.addEventListener('click', async () => {
-  while(window.CurrentResourceIdx < 20){
+  while(window.CurrentResourceIdx < 100){
     await updateCapListTesting()
   }
 
@@ -316,7 +316,7 @@ async function updateCapListTesting(){
   
 
   var tx = new ethereumjs.Tx(txObj)
-  privateKey = new ethereumjs.Buffer.Buffer('3d9c07817ad0af82ef569eb8954c689b7ca8745e9016a29643f534849181aed3', 'hex');
+  privateKey = new ethereumjs.Buffer.Buffer('6cbed15c793ce57650b9877cf6fa156fbef513c4e6134f022a85b1ffdd59b2a1', 'hex');
   tx.sign(privateKey)
   var serializedTx = tx.serialize()
 

@@ -178,7 +178,7 @@ class GDV():
 gdv = GDV()
 
 gdv.generate(20,200)
-gdv.populate(1000)
+gdv.populate(5000)
 gdv.save()
 
 gdv.exportResources()

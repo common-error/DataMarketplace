@@ -20,15 +20,15 @@ paths = {
     'graph' : curr_path+"\\runTime\\KDS.gml",
     'mapping' : curr_path+"\\runTime\\mapping.json",
     'abi' :  curr_path+"\\ABI\\accessAuth.json",
-    'wallets' : curr_path+"\\wallets\\wallets10x.json",
-    'resources' : curr_path+"\\resources\\resources1000x.json",
+    'wallets' : curr_path+"\\wallets\\wallets500x.json",
+    'resources' : curr_path+"\\resources\\resources10000x.json",
     'saveUpdate' : curr_path+"\\runTime\\scalabilityResults\\savedUpdate.txt",
     'saveBuy' : curr_path+"\\runTime\\scalabilityResults\\savedBuy.txt",
     'saveBought' : curr_path+"\\runTime\\scalabilityResults\\savedBought.json"
 }
 
 load_dotenv()
-MAX_X_BUY = 50
+MAX_X_BUY = 450
 trufflefile = json.load(open(paths['abi']))
 
 abi = trufflefile['abi']
@@ -45,6 +45,8 @@ chain_id = 1337
 bougthResources = {
     "bougthRes" : []
 }
+numBoughtRes = 0
+start_time = time.time()
 
 
 def signal_handler(signal, frame):
@@ -52,7 +54,8 @@ def signal_handler(signal, frame):
     
     with open(paths['saveBought'], "w") as f:
         json.dump(bougthResources, f)
-
+    print("Numero risorse acquistate:\t{}".format(numBoughtRes))
+    print("--- %s seconds ---" % (time.time() - start_time))
     sys.exit(0)
 
 signal.signal(signal.SIGINT, signal_handler)
@@ -79,18 +82,17 @@ class tester():
         self.kds = KDS.KDS(paths['graph'],paths['mapping'])
 
     def startTest(self,_file=""):
-        numBuy = 0
+
         try:
             if(_file == ""):
                 while(len(self.stillToBuy.keys())>1):
-                    numBuy+=1
                     pubKey,privKey,idxBuyer = self._chooseRndBuyer()
                     buyer = {
                         "publicKey" : web3.toChecksumAddress(pubKey),
                         "privateKey" : privKey 
                     }
                     resToBuy = self._fixList(pubKey,random.randint(1,min(len(self.stillToBuy[pubKey]),MAX_X_BUY)))
-                    numBuy += len(resToBuy)
+                    numBoughtRes += len(resToBuy)
                     bougthResources['bougthRes'].append({
                         'key' : pubKey,
                         'res' : resToBuy,
@@ -116,7 +118,7 @@ class tester():
                         "privateKey" : self.keys[el["key"]] 
                     }
                     resToBuy = el["res"]
-                    numBuy += len(resToBuy)
+                    numBoughtRes += len(resToBuy)
                     
                     print("==========================================")
                     print("Buying...")
@@ -134,10 +136,13 @@ class tester():
             print(e)
             with open(paths['saveBought'], "w") as f:
                 json.dump(bougthResources, f)
+            print("Numero risorse acquistate:\t{}".format(numBoughtRes))
+            print("--- %s seconds ---" % (time.time() - start_time))
             sys.exit(0)
             
 
-        print("Numero risorse acquistate:\t{}".format(numBuy))
+        print("Numero risorse acquistate:\t{}".format(numBoughtRes))
+        print("--- %s seconds ---" % (time.time() - start_time))
 
     
     def _fixList(self,_buyer,_wantedRes):
