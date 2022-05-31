@@ -59,7 +59,7 @@ class Graph(Resource):
     def __init__(self,_path):
         self.path = _path
         self.reqparse = reqparse.RequestParser()
-        self.reqparse.add_argument('node',type=str,default='',required = True)
+        self.reqparse.add_argument('node',type=str,default='',required = True,location='args')
         super(Graph,self).__init__()
 
     def get(self):
