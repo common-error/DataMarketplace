@@ -569,24 +569,25 @@ function _deltaToCSV(){
 }
 
 function _getNodes(from){
-    var result = null;
-    $.ajax({
-      url:"http://127.0.0.1:5000/api/v1/graph/",
-      type:"get",
-      async:false,
-      data:{
-        node : from
-      },
-      success : function(response){
-        result = response;
-      },
-      error : function(xhr){
-        console.log(xhr)
-      }
-    });
-  
-    return result;
-  }
+  var result = null;
+  $.ajax({
+    url:"http://127.0.0.1:5000/api/v1/graph/",
+    type:"get",
+    async:false,
+    data:{
+      'node' : from
+    },
+    success : function(response){
+      result = response;
+    },
+    error : function(xhr){
+      console.log(xhr)
+    }
+  });
+
+  return result;
+}
+
 
 
 

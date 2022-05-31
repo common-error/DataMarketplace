@@ -59,11 +59,13 @@ class Graph(Resource):
     def __init__(self,_path):
         self.path = _path
         self.reqparse = reqparse.RequestParser()
-        self.reqparse.add_argument('node',type=str,default='')
+        self.reqparse.add_argument('node',type=str,default='',required = True)
         super(Graph,self).__init__()
 
     def get(self):
         args = self.reqparse.parse_args()
+
+        print(args)
         with open(self.path,'r') as f:
             data = json.load(f)
      
