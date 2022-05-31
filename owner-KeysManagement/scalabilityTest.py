@@ -3,6 +3,7 @@ import datetime
 from distutils.command.build import build
 import json
 import random
+from tkinter import N
 import requests
 from web3 import Web3
 import signal
@@ -28,7 +29,7 @@ paths = {
 }
 
 load_dotenv()
-MAX_X_BUY = 450
+MAX_X_BUY = 400
 trufflefile = json.load(open(paths['abi']))
 
 abi = trufflefile['abi']
@@ -45,20 +46,7 @@ chain_id = 1337
 bougthResources = {
     "bougthRes" : []
 }
-numBoughtRes = 0
-start_time = time.time()
 
-
-def signal_handler(signal, frame):
-    print("\nChiusura.... salvataggio file!")
-    
-    with open(paths['saveBought'], "w") as f:
-        json.dump(bougthResources, f)
-    print("Numero risorse acquistate:\t{}".format(numBoughtRes))
-    print("--- %s seconds ---" % (time.time() - start_time))
-    sys.exit(0)
-
-signal.signal(signal.SIGINT, signal_handler)
 
 class tester():
 
@@ -80,6 +68,19 @@ class tester():
         self.accessAuth = web3.eth.contract(address=contractAddress,abi=abi)
         self.chain = manageChain.chain(paths['abi'])
         self.kds = KDS.KDS(paths['graph'],paths['mapping'])
+        self.numBoughtRes = 0
+        self.start_time = time.time()
+
+        signal.signal(signal.SIGINT, self.signal_handler) 
+
+    def signal_handler(self,*args):
+        print("\nChiusura.... salvataggio file!")
+        
+        with open(paths['saveBought'], "w") as f:
+            json.dump(bougthResources, f)
+        print("Numero risorse acquistate:\t{}".format(self.numBoughtRes))
+        print("--- %s seconds ---" % (time.time() - self.start_time))
+        sys.exit(0)
 
     def startTest(self,_file=""):
 
@@ -92,7 +93,7 @@ class tester():
                         "privateKey" : privKey 
                     }
                     resToBuy = self._fixList(pubKey,random.randint(1,min(len(self.stillToBuy[pubKey]),MAX_X_BUY)))
-                    numBoughtRes += len(resToBuy)
+                    self.numBoughtRes += len(resToBuy)
                     bougthResources['bougthRes'].append({
                         'key' : pubKey,
                         'res' : resToBuy,
@@ -118,7 +119,7 @@ class tester():
                         "privateKey" : self.keys[el["key"]] 
                     }
                     resToBuy = el["res"]
-                    numBoughtRes += len(resToBuy)
+                    self.numBoughtRes += len(resToBuy)
                     
                     print("==========================================")
                     print("Buying...")
@@ -136,14 +137,78 @@ class tester():
             print(e)
             with open(paths['saveBought'], "w") as f:
                 json.dump(bougthResources, f)
-            print("Numero risorse acquistate:\t{}".format(numBoughtRes))
-            print("--- %s seconds ---" % (time.time() - start_time))
+            print("Numero risorse acquistate:\t{}".format(self.numBoughtRes))
+            print("--- %s seconds ---" % (time.time() - self.start_time))
             sys.exit(0)
             
 
-        print("Numero risorse acquistate:\t{}".format(numBoughtRes))
-        print("--- %s seconds ---" % (time.time() - start_time))
+        print("Numero risorse acquistate:\t{}".format(self.numBoughtRes))
+        print("--- %s seconds ---" % (time.time() - self.start_time))
 
+    def startTimeTest(self,_file=""):
+        current = 50
+        try:
+            if(_file == ""):
+                while(current < MAX_X_BUY):
+                    pubKey,privKey,idxBuyer = self._chooseRndBuyer()
+                    buyer = {
+                        "publicKey" : web3.toChecksumAddress(pubKey),
+                        "privateKey" : privKey 
+                    }
+                    resToBuy = self._fixList(pubKey,current)
+                    current += 10
+                    self.numBoughtRes += len(resToBuy)
+                    bougthResources['bougthRes'].append({
+                        'key' : pubKey,
+                        'res' : resToBuy,
+                        'idx' : idxBuyer 
+                    })
+
+                    print("==========================================")
+                    print("\t\tBuying")
+                    print("Buyer ->\t{}".format(buyer['publicKey']))
+                    print("Buying ->\t{}".format(resToBuy))
+
+                    self._tx(buyer,resToBuy)
+                    
+
+                    print("\t\tUpdating")
+                    self._update(buyer['publicKey'],str(idxBuyer))
+                    self.iteration+=1
+            else:
+                with open(_file,'r') as f:
+                    data = json.load(f)
+                for el in data["bougthRes"]:
+                    buyer = {
+                        "publicKey" : web3.toChecksumAddress(el["key"]),
+                        "privateKey" : self.keys[el["key"]] 
+                    }
+                    resToBuy = el["res"]
+                    self.numBoughtRes += len(resToBuy)
+                    
+                    print("==========================================")
+                    print("Buying...")
+                    print("Buyer ->\t{}".format(buyer['publicKey']))
+                    print("Buying ->\t{}".format(resToBuy))
+                    self._tx(buyer,resToBuy)
+                    
+
+                    print("Updating...")
+                    self._update(buyer['publicKey'],str(el["idx"]))
+                    self.iteration+=1
+                    
+        except Exception as e:
+            print("Errore!")
+            print(e)
+            with open(paths['saveBought'], "w") as f:
+                json.dump(bougthResources, f)
+            print("Numero risorse acquistate:\t{}".format(self.numBoughtRes))
+            print("--- %s seconds ---" % (time.time() - self.start_time))
+            sys.exit(0)
+            
+
+        print("Numero risorse acquistate:\t{}".format(self.numBoughtRes))
+        print("--- %s seconds ---" % (time.time() - self.start_time))
     
     def _fixList(self,_buyer,_wantedRes):
         resToBuy = []
@@ -184,10 +249,13 @@ class tester():
             strore_transaction,
             private_key=_user["privateKey"]
         )
+
+        t1 = time.time()
         send_store_tx = web3.eth.send_raw_transaction(sign_store_tnx.rawTransaction)
         tx_receipt = web3.eth.wait_for_transaction_receipt(send_store_tx)
+        t2 = time.time()
 
-        self._saveResult("{},{},{},{}\n".format(self.iteration,_user["publicKey"],tx_receipt["gasUsed"],len(_resources)))
+        self._saveResult("{},{},{},{},{}\n".format(self.iteration,_user["publicKey"],tx_receipt["gasUsed"],len(_resources),(t2-t1)))
         self.sleep()
 
 
@@ -233,4 +301,4 @@ class tester():
 ts = tester()
 
 ts.deployAndAdd()
-ts.startTest()
+ts.startTimeTest()
