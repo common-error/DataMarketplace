@@ -29,7 +29,7 @@ paths = {
 }
 
 load_dotenv()
-MAX_X_BUY = 400
+MAX_X_BUY = 250
 trufflefile = json.load(open(paths['abi']))
 
 abi = trufflefile['abi']
@@ -86,7 +86,7 @@ class tester():
 
         try:
             if(_file == ""):
-                while(len(self.stillToBuy.keys())>1):
+                while(len(self.stillToBuy.keys())>1 and self.numBoughtRes < 18000):
                     pubKey,privKey,idxBuyer = self._chooseRndBuyer()
                     buyer = {
                         "publicKey" : web3.toChecksumAddress(pubKey),
@@ -149,14 +149,17 @@ class tester():
         current = 50
         try:
             if(_file == ""):
-                while(current < MAX_X_BUY):
+                while(current <= MAX_X_BUY):
                     pubKey,privKey,idxBuyer = self._chooseRndBuyer()
                     buyer = {
                         "publicKey" : web3.toChecksumAddress(pubKey),
                         "privateKey" : privKey 
                     }
                     resToBuy = self._fixList(pubKey,current)
-                    current += 10
+                    if current == 250:
+                        current = 50
+                    else:
+                        current += 10
                     self.numBoughtRes += len(resToBuy)
                     bougthResources['bougthRes'].append({
                         'key' : pubKey,
