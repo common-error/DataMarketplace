@@ -29,7 +29,7 @@ paths = {
 }
 
 load_dotenv()
-MAX_X_BUY = 250
+MAX_X_BUY = 100
 trufflefile = json.load(open(paths['abi']))
 
 abi = trufflefile['abi']
@@ -81,6 +81,42 @@ class tester():
         print("Numero risorse acquistate:\t{}".format(self.numBoughtRes))
         print("--- %s seconds ---" % (time.time() - self.start_time))
         sys.exit(0)
+
+    def sequentialTest(self):
+
+        try:
+            for idxBuyer,pubKey in enumerate([*self.stillToBuy.keys()][1:]):
+                privKey = self.keys[pubKey]
+                buyer = {
+                    "publicKey" : web3.toChecksumAddress(pubKey),
+                    "privateKey" : privKey 
+                }
+                resToBuy = self._fixList(pubKey,random.randint(1,min(len(self.stillToBuy[pubKey]),MAX_X_BUY)))
+                self.numBoughtRes += len(resToBuy)
+                bougthResources['bougthRes'].append({
+                    'key' : pubKey,
+                    'res' : resToBuy,
+                    'idx' : idxBuyer 
+                })
+
+                self._tx(buyer,resToBuy)
+                
+                self._update(buyer['publicKey'],str(idxBuyer))
+                self.iteration+=1
+
+        except Exception as e:
+            print("Errore!")
+            print(e)
+            with open(paths['saveBought'], "w") as f:
+                json.dump(bougthResources, f)
+            print("Numero risorse acquistate:\t{}".format(self.numBoughtRes))
+            print("--- %s seconds ---" % (time.time() - self.start_time))
+            sys.exit(0)
+            
+
+        print("Numero risorse acquistate:\t{}".format(self.numBoughtRes))
+        print("--- %s seconds ---" % (time.time() - self.start_time))
+
 
     def startTest(self,_file=""):
 
@@ -300,6 +336,11 @@ class tester():
     
     def sleep(self):
         time.sleep(0)
+
+    def progress_bar(self, progress, total):
+        percent = 100 * (progress / float(total))
+        bar = '█' * int(percent) + '-' * (100-int(percent))
+        print(f"\r|{bar}| {percent:.2f}%",end="\r")
 
 ts = tester()
 
