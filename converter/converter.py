@@ -156,7 +156,7 @@ fifty = [
 
 #print(c.min(one))
 
-#print(c.EURperGas(1529555))
+print(c.EURperGas(1543201))
 
 res = []
 for idx,el in enumerate(fifty):
