@@ -20,6 +20,7 @@ Da utilizzare solo se si modifica il codice del contratto.
 Una volta compilato il nuovo bytecode:
 1. Copiare il contenuto della chiave "ABI" nel json al percorso "smart-contract/build/contracts/accessAuth.json"
 2. Incollare quanto copiato nella variabile chiamata "ABI" all'interno del file al percorso "flask-server/static/js/logic.js"
+3. Copiare l'intero file al percorso "smart-contract/build/contracts/accessAuth.json" nella cartella ""owner-KeysManagement/ABI"
 
 Comando per la compilazione
 ```
